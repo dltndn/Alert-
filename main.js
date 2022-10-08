@@ -12,8 +12,6 @@ var app = http.createServer(function(request,response){
         let title = queryData_id.substring(1, queryData_id.length);
         return title;
     }
-   
-
     if (pathname === "/") {
       if (queryData.id === undefined) {
         const title = "메인페이지";
@@ -44,7 +42,7 @@ var app = http.createServer(function(request,response){
       response.writeHead(302, { Location: "/" });
       response.end("clear");
     } 
-    // err : 
+    
     else if (pathname === "/signup") {
       const title = filterURL(pathname);
       const header = template.header();
