@@ -1,0 +1,5 @@
+<form action="create_userloc_process" method="post">
+    <p>도로명주소 API 영역</p>
+    <p>지역 별명 : <input type="text" name="location_nickname" ></p> 
+    <p><input type="submit" value="확인"></p>
+</form>

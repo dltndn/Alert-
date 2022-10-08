@@ -1,0 +1,8 @@
+로그인
+<form action="login_process" method="post">
+    <p><input type="text" name="ID" placeholder="ID"></p>
+    <p><input type="password" name="PW" placeholder="PW"></p>
+    <a href="http://localhost:3000/signup" value="회원가입">회원가입</a>
+    <p><input type="submit" value="확인"></p>
+    <p><input type="button" value="취소" onClick="location.href='/'"></p>
+</form>
