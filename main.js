@@ -4,6 +4,7 @@ var url = require("url");
 var qs = require("querystring");
 var template = require("./template.js");
 
+
 var app = http.createServer(function (request, response) {
   var _url = request.url;
   var queryData = url.parse(_url, true).query;
@@ -53,7 +54,7 @@ var app = http.createServer(function (request, response) {
       nick: ["mock1", "mock2"],
       adress: ["경기도", "서울시"],
     };
-    let len = nick_adress.nick.length;
+    let len = mock_nick_adress.nick.length;
     let nick_adress_form = ``;
     for (let i = 0; i < len; i++) {
       nick_adress_form += `<p><div>${mock_nick_adress.nick[i]}</div><div> ${mock_nick_adress.adress[i]}</div></p>`;
