@@ -1,0 +1,7 @@
+<form action="" method="post">
+    <p><input type="email" name="email" placeholder="이메일을 입력하세요"><button name="verification" onclick="">중복확인</button></p>
+    <p><input type="password" name="pwd" minlength="4" placeholder="패스워드를 입력해주세요"></p>
+    <p><input type="password" name="contrastPwd" minlength="4" placeholder="패스워드를 입력해주세요"></p>
+    <p><input type="submit" value="확인"></p>
+    <button name="cancel" onClick="location.href='/'">취소</button>
+  </form>

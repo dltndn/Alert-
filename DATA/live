@@ -1,0 +1,11 @@
+<!-- <form method="post">
+  <div>
+    <p>예상 소요 시간:${mock_estimated_time}</p>
+    <div>
+      <p>출발시간:${mock_start_time}</p>
+      <p>도착시간:${mock_arrival_time}</p>
+    </div>
+  </div>
+  <p>지도API</p>
+  <p>cctv API</p>
+</form> -->
