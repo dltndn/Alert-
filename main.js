@@ -4,6 +4,7 @@ var url = require("url");
 var qs = require("querystring");
 var template = require("./template.js");
 
+console.log("tete");
 var app = http.createServer(function (request, response) {
   var _url = request.url;
   var queryData = url.parse(_url, true).query;
@@ -58,13 +59,6 @@ var app = http.createServer(function (request, response) {
     for (let i = 0; i < len; i++) {
       nick_adress_form += `<p><div>${mock_nick_adress.nick[i]}</div><div> ${mock_nick_adress.adress[i]}</div></p>`;
     }
-    // fs.readFile(`data${pathname}`, "utf-8", function (err, body) {
-    //   const title = filterURL(pathname);
-    //   const header = template.header();
-    //   const HTML = template.HTML(title, header, body);
-    //   response.writeHead(200);
-    //   response.end(HTML);
-    // });
 
     const body = `<form method="post" action="">
       <div>
@@ -105,13 +99,7 @@ var app = http.createServer(function (request, response) {
     let mock_estimated_time = "0:45";
     let mock_start_time = "8:00";
     let mock_arrival_time = "8:45";
-    // fs.readFile(`data/${pathname}`, "utf8", function (err, body) {
-    //   const title = filterURL(pathname);
-    //   const header = template.header();
-    //   const HTML = template.HTML(title, header, body);
-    //   response.writeHead(200);
-    //   response.end(HTML);
-    // });
+
     const body = `<form method="post">
     <div>
       <p>예상 소요 시간:${mock_estimated_time}</p>
