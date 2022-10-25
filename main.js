@@ -5,15 +5,7 @@ const template = require("./template.js");
 const edit = require("./edit.js");
 const validate = require("./validation");
 const mysql      = require('mysql');
-const syncmysql = require('sync-mysql');
 const DB = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '11111111',
-  database : 'Alert'
-});
-
-const syncDB = new syncmysql  ({
   host     : 'localhost',
   user     : 'root',
   password : '11111111',
@@ -64,6 +56,53 @@ var app = http.createServer(function (request, response) {
     });
     
   } else if (pathname === "/signUp_process") {
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // 중복확인 필요, 패스워드 동일 여부
     // 회원의 아이디 정보    
     DB.query(`SELECT user_id FROM Alert.user_data;`, function (error, users_ids) {
@@ -125,6 +164,7 @@ var app = http.createServer(function (request, response) {
     // response.writeHead(302, { Location: `/profile` });
     response.writeHead(200);
     response.end('done');
+  // } else if (pathname === "/checkID_process") {
   } else if (pathname === "/profile") {
     DB.query(`SELECT user_id FROM Alert.user_data;`, function (error, user_data) {
       if (error) {
