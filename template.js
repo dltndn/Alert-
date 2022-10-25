@@ -1,6 +1,8 @@
 module.exports = {
   /**
    * 웹 사이트의 헤더 부분
+   * - 상태바
+   * - 링크
    * 
    */
   header: function () {
@@ -28,9 +30,9 @@ module.exports = {
 
   /**
    * 웹 사이트의 틀을 구성하는 메서드 
-   * @ title : 웹 브라우저의 탭 이름
-   * @ header : 상태바 부분
-   * @ body : 본문 부분
+   * - title : 웹 브라우저의 탭 이름
+   * - header : 상태바 부분
+   * - body : 본문 부분
    */
   HTML: function (title, header, body) {
     
@@ -40,20 +42,18 @@ module.exports = {
             <head>
             <title>${title}</title>
             <meta charset="utf-8">
-
             
-            <script type="text/javascript">
-                function check () {
-                    const ID  = document.signup.ID.value;
-                    const password  = document.signup.pwd.value;
-                    const contrastPassword  = document.signup.contrastPwd.value;
-                    if (password !== contrastPassword) {
-                        alert("비밀번호를 재확인 해주세요.");
-                        document.signup.ID.focus;
-                        return false;
-                    }
-                }
+            <script>
+            // const ID = document.signup.ID.value;
+            // const password = document.signup.pwd.value;
+            // const contrastPassword = document.signup.contrastPwd.value;
+            // if (password !== contrastPassword) {
+            //   alert("비밀번호를 재확인 해주세요.");
+            //   document.signup.ID.focus;
+            //   return false;
+            
             </script>
+             
             </head>
             <body>
             ${header}
@@ -62,6 +62,10 @@ module.exports = {
             </html>
             `;
   },
+
+  
+
+
 
   funcname: function (user_id) {
     let userID = user_id;
