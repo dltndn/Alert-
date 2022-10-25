@@ -1,4 +1,8 @@
 module.exports = {
+  /**
+   * 웹 사이트의 헤더 부분
+   * 
+   */
   header: function () {
     return `
     
@@ -12,19 +16,44 @@ module.exports = {
             `;
   },
 
+  /**
+   * 웹 사이트의 내용 부분
+   * 
+   */
   body: function () {
     return `
             this is empty. edit template object body method.
             `;
   },
 
+  /**
+   * 웹 사이트의 틀을 구성하는 메서드 
+   * @ title : 웹 브라우저의 탭 이름
+   * @ header : 상태바 부분
+   * @ body : 본문 부분
+   */
   HTML: function (title, header, body) {
+    
     return `
             <!doctype html>
             <html>
             <head>
             <title>${title}</title>
             <meta charset="utf-8">
+
+            
+            <script type="text/javascript">
+                function check () {
+                    const ID  = document.signup.ID.value;
+                    const password  = document.signup.pwd.value;
+                    const contrastPassword  = document.signup.contrastPwd.value;
+                    if (password !== contrastPassword) {
+                        alert("비밀번호를 재확인 해주세요.");
+                        document.signup.ID.focus;
+                        return false;
+                    }
+                }
+            </script>
             </head>
             <body>
             ${header}
@@ -34,8 +63,8 @@ module.exports = {
             `;
   },
 
-  funcname: function () {
-    let userID = "mockID";
+  funcname: function (user_id) {
+    let userID = user_id;
     let mock_nick_adress = {
       nick: ["mock1", "mock2"],
       adress: ["경기도", "서울시"],
@@ -47,7 +76,7 @@ module.exports = {
     }
     return `<form method="post" action="">
       <div>
-          <p><span>ID</span>${userID}<span>님</span></p>
+          <p><span>${userID}</span><span>님</span></p>
           <div>${nick_adress_form}</div>
       </div>
       <p><input type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'"></p>
@@ -76,7 +105,6 @@ module.exports = {
     return `
     ${title} 임시 페이지 내용 추가 필요
     <p><input type="button" name="redirect_create_alarm" onClick="location.href='/create_alarm'" value="알람 생성 버튼"></p>`;
-    
   }
   
 };
