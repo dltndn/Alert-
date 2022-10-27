@@ -15,10 +15,13 @@ const DB = mysql.createConnection({
 
 DB.connect();
 
-var app = http.createServer(function (request, response) {
+var app = http.createServer( (request, response) => {
   var _url = request.url;
   var queryData = url.parse(_url, true).query;
   var pathname = url.parse(_url, true).pathname;
+
+  let loginStatus = false;
+  let userIndex = -1;
   
   if (pathname === "/") {
     if (queryData.id === undefined) {
@@ -45,7 +48,15 @@ var app = http.createServer(function (request, response) {
       response.end(HTML);
     });
   } else if (pathname === "/login_process") {
-    validate.Login(request, response);
+    async function runrun ()  {
+      const userData = await validate.Login(request, response);
+      loginStatus = userData.loginStatus;
+      userIndex = userData.userIndex;
+    }
+    runrun();
+
+  } else if (pathname === "/logout_process") {
+    // validate.Login(request, response);
   } else if (pathname === "/signUp") {
     fs.readFile(`DATA/${pathname}`, "utf-8", function (err, body) {
       const title = edit.filterURL(pathname);
@@ -56,6 +67,11 @@ var app = http.createServer(function (request, response) {
     });
     
   } else if (pathname === "/signUp_process") {
+    // 아이디 중복 확인
+    
+
+    // 비밀번호 중복 확인
+
     
 
 

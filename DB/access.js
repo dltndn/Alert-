@@ -6,6 +6,7 @@ const syncDB = require("./DBhostdata");
  * @param {*} response 
  * @returns 객체타입 (사용자 테이블, 인스턴스의 개수, 아이디 리스트)
  */
+
 exports.userData = function (request, response) {
   let object = {};
   let id_list = [];

@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "mysql": "^2.18.1",
-    "sync-mysql": "^3.0.1"
+    "sync-mysql": "^3.0.1",
+    "sync-request": "^6.1.0",
+    "then-request": "^6.0.2"
   }
 }
