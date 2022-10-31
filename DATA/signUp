@@ -3,5 +3,6 @@
     <p><input type="password" name="pwd" minlength="4" placeholder="패스워드를 입력해주세요"></p>
     <p><input type="password" name="contrastPwd" minlength="4" placeholder="패스워드를 입력해주세요"></p>
     <p><input type="submit" value="확인"></p>
-    <button name="cancel" onClick="location.href='/'">취소</button>
+    <p><input type="button" value="취소" onClick="location.href='/'"></p>
   </form>
+  
