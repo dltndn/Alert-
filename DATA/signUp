@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <form action="" method="post">
     <p><input type="email" name="email" placeholder="이메일을 입력하세요"><button name="verification" onclick="">중복확인</button></p>
     <p><input type="password" name="pwd" minlength="4" placeholder="패스워드를 입력해주세요"></p>
@@ -6,3 +7,27 @@
     <p><input type="button" value="취소" onClick="location.href='/'"></p>
   </form>
   
+=======
+<form name="signup" action="signUp_process" method="post">
+    <p><input type="ID" name="ID" minlength="8" placeholder="아이디를 입력하세요" required><button name="verification" onclick="">중복확인</button></p>
+    <p><input type="password" name="pwd" minlength="4" placeholder="패스워드를 입력해주세요" required></p>
+    <p><input type="password" name="contrastPwd" minlength="4" placeholder="패스워드를 입력해주세요" required></p>
+    <p><input type="submit" value="확인" onclick=""></p>
+    <button name="cancel" onClick="location.href='/'">취소</button>
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> 7199f5f95222804b127ba8aa1d88c7d5c8d3bfd9
