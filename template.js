@@ -171,7 +171,8 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         new daum.Postcode({
             oncomplete: function(data) {
                 var addr = data.address; // 최종 주소 변수
-
+                console.log(addr);
+                localStorage.setItem("userAdress", addr);
                 // 주소 정보를 해당 필드에 넣는다.
                 document.getElementById("sample5_address").value = addr;
                 // 주소로 상세 정보를 검색
