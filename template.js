@@ -5,11 +5,11 @@ module.exports = {
    * - 링크
    * 
    */
-  header: function () {
+  header: (loginOrLogout="login", text="로그인") => {
     return `
             statusbar section
             <ul>
-                <li><a href="/login">로그인 페에지 링크</a></li>
+                <li><a href="/${loginOrLogout}">${text} 페에지 링크</a></li>
                 <li><a href="/profile">프로필 페에지 링크</a></li>
                 <li><a href="/alarm">알람 페에지 링크</a></li>
                 <li><a href="/live">실시간 페에지 링크</a></li>
@@ -21,7 +21,7 @@ module.exports = {
    * 웹 사이트의 내용 부분
    * 
    */
-  body: function () {
+  body: () => {
     return `
             this is empty. edit template object body method.
             `;
@@ -33,7 +33,7 @@ module.exports = {
    * - header : 상태바 부분
    * - body : 본문 부분
    */
-  HTML: function (title, header, body) {
+  HTML: (title, header, body) => {
     
     return `
             <!doctype html>
@@ -57,7 +57,7 @@ module.exports = {
    * - body : 본문 부분
    * - script : 스크립트 코드
    */
-   HTML: function (title, header, body, script="") {
+   HTML:  (title, header, body, script="") => {
     
     return `
             <!doctype html>
@@ -79,7 +79,7 @@ module.exports = {
 
 
 
-  funcname: function (user_id) {
+  funcname:  (user_id) => {
     let userID = user_id;
     let mock_nick_adress = {
       nick: ["mock1", "mock2"],
@@ -100,7 +100,7 @@ module.exports = {
   </form>`;
   },
 
-  funcname2: function () {
+  funcname2: () => {
     let mock_estimated_time = "0:45";
     let mock_start_time = "8:00";
     let mock_arrival_time = "8:45";
@@ -117,7 +117,7 @@ module.exports = {
   </form>`;
   },
 
-  alarm : function (title) {
+  alarm : (title) => {
     return `
     ${title} 임시 페이지 내용 추가 필요
     <p><input type="button" name="redirect_create_alarm" onClick="location.href='/create_alarm'" value="알람 생성 버튼"></p>`;

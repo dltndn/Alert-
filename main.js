@@ -39,6 +39,7 @@ app.get('/', (request, response) => {
   const header = template.header();
   const body = template.body();
   const HTML = template.HTML(title, header, body);
+  console.log(request.session);
   response.send(HTML);
 })
 app.get('/login', (request, response) => {
@@ -62,7 +63,14 @@ app.post('/login_process', (request, response) => {
   login_process();
 })
 app.get('/logout_process', (request, response) => {
-  // validate.Login(request, response);
+  if (request.session.is_logined === false) {
+    response.redirect('/');
+  }
+  else {
+    request.session.destroy( () => {
+      response.redirect('/');
+    })
+  }
 })
 app.get('/signUp', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
@@ -109,36 +117,49 @@ app.get('/signUp_process', (request, response) => {
   response.writeHead(200);
   response.end('done');
 })
-app.get('/profile', (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
-  DB.query(`SELECT user_id FROM Alert.user_data;`, (error, user_data) => {
-    if (error) {
-      throw error;
-    }
-    let user_id = user_data[request.session.userIndex].user_id;
-    console.log(user_id);
-    const title = edit.filterURL(pathname);
-    const header = template.header();
-    const body = template.funcname(user_id);
-    const HTML = template.HTML(title, header, body);
-    response.send(HTML);
-  });
-})
+app.get("/profile", (request, response) => {
+  if (request.session.is_logined === true) {
+    console.log(request.session);
+    let pathname = url.parse(request.url, true).pathname;
+    DB.query(`SELECT user_id FROM Alert.user_data;`, (error, user_data) => {
+      if (error) {
+        throw error;
+      }
+      let user_id = user_data[request.session.userIndex].user_id;
+      console.log(user_id);
+      const title = edit.filterURL(pathname);
+      const header = template.header("logout_process", "로그아웃");
+      const body = template.funcname(user_id);
+      const HTML = template.HTML(title, header, body);
+      response.send(HTML);
+    });
+  } else {
+    response.redirect("/login");
+  }
+});
 app.get('/alarm', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   const title = edit.filterURL(pathname);
-    const header = template.header();
-    const body = template.alarm(title);
-    const HTML = template.HTML(title, header, body);
-    response.send(HTML);
+    if (request.session.is_logined === true) {
+      const header = template.header("logout_process", "로그아웃");
+      const body = template.alarm(title);
+      const HTML = template.HTML(title, header, body);
+      response.send(HTML);
+    } else {
+      response.redirect("/login");
+    }
 })
 app.get('/create_alarm', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
-    const title = edit.filterURL(pathname);
-    const header = template.header();
-    const HTML = template.HTML(title, header, body);
-    response.send(HTML);
+    if (request.session.is_logined === true) {
+      const title = edit.filterURL(pathname);
+      const header = template.header("logout_process", "로그아웃");
+      const HTML = template.HTML(title, header, body);
+      response.send(HTML);
+    } else {
+      response.redirect("/login");
+    }
   });
 })
 app.get('/create_alarm_process', (request, response) => {
@@ -149,19 +170,27 @@ app.get('/create_alarm_process', (request, response) => {
 app.get('/live', (request, response) => {
   console.log(request.session);
   let pathname = url.parse(request.url, true).pathname;
-  const title = edit.filterURL(pathname);
-  const header = template.header();
-  const body = template.funcname2();
-  const HTML = template.HTML(title, header, body);
-  response.send(HTML);
+  if (request.session.is_logined === true) {
+    const title = edit.filterURL(pathname);
+    const header = template.header("logout_process", "로그아웃");
+    const body = template.funcname2();
+    const HTML = template.HTML(title, header, body);
+    response.send(HTML);
+  } else {
+    response.redirect('/login');
+  }
 })
 app.get('/create_userloc', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
-    const title = edit.filterURL(pathname);
-    const header = template.header();
-    const HTML = template.HTML(title, header, body);
-    response.send(HTML);
+    if (request.session.is_logined === true) {
+      const title = edit.filterURL(pathname);
+      const header = template.header("logout_process", "로그아웃");
+      const HTML = template.HTML(title, header, body);
+      response.send(HTML);
+    } else {
+      response.redirect("/login");
+    }
   });
 })
 app.get('/create_userloc_process', (request, response) => {
