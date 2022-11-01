@@ -11,6 +11,7 @@ const asyncDB = mysql.createConnection({
 });
 
 // asynchronous
+
 const MySql = require('sync-mysql');
 /** 비동기적 데이터베이스 접근 시 사용
    */

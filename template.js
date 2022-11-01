@@ -7,7 +7,6 @@ module.exports = {
    */
   header: function () {
     return `
-    
             statusbar section
             <ul>
                 <li><a href="/login">로그인 페에지 링크</a></li>
@@ -41,19 +40,32 @@ module.exports = {
             <html>
             <head>
             <title>${title}</title>
-            <meta charset="utf-8">
-            
-            <script>
-            // const ID = document.signup.ID.value;
-            // const password = document.signup.pwd.value;
-            // const contrastPassword = document.signup.contrastPwd.value;
-            // if (password !== contrastPassword) {
-            //   alert("비밀번호를 재확인 해주세요.");
-            //   document.signup.ID.focus;
-            //   return false;
-            
-            </script>
-             
+            <meta charset="utf-8"> 
+            </head>
+            <body>
+            ${header}
+            ${body}
+            </body>
+            </html>
+            `;
+  },
+
+  /**
+   * 웹 사이트의 틀을 구성하는 메서드 
+   * - title : 웹 브라우저의 탭 이름
+   * - header : 상태바 부분
+   * - body : 본문 부분
+   * - script : 스크립트 코드
+   */
+   HTML: function (title, header, body, script="") {
+    
+    return `
+            <!doctype html>
+            <html>
+            <head>
+            <title>${title}</title>
+            <meta charset="utf-8"> 
+            ${script}
             </head>
             <body>
             ${header}

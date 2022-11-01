@@ -1,5 +1,6 @@
 const access = require("./DB/access");
 
+
 module.exports = {
   /**
    * Form 에서 데이터를 받아 객체를 리턴하는 메서드
@@ -9,60 +10,53 @@ module.exports = {
    * @param {*} password form 태그의 name속성 값2
    * @returns 객체타입의 값을 리턴 {ID : userInputID, password : userInputPassword }
    */
-  async getFormData (request, response, ID, password) {
+  async getFormData (request, response, ID, password) { 
     let input_data = "";
 
-    // reject 구현 필요
-    await new Promise((resolve, reject) => {
-      request.on("data", (data) => {
-        resolve(input_data += data);
-      });
+    request.on("data", (data) => {
+      input_data += data;
     });
 
-    await new Promise((resolve, reject) => {
-      request.on("end", () => {
-        const userdata = new URLSearchParams(input_data);
-        userInputID = userdata.get(ID);
-        userInputPassword = userdata.get(password);
-        resolve();
-      });
+    request.on("end", () => {
+      const userdata = new URLSearchParams(input_data);
+      userInputID = userdata.get(ID);
+      userInputPassword = userdata.get(password);
+      this.verifyLogin(request, response, {ID : userInputID, password : userInputPassword});
     });
-
-    return {ID : userInputID, password : userInputPassword };
-
   },
 
-  /**
-   * Form 에서 데이터를 받아 객체를 리턴하는 메서드
-   * @param {*} request 
-   * @param {*} response 
-   * @param {*} ID form 태그의 name속성 값1
-   * @param {*} password form 태그의 name속성 값2
-   * @param {*} contrastPassword form 태그의 name속성 값3
-   * @returns 객체타입의 값을 리턴 {ID : userInputID, password : userInputPassword }
-   */
-  async getFormData (request, response, ID, password, contrastPassword) {
-    let input_data = "";
+  // /**
+  //  * Form 에서 데이터를 받아 객체를 리턴하는 메서드
+  //  * @param {*} request 
+  //  * @param {*} response 
+  //  * @param {*} ID form 태그의 name속성 값1
+  //  * @param {*} password form 태그의 name속성 값2
+  //  * @param {*} contrastPassword form 태그의 name속성 값3
+  //  * @returns 객체타입의 값을 리턴 {ID : userInputID, password : userInputPassword }
+  //  */
+  // async getFormData (request, response, ID, password, contrastPassword) {
+  //   let input_data = "";
+  //   await new Promise((resolve, reject) => {
+  //     request.on("data", (data) => {
+  //       resolve(input_data += data);
+  //     });
+  //   });
+    
+  //   // 여기서 문제 터짐
+  //   await new Promise((resolve, reject) => {
+  //     request.on("end", () => {
+  //       const userdata = new URLSearchParams(input_data);
+  //       userInputID = userdata.get(ID);
+  //       userInputPassword = userdata.get(password);
+  //       userInputContrastPassword = userdata.get(contrastPassword);
+  //       resolve();
+  //     });
+  //   });
+    
 
-    await new Promise((resolve, reject) => {
-      request.on("data", (data) => {
-        resolve(input_data += data);
-      });
-    });
+  //   return {ID : userInputID, password : userInputPassword, contrastPassword : userInputContrastPassword};
 
-    await new Promise((resolve, reject) => {
-      request.on("end", () => {
-        const userdata = new URLSearchParams(input_data);
-        userInputID = userdata.get(ID);
-        userInputPassword = userdata.get(password);
-        userInputContrastPassword = userdata.get(contrastPassword);
-        resolve();
-      });
-    });
-
-    return {ID : userInputID, password : userInputPassword, contrastPassword : userInputContrastPassword};
-
-  },
+  // },
 
   
 
@@ -82,22 +76,16 @@ module.exports = {
     const password = userInput.password;
 
     for (let i = 0; i < rows; i++) {
-      if (ID === id_list[i]) {
-        if (password === user_data[i].user_password) {
-          console.log("아이디 비밀번호 일치");
-          response.writeHead(302, { Location: "/live" });
-          response.end("");
-          return { userIndex : i,  loginStatus : true};
-        } else {
-          console.log("비밀번호가 잘못 되었습니다.");
-          response.writeHead(302, { Location: "/login" });
-          response.end("");
-          break;
-        }
+      if (ID === id_list[i] & password == user_data[i].user_password) {
+        request.session.is_logined = true;
+        request.session.userIndex = i;
+        response.redirect("/live");
+        return; 
       } else if (rows - 1 == i) {
-        console.log("아이디가 잘못 되었습니다.");
-        response.writeHead(302, { Location: "/login" });
-        response.end("");
+        console.log(userInput);
+        console.log(ID+ " "  + password)
+        console.log("아이디가 혹은 패스워드가 잘못 되었습니다.");
+        response.redirect('back');
         break;
       }
     }
