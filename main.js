@@ -19,9 +19,6 @@ const DB = mysql.createConnection({
 });
 
 
-let loginStatus = false;
-let userIndex = -1;
-
 // let _url = request.url;
 // let queryData = url.parse(_url, true).query;
 // let pathname = url.parse(_url, true).pathname;
@@ -45,13 +42,17 @@ app.get('/', (request, response) => {
   response.send(HTML);
 })
 app.get('/login', (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
-  fs.readFile(`DATA/${pathname}`, "utf8", (err, body) => {    
+  if (request.session.is_logined === true) {
+    response.redirect("back");
+  }else {
+    let pathname = url.parse(request.url, true).pathname;
+    fs.readFile(`DATA/${pathname}`, "utf8", (err, body) => {    
     const title = edit.filterURL(pathname);
     const header = template.header();
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   });
+  }
 })
 app.post('/login_process', (request, response) => {
   const login_process = async function()  {
@@ -76,8 +77,6 @@ app.get('/signUp_process', (request, response) => {
   const signupProcess = async () => {
     const userData = await validate.getFormData(request, response, "ID", "pwd", "contrastPwd");
     validation.searchUser(request, response, userData);
-
-
   }
   signupProcess();
   
@@ -148,6 +147,7 @@ app.get('/create_alarm_process', (request, response) => {
     response.end("clear");
 })
 app.get('/live', (request, response) => {
+  console.log(request.session);
   let pathname = url.parse(request.url, true).pathname;
   const title = edit.filterURL(pathname);
   const header = template.header();
