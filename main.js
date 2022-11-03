@@ -2,26 +2,19 @@ const fs = require("fs");
 const url = require("url");
 const template = require("./template.js");
 const edit = require("./edit.js");
-const validate = require("./validation");
 const mysql      = require('mysql');
 const validation = require("./validation");
 const express = require('express')
 const session = require('express-session');
-const { resolve } = require("path");
+const access = require("./DB/access");
+const create = require("./create");
 const app = express()
-// var parseurl = require('parseurl')
-// var session = require('express-session')
 const DB = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
   password : '11111111',
   database : 'Alert'
 });
-
-
-// let _url = request.url;
-// let queryData = url.parse(_url, true).query;
-// let pathname = url.parse(_url, true).pathname;
 
 DB.connect();
 
@@ -33,106 +26,79 @@ app.use(session({
   })
 );
 
+var bodyParser = require('body-parser')
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', (request, response) => {
   const title = "메인페이지";
   const header = template.header();
   const body = template.body();
   const HTML = template.HTML(title, header, body);
-  console.log(request.session);
   response.send(HTML);
 })
-app.get('/login', (request, response) => {
+app.get("/login", (request, response) => {
   if (request.session.is_logined === true) {
     response.redirect("back");
-  }else {
+  } else {
     let pathname = url.parse(request.url, true).pathname;
-    fs.readFile(`DATA/${pathname}`, "utf8", (err, body) => {    
+    fs.readFile(`DATA/${pathname}`, "utf8", (err, body) => {
+      const title = edit.filterURL(pathname);
+      const header = template.header();
+      const HTML = template.HTML(title, header, body);
+      response.send(HTML);
+    });
+  }
+});
+app.post('/login_process', (request, response) => {
+  let o = validation.getFormData(request, response);
+  validation.verifyLogin(request, response, o);
+})
+app.get("/logout_process", (request, response) => {
+  if (request.session.is_logined === false) {
+    response.redirect("/");
+  } else {
+    request.session.destroy(() => {
+      response.redirect("/");
+    });
+  }
+});
+app.get("/signUp", (request, response) => {
+  let pathname = url.parse(request.url, true).pathname;
+  fs.readFile(`DATA/${pathname}`, "utf-8", (err, body) => {
     const title = edit.filterURL(pathname);
     const header = template.header();
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   });
-  }
-})
-app.post('/login_process', (request, response) => {
-  const login_process = async function()  {
-    await validate.getFormData(request, response, "ID", "PW");
-    //validate.verifyLogin(request, response, userData);
-  }
-  login_process();
-})
-app.get('/logout_process', (request, response) => {
-  if (request.session.is_logined === false) {
-    response.redirect('/');
-  }
-  else {
-    request.session.destroy( () => {
-      response.redirect('/');
-    })
-  }
-})
-app.get('/signUp', (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
-  fs.readFile(`DATA/${pathname}`, "utf-8", (err, body) => {
-    const title = edit.filterURL(pathname);
-    const header = template.header();
-    const HTML = template.HTML(title,header, body);
-    response.send(HTML);
-  });
-})
-app.get('/signUp_process', (request, response) => {
-  const signupProcess = async () => {
-    const userData = await validate.getFormData(request, response, "ID", "pwd", "contrastPwd");
-    validation.searchUser(request, response, userData);
-  }
-  signupProcess();
-  
-  // 아이디 중복 확인
-  
-
-  // 비밀번호 중복 확인
-  // 회원의 아이디 정보
-  
-  
-  
-
-
-
-  // // 입력부
-  // let signup_data = "";
-  // request.on("data", (data) => {
-  //   signup_data += data;
-  // });
-  // request.on("end", () => {
-  //   const userdata = new URLSearchParams(signup_data);
-  //   const ID = userdata.get("ID");
-  //   const password = userdata.get("pwd");
-  //   DB.query(`INSERT INTO user_data (user_id, user_password) VALUES(?, ?)`, [ID, password], (error, result) => {
-  //       if (error) {
-  //         throw error;
-  //   }});
-  // });
-  // response.writeHead(302, { Location: `/profile` });
-  response.writeHead(200);
-  response.end('done');
+});
+app.post('/signUp_process', (request, response) => {
+  let o = validation.getFormData(request, response);
+  validation.verifySignup(request, response, o);
 })
 app.get("/profile", (request, response) => {
   if (request.session.is_logined === true) {
-    console.log(request.session);
     let pathname = url.parse(request.url, true).pathname;
-    DB.query(`SELECT user_id FROM Alert.user_data;`, (error, user_data) => {
-      if (error) {
-        throw error;
-      }
-      let user_id = user_data[request.session.userIndex].user_id;
-      console.log(user_id);
-      const title = edit.filterURL(pathname);
-      const header = template.header("logout_process", "로그아웃");
-      const body = template.funcname(user_id);
-      const HTML = template.HTML(title, header, body);
-      response.send(HTML);
-    });
+    // let user_data = access.query(`SELECT user_id FROM Alert.user_data;`);
+
+    // backend logic
+    // 이부분 수정
+    const userLocationData = access.query(request, response,`SELECT * FROM Alert.user_location where user_id = "${request.session.userid}";`);
+    let nick = [];
+    let adress = [];
+    for (let i = 0; i < userLocationData.length;i++) {
+      nick.push(userLocationData[i].nickname);
+      adress.push(userLocationData[i].adress);      
+    }
+
+    // front end part
+    let user_id = request.session.userid;
+    const title = edit.filterURL(pathname);
+    const header = template.header("logout_process", "로그아웃");
+    const body = template.funcname(user_id,nick,adress);
+    const HTML = template.HTML(title, header, body);
+    response.send(HTML);
   } else {
     response.redirect("/login");
   }
@@ -140,35 +106,62 @@ app.get("/profile", (request, response) => {
 app.get('/alarm', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   const title = edit.filterURL(pathname);
-    if (request.session.is_logined === true) {
-      const header = template.header("logout_process", "로그아웃");
-      const body = template.alarm(title);
-      const HTML = template.HTML(title, header, body);
-      response.send(HTML);
-    } else {
-      response.redirect("/login");
-    }
+  if (request.session.is_logined === true) {
+    
+
+
+
+
+
+
+    
+    // front end part
+    const header = template.header("logout_process", "로그아웃");
+    const body = template.alarm( );
+    const HTML = template.HTML(title, header, body);
+    response.send(HTML);
+  } else {
+    response.redirect("/login");
+  }
 })
 app.get('/create_alarm', (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
-  fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
-    if (request.session.is_logined === true) {
-      const title = edit.filterURL(pathname);
-      const header = template.header("logout_process", "로그아웃");
-      const HTML = template.HTML(title, header, body);
-      response.send(HTML);
-    } else {
-      response.redirect("/login");
-    }
-  });
+  if (request.session.is_logined === true) {
+    let pathname = url.parse(request.url, true).pathname;
+
+      //backend part
+    const userLocationData = access.query(request, response,`SELECT * FROM Alert.user_location where user_id = "${request.session.userid}";`);
+    console.log(userLocationData);
+    let body = create.alarm(userLocationData);
+
+    // front
+    const title = edit.filterURL(pathname);
+    const header = template.header("logout_process", "로그아웃");
+    const HTML = template.HTML(title, header, body);
+    response.send(HTML);
+  } else {
+    response.redirect("/login");
+  }
 })
-app.get('/create_alarm_process', (request, response) => {
-  console.log("passed create alarm process");
-    response.writeHead(302, { Location: "/live" });
-    response.end("clear");
+app.post('/create_alarm_process', (request, response) => {
+  // 데이터 받아오고
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 })
 app.get('/live', (request, response) => {
-  console.log(request.session);
   let pathname = url.parse(request.url, true).pathname;
   if (request.session.is_logined === true) {
     const title = edit.filterURL(pathname);
@@ -194,7 +187,6 @@ app.get('/create_userloc', (request, response) => {
   });
 })
 app.get('/create_userloc_process', (request, response) => {
-  console.log("passed login process");
   response.redirect('/');
 })
 
@@ -317,13 +309,11 @@ app.listen(3000);
 //     response.end('done');
 //   // } else if (pathname === "/checkID_process") {
 //   } else if (pathname === "/profile") {
-//     console.log(userIndex);
 //     DB.query(`SELECT user_id FROM Alert.user_data;`, (error, user_data) => {
 //       if (error) {
 //         throw error;
 //       }
 //       let user_id = user_data[2].user_id;
-//       console.log(user_id);
 //       const title = edit.filterURL(pathname);
 //       const header = template.header();
 //       const body = template.funcname(user_id);
@@ -347,7 +337,6 @@ app.listen(3000);
 //       response.end(HTML);
 //     });
 //   } else if (pathname === "/create_alarm_process") {
-//     console.log("passed create alarm process");
 //     response.writeHead(302, { Location: "/live" });
 //     response.end("clear");
 //   } else if (pathname === "/live") {
@@ -367,11 +356,9 @@ app.listen(3000);
 //       response.end(HTML);
 //     });
 //   } else if (pathname === "/create_userloc_process") {
-//     console.log("passed login process");
 //     response.writeHead(302, { Location: "/" });
 //     response.end("clear");
 //   } else {
-//     console.log(pathname);
 //     response.writeHead(404);
 //     response.end("Not found");
 //   }

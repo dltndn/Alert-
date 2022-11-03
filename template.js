@@ -79,16 +79,12 @@ module.exports = {
 
 
 
-  funcname:  (user_id) => {
+  funcname:  (user_id, nick ,adress) => {
     let userID = user_id;
-    let mock_nick_adress = {
-      nick: ["mock1", "mock2"],
-      adress: ["경기도", "서울시"],
-    };
-    let len = mock_nick_adress.nick.length;
+    let len = nick.length;
     let nick_adress_form = ``;
     for (let i = 0; i < len; i++) {
-      nick_adress_form += `<p><div>${mock_nick_adress.nick[i]}</div><div> ${mock_nick_adress.adress[i]}</div></p>`;
+      nick_adress_form += `<p><div>${nick[i]}</div><div> ${adress[i]}</div></p>`;
     }
     return `<form method="post" action="">
       <div>
@@ -117,9 +113,9 @@ module.exports = {
   </form>`;
   },
 
-  alarm : (title) => {
+  alarm : (alarms) => {
     return `
-    ${title} 임시 페이지 내용 추가 필요
+    ${alarms} 
     <p><input type="button" name="redirect_create_alarm" onClick="location.href='/create_alarm'" value="알람 생성 버튼"></p>`;
   }
   

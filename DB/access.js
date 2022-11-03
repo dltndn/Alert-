@@ -8,7 +8,7 @@ const syncDB = require("./DBhostdata");
  */
 
 exports.userData = function (request, response) {
-  let id_list = [];
+  let id_list = [];//`SELECT * FROM Alert.user_data;`
   const user_data = syncDB.query(`SELECT * FROM Alert.user_data;`);
   const rows = syncDB.query(`SELECT COUNT(user_id) as count FROM user_data;`)[0].count;
   for (let i = 0; i < rows; i++) {
@@ -16,5 +16,13 @@ exports.userData = function (request, response) {
   }
 
   return { "user_data": user_data, "count_user_datas_row": rows, "id_list": id_list,};
+};
+
+exports.query = function (request, response, query) {
+  return syncDB.query(query);
+};
+
+exports.InsertQuery = function (request, response, query) {
+  syncDB.query(query);
 };
 
