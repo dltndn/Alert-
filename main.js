@@ -26,7 +26,8 @@ app.use(session({
   })
 );
 
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+const { alarm } = require("./template.js");
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -107,17 +108,26 @@ app.get('/alarm', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   const title = edit.filterURL(pathname);
   if (request.session.is_logined === true) {
-    
+    //backEndLogic
+    let userid = request.session.userid;
+    let part = "";
 
+    let count = access.query(request, response, `SELECT count(*) as count FROM Alert.alarm where user_id = '${userid}';`)[0].count
+    let data = access.query(request, response, `SELECT * FROM Alert.alarm where user_id = '${userid}';`) 
 
+    for (let i = 0; i < count; i++){
+      part += `<div>`;
+      part += data[i].day_of_week + " "
+      part += data[i].departure_time+ " "
+      part += data[i].alarm_time+ " "
+      part += data[i].departrue_adress+ " "
+      part += data[i].arrive_adress
+      part += `</div><br>`
+    }
 
-
-
-
-    
     // front end part
     const header = template.header("logout_process", "로그아웃");
-    const body = template.alarm( );
+    const body = template.alarm(part);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
@@ -128,7 +138,7 @@ app.get('/create_alarm', (request, response) => {
   if (request.session.is_logined === true) {
     let pathname = url.parse(request.url, true).pathname;
 
-      //backend part
+    //backend part
     const userLocationData = access.query(request, response,`SELECT * FROM Alert.user_location where user_id = "${request.session.userid}";`);
     console.log(userLocationData);
     let body = create.alarm(userLocationData);
@@ -143,21 +153,80 @@ app.get('/create_alarm', (request, response) => {
   }
 })
 app.post('/create_alarm_process', (request, response) => {
-  // 데이터 받아오고
+  const alarmData = validation.getFormData(request,response)
+  
+  // backendlogic
+  let day_of_week = "";
+  Day_of_the_week = alarmData.Day_of_the_week
 
+  for (let i = 0; i < Day_of_the_week.length;i++) {
+    if (i === 0 )
+      day_of_week += Day_of_the_week[i]
+    else 
+      day_of_week += "&" + Day_of_the_week[i]
+  }
 
+  let departrue_adress = alarmData.출발지
+  let arrive_adress = alarmData.도착지
+  let departure_time = alarmData.depart_time_hour + ":" + alarmData.depart_time_min;
+  let alarm_time = alarmData.alarm_time_hour + ":" + alarmData.alarm_time_min;
+  
+// 중복 확인 작업 
 
+  let loginUser = access.query(request, response, `select * from Alert.alarm where user_id = '${request.session.userid}';`);
+  
+  if (loginUser.length === 0) {
+    access.InsertQuery(request, response, 
+      `INSERT INTO Alert.alarm (user_id, day_of_week, departure_time, alarm_time, departrue_adress, arrive_adress) 
+        VALUES ('${request.session.userid}', '${day_of_week}', '${departure_time}', '${alarm_time}', '${departrue_adress}', '${arrive_adress}');`)
+    
+    let alarm_id = access.query(request, response, 
+      `select Max(alarm_id) as alarm_id from Alert.alarm where user_id = '${request.session.userid}';`)[0].alarm_id
 
+    access.InsertQuery(request, response, 
+      `INSERT INTO Alert.connect (user_id, alarm_id) 
+        VALUES ('${request.session.userid}', '${alarm_id}');`)
 
+    // access.InsertQuery(request. response, `INSERT INTO Alert.connect (user_id, alarm_id) VALUES ('${request.session.userid}', '${alarm_id}');`)
+      console.log("done")
+    response.redirect('/alarm');
+  }
+  else {
+    for (let i = 0; i < loginUser.length;i++) {
+      let data = loginUser[i]
+      console.log(data);
+      if (data.user_id === request.session.userid && data.day_of_week === day_of_week && 
+        data.departure_time === departure_time && data.alarm_time === alarm_time &&
+        data.departrue_adress === departrue_adress && data.arrive_adress === arrive_adress)  {
+          console.log("중복");
+          response.redirect('back');
+          break;
+        }
+        else if (i === loginUser.length - 1) {
+          console.log("test");
+          access.InsertQuery(request, response, 
+            `INSERT INTO Alert.alarm (user_id, day_of_week, departure_time, alarm_time, departrue_adress, arrive_adress) 
+          VALUES ('${request.session.userid}', '${day_of_week}', '${departure_time}', '${alarm_time}', '${departrue_adress}', '${arrive_adress}');`)
+      
+        let alarm_id = access.query(request, response, 
+            `select Max(alarm_id) as alarm_id from Alert.alarm where user_id = '${request.session.userid}';`)[0].alarm_id
+        
+        // console.log(`INSERT INTO Alert.connect (user_id, alarm_id) VALUES ('${request.session.userid}', '${alarm_id}')`);
+        
+          access.InsertQuery(request, response, 
+            `INSERT INTO Alert.connect (user_id, alarm_id) 
+              VALUES ('${request.session.userid}', '${alarm_id}');`)
+    
+        response.redirect('/alarm');
+        break;
+      }
+  
+    }
+  }
 
-
-
-
-
-
-
-
-
+  
+  
+  
 
 
 })
