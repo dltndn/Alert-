@@ -1,4 +1,5 @@
-var getAdress = require("./getAdress.js");
+
+var url = require("url");
 
 module.exports = {
   header: function () {
@@ -54,23 +55,6 @@ module.exports = {
       </div>
       <p><input type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'"></p>
       <button>수정,삭제</button>
-  </form>`;
-  },
-
-  live_body: function () {
-    let mock_estimated_time = "0:45";
-    let mock_start_time = "8:00";
-    let mock_arrival_time = "8:45";
-    return `<form method="post">
-    <div>
-      <p>예상 소요 시간:${mock_estimated_time}</p>
-      <div>
-        <p>출발시간:${mock_start_time}</p>
-        <p>도착시간:${mock_arrival_time}</p>
-      </div>
-    </div>
-    <p>지도API</p>
-    <p>cctv API</p>
   </form>`;
   },
 
@@ -147,8 +131,8 @@ module.exports = {
   </form>`;
   },
   create_userLoc: function () {
-    const APIkey = "";
-    
+    const APIkey = ""; //kakao
+
     const getAdressScript = `
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
@@ -213,4 +197,17 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
     <p><input type="submit" value="확인"></p>
 </form>`;
   },
+  liveForm : function (estimated_time) {
+    let mock_start_time = "8:00";
+    let mock_arrival_time = "8:45";
+    return `<form method="post">
+    <div>
+      <p>예상 소요 시간:${estimated_time}</p>
+      <div>
+        <p>출발시간:${mock_start_time}</p>
+        <p>도착시간:${mock_arrival_time}</p>
+      </div>
+    </div>
+  </form>`;
+  }
 };

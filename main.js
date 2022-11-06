@@ -3,7 +3,7 @@ var fs = require("fs");
 var url = require("url");
 var template = require("./template.js");
 var edit = require("./edit.js");
-var getAdress = require("./getAdress.js");
+const livePage = require("./livePage.js");
 
 var app = http.createServer(function (request, response) {
   var _url = request.url;
@@ -71,11 +71,9 @@ var app = http.createServer(function (request, response) {
     console.log("passed create alarm process");
     response.writeHead(302, { Location: "/live" });
     response.end("clear");
-  } else if (pathname === "/live") {
+  } else if (pathname === "/live") { //************* */
     const title = edit.filterURL(pathname);
-    const header = template.header();
-    const body = template.live_body();
-    const HTML = template.HTML(title, header, body);
+    const HTML = livePage.livePage(title);
     response.writeHead(200);
     response.end(HTML);
   } else if (pathname === "/create_userloc") {
