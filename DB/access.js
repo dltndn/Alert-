@@ -26,3 +26,5 @@ exports.InsertQuery = function (request, response, query) {
   syncDB.query(query);
 };
 
+
+

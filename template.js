@@ -96,9 +96,8 @@ module.exports = {
   </form>`;
   },
 
-  funcname2: () => {
+  funcname2: (mock_start_time = "none") => {
     let mock_estimated_time = "0:45";
-    let mock_start_time = "8:00";
     let mock_arrival_time = "8:45";
     return `<form method="post">
     <div>
@@ -116,7 +115,9 @@ module.exports = {
   alarm : (alarms) => {
     return `
     ${alarms} 
-    <p><input type="button" name="redirect_create_alarm" onClick="location.href='/create_alarm'" value="알람 생성 버튼"></p>`;
+    <p><input type="button" name="redirect_create_alarm" onClick="location.href='/create_alarm'" value="알람 생성 버튼"></p><br>
+    
+    <button>수정,삭제</button>`;
   }
   
 };

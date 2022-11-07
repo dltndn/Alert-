@@ -12,19 +12,19 @@ module.exports =  {
         return `<form action="/create_alarm_process" method="post">
         <p><input type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'"> </p>
         <p>
-            <input type="checkbox" name="Day_of_the_week" value="일" id="일">
+            <input type="checkbox" name="Day_of_the_week" value="0" id="일">
             <label for="일">일</label>
-            <input type="checkbox" name="Day_of_the_week" value="월" id="월">
+            <input type="checkbox" name="Day_of_the_week" value="1" id="월">
             <label for="월">월</label>
-            <input type="checkbox" name="Day_of_the_week" value="화" id="화">
+            <input type="checkbox" name="Day_of_the_week" value="2" id="화">
             <label for="화">화</label>
-            <input type="checkbox" name="Day_of_the_week" value="수" id="수">
+            <input type="checkbox" name="Day_of_the_week" value="3" id="수">
             <label for="수">수</label>            
-            <input type="checkbox" name="Day_of_the_week" value="목" id="목">
+            <input type="checkbox" name="Day_of_the_week" value="4" id="목">
             <label for="목">목</label>
-            <input type="checkbox" name="Day_of_the_week" value="금" id="금">
+            <input type="checkbox" name="Day_of_the_week" value="5" id="금">
             <label for="금">금</label>
-            <input type="checkbox" name="Day_of_the_week" value="토" id="토">    
+            <input type="checkbox" name="Day_of_the_week" value="6" id="토">    
             <label for="토">토</label>
         </p>
            
