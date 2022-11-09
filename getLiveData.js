@@ -1,75 +1,17 @@
 
-const getTemplate = require("./template.js");
-const xlsx = require("xlsx");
-const store = require('store');
 const cookie = require('cookie');
 
-
-// cctv 엑셀 파일 json 데이터로 추출
-const cctvFile = xlsx.readFile("./OpenDataCCTV.xlsx");
-const sheetName = cctvFile.SheetNames[0];
-const firstSheet = cctvFile.Sheets[sheetName];
-const cctvData = xlsx.utils.sheet_to_json(firstSheet);
-const cctvDataClone = []; //x, y좌표 타입이 num으로 변경된 딕셔너리
-let obj;
-for (let i = 0; i < cctvData.length; i++) {
-  // cctv 엑셀 파일 json 데이터 x, y좌표 타입 num으로 변경
-  let x = cctvData[i].XCOORD;
-  let y = cctvData[i].YCOORD;
-  x = parseFloat(x);
-  y = parseFloat(y);
-  obj = {
-    CCTVID: cctvData[i].CCTVID,
-    XCOORD: x,
-    YCOORD: y,
-  };
-  cctvDataClone.push(obj);
-}
-
-
-const getCctvList = function (centerX, centerY) {  //return type -> arr
-  //중심 좌표를 기준으로 반경 500m 범위 내 cctv 목록 계산
-  const k = 0.0050445;
-  const minX = centerX - k;
-  const maxX = centerX + k;
-  const minY = centerY - k;
-  const maxY = centerY + k;
-  let targetCctvArr = [];
-
-  for (let i=0; i<cctvDataClone.length; i++) {
-    let x = cctvDataClone[i].XCOORD;
-    let y = cctvDataClone[i].YCOORD;
-    if (x > minX && x < maxX) {
-        if (y > minY && y < maxY) {
-            targetCctvArr.push(cctvDataClone[i]);
-        }
-    }
-  }
-  return targetCctvArr;
-};
-
 module.exports = {
-  livePage: function (request,response, title) {    
-    if (request.headers.cookie !== undefined){
-        let cookies = cookie.parse(request.headers.cookie);
-        console.log(cookies);
-    }
-    getCctvList(126.789152174109, 37.4532149076506);
-    const openAPIkey =
-      "RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc"; //openData
-
-    const cctvId = "E350030";
-    const kind = "CC";
-    const cctvCh = "20";
-    const id = "null";
-
-    //const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}&kind=${kind}&cctvch=${cctvCh}&id=${id}`;
-    const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}`;
+  getLiveData : function (request,response, title, sX, sY, eX, eY) {    
+    // if (request.headers.cookie !== undefined){
+    //     let cookies = cookie.parse(request.headers.cookie);
+    //     console.log(cookies);
+    // }
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";
-    const startX = 126.803066712453; //출발지 x좌표
-    const startY = 37.4637380346779; //출발지 y좌표
-    const endX = 127.058338066917; //도착지 x좌표
-    const endY = 37.6193203481648; //도착지 y좌표
+    const startX = sX; //출발지 x좌표
+    const startY = sY; //출발지 y좌표
+    const endX = eX; //도착지 x좌표
+    const endY = eY; //도착지 y좌표
     return `<!DOCTYPE html>
             <html>
                 <head>
@@ -79,15 +21,11 @@ module.exports = {
                     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${tMapAPIKEY}"></script>
                 </head>
                 <body onload="initTmap();">
-                    ${getTemplate.header}
-                    ${getTemplate.liveForm("소요시간 결과")}
-                   
                     <div id="map_wrap" class="map_wrap">
                         <div id="map_div"></div>
                     </div>
                     <div class="map_act_btn_wrap clear_box"></div>
                     <br />
-                    <embed src=${cctvUrl} width="320px" height="280px">
                     <script type="text/javascript">
                     var map;
                     var markerInfo;
@@ -103,46 +41,13 @@ module.exports = {
                 
                     function initTmap() {
 
-                        // 1. 지도 띄우기
-                        map = new Tmapv2.Map("map_div", {
-                            center : new Tmapv2.LatLng(${startY},
-                                ${startX}),
-                            width : "100%",
-                            height : "400px",
-                            zoom : 11,
-                            zoomControl : true,
-                            scrollwheel : true
-                        });
+                    
                 
-                        // 2. 시작, 도착 심볼찍기
-                        // 시작
-                        marker_s = new Tmapv2.Marker(
-                                {
-                                    position : new Tmapv2.LatLng(${startY},
-                                        ${startX}),
-                                    icon : "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_s.png",
-                                    iconSize : new Tmapv2.Size(24, 38),
-                                    map : map
-                                });
-                
-                        //도착
-                        marker_e = new Tmapv2.Marker(
-                                {
-                                    position : new Tmapv2.LatLng(${endY},
-                                        ${endX}),
-                                    icon : "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_e.png",
-                                    iconSize : new Tmapv2.Size(24, 38),
-                                    map : map
-                                });
-                
-                        // 3. 경로탐색 API 사용요청                                        
-                                            //기존 맵에 있던 정보들 초기화
-                                            resettingMap();
-                
+                        // 3. 경로탐색 API 사용요청                                                                                                   
                                             var searchOption = $("#selectLevel").val();
                 
-                                            var trafficInfochk = "Y"; //교통 정보 표시
-                
+                                            var trafficInfochk = "Y"; //교통 정보 표시                                            
+                                            let cctvArr = [];
                                             //JSON TYPE EDIT [S]
                                             $
                                                     .ajax({
@@ -164,7 +69,7 @@ module.exports = {
                 
                                                             var resultData = response.features;  
                                                             let tTime = resultData[0].properties.totalTime    
-                                                            document.cookie = "totalTime=" + tTime;                                                                                                                                                           
+                                                            document.cookie = "totalTime=" + tTime;            //소요 시간 cookie에 임시 저장(초단위)                                                                                                                                            
 
                                                             //localStorage.setItem('totalTime', resultData[0].properties.totalTime);   //소요 시간 로컬스토리지에 임시 저장(초단위)
                                                             //localStorage.setItem('totalDistance', resultData[0].properties.totalDistance);   //총 거리 로컬스토리지에 임시 저장(m단위)
@@ -197,8 +102,11 @@ module.exports = {
                                                                                    
                                                                         }
                 
-                                                                        drawLine(sectionInfos,
-                                                                                trafficArr);
+                                                                        const arrr = drawLine(sectionInfos, trafficArr);
+                                                                        if (arrr.length != 0) {
+                                                                            cctvArr = cctvArr.concat(arrr);                                                                            
+                                                                        }                                                                                                                                                
+
                                                                     } else {
                 
                                                                         var markerImg = "";
@@ -229,8 +137,7 @@ module.exports = {
                                                                             lat : convertPoint._lat,
                                                                             pointType : pType
                                                                         };
-                                                                        // 마커 추가
-                                                                        addMarkers(routeInfoObj);
+                                                                        
                                                                     }
                                                                 }//for문 [E]
                                                                         
@@ -244,36 +151,31 @@ module.exports = {
                                                         }
                                                     });
                                             //JSON TYPE EDIT [E]
-                                        
+                                            if (cctvArr.length == 0) {
+                                                console.log("정체구간 없음");
+                                            } else {
+                                                let cctvData = [];
+                                                let lat = 0;
+                                                let lng = 0;
+                                                let objj = {};
+                                                for (let i=0; i<cctvArr.length; i++) {
+                                                    lat = cctvArr[i]._lat;
+                                                    lng = cctvArr[i]._lng;
+                                                    objj = {
+                                                        lat: lat,
+                                                        lng: lng
+                                                    }                                                
+                                                    cctvData.push(objj);
+                                                }                                                                                            
+                                                document.cookie = "cctvList=" + JSON.stringify(cctvData); //cctv객체 배열 쿠키에 저장
+                                            }                                            
                     }
-                
-                    function addComma(num) {
-                        var regexp = /\B(?=(\d{3})+(?!\d))/g;
-                        return num.toString().replace(regexp, ',');
-                    }
-                
-                    //마커 생성하기
-                    function addMarkers(infoObj) {
-                        var size = new Tmapv2.Size(24, 38);//아이콘 크기 설정합니다.
-                
-                        if (infoObj.pointType == "P") { //포인트점일때는 아이콘 크기를 줄입니다.
-                            size = new Tmapv2.Size(8, 8);
-                        }
-                
-                        marker_p = new Tmapv2.Marker({
-                            position : new Tmapv2.LatLng(infoObj.lat, infoObj.lng),
-                            icon : infoObj.markerImage,
-                            iconSize : size,
-                            map : map
-                        });
-                
-                        resultMarkerArr.push(marker_p);
-                    }
+            
                 
                     //라인그리기
                     function drawLine(arrPoint, traffic) {
                         var polyline_;
-                        
+                        let drawLineCctvArr = [];
                         if (chktraffic.length != 0) {
                 
                             // 교통정보 혼잡도를 체크
@@ -298,9 +200,9 @@ module.exports = {
                                 } else { //교통정보가 있음
                 
                                     if (traffic[0][0] != 0) { //교통정보 시작인덱스가 0이 아닌경우
+                                        let cctvDataList = []; //정체구간 cctv 리스트 arr
                                         var trafficObject = "";
-                                        var tInfo = [];
-                                        
+                                        var tInfo = [];                                        
                                         for (var z = 0; z < traffic.length; z++) {
                                             trafficObject = {
                                                 "startIndex" : traffic[z][0],
@@ -326,51 +228,45 @@ module.exports = {
                                         
                                         //라인그리기[E]
                                         resultdrawArr.push(polyline_);
-                                        let trafficIndexTem = tInfo[0].trafficIndex;  //출발지 혼잡도 값
+                                        let trafficIndexTem = tInfo[0].trafficIndex;  //출발지 혼잡도 값                                    
                                         for (var x = 0; x < tInfo.length; x++) {
                                             var sectionPoint = []; //구간선언
-                
+                                                            
                                             for (var y = tInfo[x].startIndex; y <= tInfo[x].endIndex; y++) {
                                                 sectionPoint.push(arrPoint[y]);
                                             }
                                             
                                             if (tInfo[x].trafficIndex == 0) {
                                                 lineColor = "#06050D";
-                                                if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    
+                                                if (trafficIndexTem == 4) {                                                    
+                                                    cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
                                                     trafficIndexTem = tInfo[x].trafficIndex;
                                                 }
                                             } else if (tInfo[x].trafficIndex == 1) {
                                                 lineColor = "#61AB25";
                                                 if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
+                                                    cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
                                                     trafficIndexTem = tInfo[x].trafficIndex;
                                                 }
                                             } else if (tInfo[x].trafficIndex == 2) {
                                                 lineColor = "#FFFF00";
                                                 if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
+                                                    cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
                                                     trafficIndexTem = tInfo[x].trafficIndex;
                                                 }
                                             } else if (tInfo[x].trafficIndex == 3) {
                                                 lineColor = "#E87506";
                                                 if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
+                                                    cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
                                                     trafficIndexTem = tInfo[x].trafficIndex;
                                                 }
                                             } else if (tInfo[x].trafficIndex == 4) {
                                                 lineColor = "#D61125";
                                                 if (trafficIndexTem != 4) {  
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
+                                                    cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                                                                      
                                                     trafficIndexTem = tInfo[x].trafficIndex;                                                                    
                                                 }       
-                                            }
-                                            
+                                            }                                                
                 
                                             //라인그리기[S]
                                             polyline_ = new Tmapv2.Polyline({
@@ -381,10 +277,14 @@ module.exports = {
                                             });
                                             
                                             //라인그리기[E]
-                                            resultdrawArr.push(polyline_);
-                                        }
+                                            resultdrawArr.push(polyline_);  
+                                                                                
+                                        }                                                                                                                               
+                                        if (cctvDataList.length != 0) {                                    
+                                            drawLineCctvArr.push(cctvDataList);
+                                        }                                                            
                                     } else { //0부터 시작하는 경우
-                
+                                        let cctvDataList = []; //정체구간 cctv 리스트 arr
                                         var trafficObject = "";
                                         var tInfo = [];                                        
                                         for (var z = 0; z < traffic.length; z++) {
@@ -396,10 +296,9 @@ module.exports = {
                                             
                                             tInfo.push(trafficObject);
                                         }
-                                        let trafficIndexTem = tInfo[0].trafficIndex;  //출발지 혼잡도 값
+                                        let trafficIndexTem = tInfo[0].trafficIndex;  //출발지 혼잡도 값                                        
                                         for (var x = 0; x < tInfo.length; x++) {
-                                            var sectionPoint = []; //구간선언
-                
+                                            var sectionPoint = []; //구간선언                                            
                                             for (var y = tInfo[x].startIndex; y <= tInfo[x].endIndex; y++) {
                                                 sectionPoint.push(arrPoint[y]);
                                             }
@@ -407,39 +306,35 @@ module.exports = {
                                             if (tInfo[x].trafficIndex == 0) {
                                                 lineColor = "#06050D";
                                                 if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
+                                                    cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
                                                     trafficIndexTem = tInfo[x].trafficIndex;
                                                 }
                                             } else if (tInfo[x].trafficIndex == 1) {
                                                 lineColor = "#61AB25";
                                                 if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
+                                                    cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
                                                     trafficIndexTem = tInfo[x].trafficIndex;
                                                 }
                                             } else if (tInfo[x].trafficIndex == 2) {
                                                 lineColor = "#FFFF00";
                                                 if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
+                                                    cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
                                                     trafficIndexTem = tInfo[x].trafficIndex;
                                                 }
                                             } else if (tInfo[x].trafficIndex == 3) {
                                                 lineColor = "#E87506";
                                                 if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
+                                                    cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
                                                     trafficIndexTem = tInfo[x].trafficIndex;                                                    
                                                 }
                                             } else if (tInfo[x].trafficIndex == 4) {
                                                 lineColor = "#D61125";
                                                 if (trafficIndexTem != 4) {  
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
+                                                    cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                             
                                                     trafficIndexTem = tInfo[x].trafficIndex;                                                                    
                                                 }                                                
-                                            }
+                                            }                                        
+                                            
                 
                                             //라인그리기[S]
                                             polyline_ = new Tmapv2.Polyline({
@@ -450,9 +345,12 @@ module.exports = {
                                             });
                                             
                                             //라인그리기[E]
-                                            resultdrawArr.push(polyline_);
-                                        }
-                                    }
+                                            resultdrawArr.push(polyline_);                                            
+                                        }  
+                                        if (cctvDataList.length != 0) {                                            
+                                            drawLineCctvArr.push(cctvDataList);
+                                        }                             
+                                    }   
                                 }
                             } else {
                 
@@ -467,7 +365,13 @@ module.exports = {
                             
                             resultdrawArr.push(polyline_);
                         }
-                
+                        let rtrnCctvArr = [];
+                        if (drawLineCctvArr.length != 0) {                                                       
+                            for (let i=0; i<drawLineCctvArr[0].length; i++) {
+                                rtrnCctvArr.push(drawLineCctvArr[0][i]);
+                            }                            
+                        }                        
+                        return rtrnCctvArr;
                     }
                 
                     //초기화 기능

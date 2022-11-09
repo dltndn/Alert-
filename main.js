@@ -4,6 +4,20 @@ var url = require("url");
 var template = require("./template.js");
 var edit = require("./edit.js");
 const livePage = require("./livePage.js");
+const testGetLiveData = require("./getLiveData.js");
+
+//const express = require("express");
+// const session = require("express-session");
+// const session1 = express();
+
+
+// session1.use(session({
+//   key: "tMapTest",
+//   secret: "mysecret",
+//   resave: false,
+//   saveUninitialized: true
+// })
+// );
 
 var app = http.createServer(function (request, response) {
   var _url = request.url;
@@ -71,12 +85,17 @@ var app = http.createServer(function (request, response) {
     console.log("passed create alarm process");
     response.writeHead(302, { Location: "/live" });
     response.end("clear");
-  } else if (pathname === "/live") { //************* */
+  } else if (pathname === "/live") { 
     const title = edit.filterURL(pathname);
-    const HTML = livePage.livePage(title);
+    const HTML = livePage.livePage(request, response,title);
     response.writeHead(200);
     response.end(HTML);
-  } else if (pathname === "/create_userloc") {
+  }else if (pathname === "/live_before_process") { 
+    // const title = edit.filterURL(pathname);
+    // const HTML = livePage.livePage(request, response,title);
+    // response.writeHead(200);
+    // response.end(HTML);
+  }else if (pathname === "/create_userloc") {
     const title = edit.filterURL(pathname);
     const header = template.header();
     const body = template.create_userLoc();
@@ -87,6 +106,15 @@ var app = http.createServer(function (request, response) {
     console.log("passed login process");
     response.writeHead(302, { Location: "/" });
     response.end("clear");
+  }else if (pathname === "/testGetLive") {
+    // const startX = 126.803066712453; //출발지 x좌표
+    // const startY = 37.4637380346779; //출발지 y좌표
+    // const endX = 126.853838305598; //도착지 x좌표
+    // const endY = 37.4859944046897; //도착지 y좌표
+    // const title = edit.filterURL(pathname);
+    // const HTML = testGetLiveData.getLiveData(request, response, title, startX, startY, endX, endY);
+    // response.writeHead(200);
+    // response.end(HTML);
   } else {
     console.log(pathname);
     response.writeHead(404);

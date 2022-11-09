@@ -1,5 +1,4 @@
-
-var url = require("url");
+//const liveData = require('getLiveData.js');
 
 module.exports = {
   header: function () {
@@ -131,7 +130,7 @@ module.exports = {
   </form>`;
   },
   create_userLoc: function () {
-    const APIkey = ""; //kakao
+    const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
 
     const getAdressScript = `
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div
@@ -209,5 +208,11 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
       </div>
     </div>
   </form>`;
-  }
+  },
+  cctvForm : function (cctvUrl) {
+    return`<embed src=${cctvUrl} width="320px" height="280px">`;
+  },
+  liveProcess : function () {
+    return``;
+  },
 };
