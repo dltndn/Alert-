@@ -1,13 +1,15 @@
 module.exports = {
+  
   /**
    * 웹 사이트의 헤더 부분
-   * - 상태바
-   * - 링크
-   * 
+   * @param {*} loginOrLogout 로그인과 로그아웃 링크
+   * @param {*} text 로그인과 로그아웃 텍스트
+   * @param {*} statusbar 상태바
+   * @returns 
    */
-  header: (loginOrLogout="login", text="로그인") => {
+  header: (statusbar = "알람이 없습니다.", loginOrLogout="login", text="로그인") => {
     return `
-            statusbar section
+            ${statusbar}
             <ul>
                 <li><a href="/${loginOrLogout}">${text} 페에지 링크</a></li>
                 <li><a href="/profile">프로필 페에지 링크</a></li>
@@ -58,7 +60,6 @@ module.exports = {
    * - script : 스크립트 코드
    */
    HTML:  (title, header, body, script="") => {
-    
     return `
             <!doctype html>
             <html>
@@ -79,7 +80,7 @@ module.exports = {
 
 
 
-  funcname:  (user_id, nick ,adress) => {
+  funcname : (user_id, nick ,adress) => {
     let userID = user_id;
     let len = nick.length;
     let nick_adress_form = ``;
