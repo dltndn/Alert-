@@ -1,10 +1,10 @@
 var http = require("http");
 var fs = require("fs");
 var url = require("url");
+const bodyParser = require("body-parser");
 var template = require("./template.js");
 var edit = require("./edit.js");
 const livePage = require("./livePage.js");
-const testGetLiveData = require("./getLiveData.js");
 
 //const express = require("express");
 // const session = require("express-session");
@@ -111,18 +111,12 @@ var app = http.createServer(function (request, response) {
     response.end(HTML);
   } else if (pathname === "/create_userloc_process") {
     console.log("passed login process");
-    response.writeHead(302, { Location: "/" });
+    const adress_nick = request;
+    console.log(adress_nick);
+    // response.writeHead(302, { Location: "/" });
+    response.writeHead(200);
     response.end("clear");
-  }else if (pathname === "/testGetLive") {
-    // const startX = 126.803066712453; //출발지 x좌표
-    // const startY = 37.4637380346779; //출발지 y좌표
-    // const endX = 126.853838305598; //도착지 x좌표
-    // const endY = 37.4859944046897; //도착지 y좌표
-    // const title = edit.filterURL(pathname);
-    // const HTML = testGetLiveData.getLiveData(request, response, title, startX, startY, endX, endY);
-    // response.writeHead(200);
-    // response.end(HTML);
-  } else {
+  }else {
     console.log(pathname);
     response.writeHead(404);
     response.end("Not found");

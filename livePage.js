@@ -187,14 +187,7 @@ module.exports = {
                                                         },
                                                         success : function(response) {
                 
-                                                            var resultData = response.features;  
-                                                            let tTime = resultData[0].properties.totalTime    
-                                                            //document.cookie = "totalTime=" + tTime;                                                                                                                                                           
-
-                                                            //localStorage.setItem('totalTime', resultData[0].properties.totalTime);   //소요 시간 로컬스토리지에 임시 저장(초단위)
-                                                            //localStorage.setItem('totalDistance', resultData[0].properties.totalDistance);   //총 거리 로컬스토리지에 임시 저장(m단위)
-                                                            //localStorage.setItem('totalFare', resultData[0].properties.totalFare);   //총 요금 로컬스토리지에 임시 저장(won단위)                                                                                                                  
-                                                            
+                                                            var resultData = response.features;                                      
                                                                 for ( var i in resultData) { //for문 [S]
                                                                     var geometry = resultData[i].geometry;
                                                                     var properties = resultData[i].properties;                                                                    
@@ -360,40 +353,15 @@ module.exports = {
                                             }
                                             
                                             if (tInfo[x].trafficIndex == 0) {
-                                                lineColor = "#06050D";
-                                                if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    
-                                                    trafficIndexTem = tInfo[x].trafficIndex;
-                                                }
+                                                lineColor = "#06050D";                                            
                                             } else if (tInfo[x].trafficIndex == 1) {
-                                                lineColor = "#61AB25";
-                                                if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
-                                                    trafficIndexTem = tInfo[x].trafficIndex;
-                                                }
+                                                lineColor = "#61AB25";                                                
                                             } else if (tInfo[x].trafficIndex == 2) {
-                                                lineColor = "#FFFF00";
-                                                if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
-                                                    trafficIndexTem = tInfo[x].trafficIndex;
-                                                }
+                                                lineColor = "#FFFF00";                                               
                                             } else if (tInfo[x].trafficIndex == 3) {
-                                                lineColor = "#E87506";
-                                                if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
-                                                    trafficIndexTem = tInfo[x].trafficIndex;
-                                                }
+                                                lineColor = "#E87506";                                               
                                             } else if (tInfo[x].trafficIndex == 4) {
-                                                lineColor = "#D61125";
-                                                if (trafficIndexTem != 4) {  
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
-                                                    trafficIndexTem = tInfo[x].trafficIndex;                                                                    
-                                                }       
+                                                lineColor = "#D61125";                                                   
                                             }
                                             
                 
@@ -430,40 +398,15 @@ module.exports = {
                                             }
                                              
                                             if (tInfo[x].trafficIndex == 0) {
-                                                lineColor = "#06050D";
-                                                if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
-                                                    trafficIndexTem = tInfo[x].trafficIndex;
-                                                }
+                                                lineColor = "#06050D";                                               
                                             } else if (tInfo[x].trafficIndex == 1) {
-                                                lineColor = "#61AB25";
-                                                if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
-                                                    trafficIndexTem = tInfo[x].trafficIndex;
-                                                }
+                                                lineColor = "#61AB25";                                           
                                             } else if (tInfo[x].trafficIndex == 2) {
-                                                lineColor = "#FFFF00";
-                                                if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
-                                                    trafficIndexTem = tInfo[x].trafficIndex;
-                                                }
+                                                lineColor = "#FFFF00";                                              
                                             } else if (tInfo[x].trafficIndex == 3) {
                                                 lineColor = "#E87506";
-                                                if (trafficIndexTem == 4) {
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
-                                                    trafficIndexTem = tInfo[x].trafficIndex;                                                    
-                                                }
                                             } else if (tInfo[x].trafficIndex == 4) {
-                                                lineColor = "#D61125";
-                                                if (trafficIndexTem != 4) {  
-                                                    console.log(arrPoint[tInfo[x].startIndex]);
-                                                    console.log(trafficIndexTem);
-                                                    trafficIndexTem = tInfo[x].trafficIndex;                                                                    
-                                                }                                                
+                                                lineColor = "#D61125";                                                                                              
                                             }
                 
                                             //라인그리기[S]
