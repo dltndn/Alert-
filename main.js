@@ -21,15 +21,13 @@ app.use(session({
 );
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.get('*',(request, response, next) => {
+app.use('*',(request, response, next) => {
   let nearTimeObject = backEnd.getNearTime(request, response)
   request.departTime = nearTimeObject.departure_time
   request.arriveAdress = nearTimeObject.arrive_adress
   request.departrueAdress = nearTimeObject.arrive_adress
   next();
 })
-
-
 
 app.get('/', (request, response) => {
   const title = "메인페이지";
@@ -55,11 +53,15 @@ app.post('/login_process', (request, response) => {
   let formData = getData.getFormData(request, response);
   validation.verifyLogin(request, response, formData);
 })
-app.post("/logout_process", (request, response) => {
-  if (request.session.is_logined === false)
+app.get("/logout_process", (request, response) => {
+  if (request.session.is_logined === false){
     response.redirect("/");
-  else 
-    request.session.destroy(() => { response.redirect("/"); });
+  }
+  else {
+    request.session.destroy(() => { 
+      response.redirect("/"); 
+    });
+  }
 });
 app.get("/signUp", (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
@@ -102,7 +104,6 @@ app.get('/alarm', (request, response) => {
   if (request.session.is_logined === true) {
     //backEndLogic
     let alarmData = backEnd.getAlarmData(request,response);
-    
     // frontEndPart
     const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
     const body = template.alarm(alarmData);
@@ -133,6 +134,56 @@ app.post('/create_alarm_process', (request, response) => {
   const alarmFomData = getData.getFormData(request,response)
   backEnd.createAlarm(request, response, alarmFomData);
 })
+app.get('/edit_delete_alarm', (request, response) => {
+  let pathname = url.parse(request.url, true).pathname;
+  const title = edit.filterURL(pathname);
+  if (request.session.is_logined === true) {
+    //backEndLogic
+    let alarmData = backEnd.editAlarmData(request,response);
+    // frontEndPart
+    const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const body = template.alarm(alarmData);
+    const HTML = template.HTML(title, header, body);
+    response.send(HTML);
+  } else {
+    response.redirect("/login");
+  }
+})
+app.post('/update_alarm', (request, response) => {
+  if (request.session.is_logined === true) {
+    let pathname = url.parse(request.url, true).pathname;
+    // backEndLogic
+    const userLocationData = access.query(request, response,`SELECT * FROM Alert.user_location where user_id = "${request.session.userid}";`);
+    let body = create.editAlarm(userLocationData , request.body.alarm_id);
+
+    // frontEndPart
+    const title = edit.filterURL(pathname);
+    const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const HTML = template.HTML(title, header, body);
+    response.send(HTML);
+  } else {
+    response.redirect("/login");
+  }
+})
+app.post('/update_alarm_process', (request, response) => {
+  if (request.session.is_logined === true) {
+    // backEndLogic
+    const alarmFomData = getData.getFormData(request,response)
+    backEnd.editAlarm(request, response, alarmFomData);
+  } else {
+    response.redirect("/login");
+  }
+})
+app.post('/delete_alarm_process', (request, response) => {
+  if (request.session.is_logined === true) {
+    const alarm_id = request.body.alarm_id;
+    access.query(request, response , `DELETE FROM Alert.alarm WHERE alarm_id = '${alarm_id}';`);
+    // access.query(request, response , `DELETE FROM Alert.connect WHERE alarm_id = '${alarm_id}';`);
+    response.redirect("/alarm");
+  } else {
+    response.redirect("/login");
+  }
+})
 app.get('/live', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   if (request.session.is_logined === true) {
@@ -162,7 +213,7 @@ app.get('/create_userloc', (request, response) => {
   });
 })
 app.get('/create_userloc_process', (request, response) => {
-  response.redirect('/');
+  response.redirect('/create_userloc');
 })
 
 app.use((request, response, next) => {

@@ -118,7 +118,7 @@ module.exports = {
     ${alarms} 
     <p><input type="button" name="redirect_create_alarm" onClick="location.href='/create_alarm'" value="알람 생성 버튼"></p><br>
     
-    <button>수정,삭제</button>`;
+    <button name="edit_delete_alarm" onClick="location.href='/edit_delete_alarm'">수정,삭제</button>`;
   }
   
 };

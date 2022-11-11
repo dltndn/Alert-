@@ -24,15 +24,12 @@
 </head>
 <body>
 
-    
-
-    <form name="signup" action="signUp_process" method="post">
-        <p><input type="ID" name="ID" minlength="8" placeholder="아이디를 입력하세요" required><button name="verification" onclick="">중복확인</button></p>
-        <p><input type="password" name="pwd" minlength="4" placeholder="패스워드를 입력해주세요" required></p>
-        <p><input type="password" name="contrastPwd" minlength="4" placeholder="패스워드를 입력해주세요" required></p>
-        <p><input type="submit" value="확인" onclick="check()"></p>
-        <button name="cancel" onClick="location.href='/'">취소</button>
+    <form name="edit" action="/update_alarm_process" method="post">
+        <input type="submit" value="수정" onclick="check()">
+        <input type="hidden" name="alarm_id" value="3">
     </form>
+
+    
 
 </body>
 </html>
