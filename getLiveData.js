@@ -1,12 +1,6 @@
-
 const cookie = require('cookie');
-
 module.exports = {
-  getLiveData : function (request,response, title, sX, sY, eX, eY) {    
-    // if (request.headers.cookie !== undefined){
-    //     let cookies = cookie.parse(request.headers.cookie);
-    //     console.log(cookies);
-    // }
+  getLiveData : function (title, sX, sY, eX, eY) {    
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";
     const startX = sX; //출발지 x좌표
     const startY = sY; //출발지 y좌표
@@ -168,6 +162,7 @@ module.exports = {
                                                     cctvData.push(objj);
                                                 }                                                                                            
                                                 document.cookie = "cctvList=" + JSON.stringify(cctvData); //cctv객체 배열 쿠키에 저장
+                                                
                                             }                                            
                     }
             

@@ -1,7 +1,6 @@
 
 const getTemplate = require("./template.js");
 const xlsx = require("xlsx");
-const store = require('store');
 const cookie = require('cookie');
 
 
@@ -35,7 +34,6 @@ const getCctvList = function (centerX, centerY) {  //return type -> arr
   const minY = centerY - k;
   const maxY = centerY + k;
   let targetCctvArr = [];
-
   for (let i=0; i<cctvDataClone.length; i++) {
     let x = cctvDataClone[i].XCOORD;
     let y = cctvDataClone[i].YCOORD;
@@ -45,16 +43,44 @@ const getCctvList = function (centerX, centerY) {  //return type -> arr
         }
     }
   }
+  
   return targetCctvArr;
 };
 
 module.exports = {
-  livePage: function (request,response, title) {    
+  livePage: function (request,response, title) {
+    let cctvList = [];     //정체구간 근방 cctv 데이터
+    const cookies = cookie.parse(request.headers.cookie);
     if (request.headers.cookie !== undefined){
-        let cookies = cookie.parse(request.headers.cookie);
-        console.log(cookies);
+        const jamSectionList = JSON.parse(cookies.cctvList);
+        for (let i=0; i<jamSectionList.length; i++) {
+            const lat = jamSectionList[i].lat;
+            const lng = jamSectionList[i].lng;
+            const arr = getCctvList(lng, lat);           
+            if (arr.length > 1) {
+                cctvList.concat(arr);               
+            }else if (arr.length == 1) {
+                cctvList.push(arr);               
+            }else {
+                
+            }
+        }
     }
-    getCctvList(126.789152174109, 37.4532149076506);
+    for(let i=0; i<cctvList.length; i++) { //정체구간 근방 cctv 데이터 출력 방식
+        console.log(cctvList[i][0].CCTVID);
+    }
+
+    const tTimeData = JSON.parse(cookies.totalTime);
+    let tTime = tTimeData / 60; 
+    tTime = Math.round(tTime);
+    tTime = tTime / 60;
+    let hour = Math.round(tTime); //최종 시
+    let min = tTime % 1;
+    min = Math.round(min * 100);
+    min = min * 60 / 100;
+    min = Math.round(min); //최종 분
+    let estimated_time = hour + "시간 " + min + "분"; //소요시간 string
+
     const openAPIkey =
       "RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc"; //openData
 
@@ -63,8 +89,7 @@ module.exports = {
     const cctvCh = "20";
     const id = "null";
 
-    //const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}&kind=${kind}&cctvch=${cctvCh}&id=${id}`;
-    const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}`;
+    const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}&kind=${kind}&cctvch=${cctvCh}&id=${id}`;
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";
     const startX = 126.803066712453; //출발지 x좌표
     const startY = 37.4637380346779; //출발지 y좌표
@@ -80,7 +105,7 @@ module.exports = {
                 </head>
                 <body onload="initTmap();">
                     ${getTemplate.header}
-                    ${getTemplate.liveForm("소요시간 결과")}
+                    ${getTemplate.liveForm(estimated_time)}
                    
                     <div id="map_wrap" class="map_wrap">
                         <div id="map_div"></div>
@@ -164,7 +189,7 @@ module.exports = {
                 
                                                             var resultData = response.features;  
                                                             let tTime = resultData[0].properties.totalTime    
-                                                            document.cookie = "totalTime=" + tTime;                                                                                                                                                           
+                                                            //document.cookie = "totalTime=" + tTime;                                                                                                                                                           
 
                                                             //localStorage.setItem('totalTime', resultData[0].properties.totalTime);   //소요 시간 로컬스토리지에 임시 저장(초단위)
                                                             //localStorage.setItem('totalDistance', resultData[0].properties.totalDistance);   //총 거리 로컬스토리지에 임시 저장(m단위)

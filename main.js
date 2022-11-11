@@ -91,10 +91,17 @@ var app = http.createServer(function (request, response) {
     response.writeHead(200);
     response.end(HTML);
   }else if (pathname === "/live_before_process") { 
-    // const title = edit.filterURL(pathname);
-    // const HTML = livePage.livePage(request, response,title);
-    // response.writeHead(200);
-    // response.end(HTML);
+    console.log("passed live_before_process");
+    const HTML = template.liveBeforeProcess();
+    // response.writeHead(302, { Location: "/live" });
+    // request.socket.setTimeout(10000);
+    // request.socket.removeAllListeners('timeout'); 
+    // request.socket.on('timeout', function () {
+    //   response.writeHead(302, { Location: "/live" });
+    //   response.end(HTML);
+    // });
+    response.writeHead(200);
+    response.end(HTML);
   }else if (pathname === "/create_userloc") {
     const title = edit.filterURL(pathname);
     const header = template.header();

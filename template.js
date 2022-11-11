@@ -1,4 +1,4 @@
-//const liveData = require('getLiveData.js');
+const getLiveData = require("./getLiveData.js");
 
 module.exports = {
   header: function () {
@@ -198,7 +198,7 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
   },
   liveForm : function (estimated_time) {
     let mock_start_time = "8:00";
-    let mock_arrival_time = "8:45";
+    let mock_arrival_time = "계산로직 구현";
     return `<form method="post">
     <div>
       <p>예상 소요 시간:${estimated_time}</p>
@@ -209,10 +209,13 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
     </div>
   </form>`;
   },
-  cctvForm : function (cctvUrl) {
-    return`<embed src=${cctvUrl} width="320px" height="280px">`;
-  },
-  liveProcess : function () {
-    return``;
+  liveBeforeProcess : function () {
+    const title = "live_before_process";
+    const sX = 126.803066712453;  //출발지 x 좌표(ex: 126.803066712453)
+    const sY = 37.4637380346779;  //출발지 y 좌표(ex: 37.4637380346779)
+    const eX = 127.058338066917;
+    const eY = 37.6193203481648;
+    const getLD = getLiveData.getLiveData(title, sX, sY, eX, eY);
+    return getLD;
   },
 };
