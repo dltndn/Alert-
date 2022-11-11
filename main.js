@@ -1,12 +1,14 @@
 var http = require("http");
 var fs = require("fs");
 var url = require("url");
+const express = require("express");
 const bodyParser = require("body-parser");
 var template = require("./template.js");
 var edit = require("./edit.js");
 const livePage = require("./livePage.js");
 
-//const express = require("express");
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
 // const session = require("express-session");
 // const session1 = express();
 
@@ -19,7 +21,9 @@ const livePage = require("./livePage.js");
 // })
 // );
 
-var app = http.createServer(function (request, response) {
+
+
+var app1 = http.createServer(function (request, response) {
   var _url = request.url;
   var queryData = url.parse(_url, true).query;
   var pathname = url.parse(_url, true).pathname;
@@ -122,4 +126,4 @@ var app = http.createServer(function (request, response) {
     response.end("Not found");
   }
 });
-app.listen(3000);
+app1.listen(3000);
