@@ -90,8 +90,12 @@ var app1 = http.createServer(function (request, response) {
     response.writeHead(302, { Location: "/live" });
     response.end("clear");
   } else if (pathname === "/live") { 
+    const sX = 126.803066712453;  //출발지 x 좌표(ex: 126.803066712453)
+    const sY = 37.4637380346779;  //출발지 y 좌표(ex: 37.4637380346779)
+    const eX = 127.058338066917;
+    const eY = 37.6193203481648;
     const title = edit.filterURL(pathname);
-    const HTML = livePage.livePage(request, response,title);
+    const HTML = livePage.livePage(request, response, title, sX, sY, eX, eY);
     response.writeHead(200);
     response.end(HTML);
   }else if (pathname === "/live_before_process") { 

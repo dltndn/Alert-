@@ -48,7 +48,7 @@ const getCctvList = function (centerX, centerY) {  //return type -> arr
 };
 
 module.exports = {
-  livePage: function (request,response, title) {
+  livePage: function (request,response, title, sX, sY, eX, eY) {
     let cctvList = [];     //정체구간 근방 cctv 데이터
     const cookies = cookie.parse(request.headers.cookie);
     if (request.headers.cookie !== undefined){
@@ -91,10 +91,10 @@ module.exports = {
 
     const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}&kind=${kind}&cctvch=${cctvCh}&id=${id}`;
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";
-    const startX = 126.803066712453; //출발지 x좌표
-    const startY = 37.4637380346779; //출발지 y좌표
-    const endX = 127.058338066917; //도착지 x좌표
-    const endY = 37.6193203481648; //도착지 y좌표
+    const startX = sX; //출발지 x좌표
+    const startY = sY; //출발지 y좌표
+    const endX = eX; //도착지 x좌표
+    const endY = eY; //도착지 y좌표
     return `<!DOCTYPE html>
             <html>
                 <head>
