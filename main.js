@@ -9,6 +9,7 @@ const validation = require("./validation");
 const getData = require("./getData")
 const create = require("./create");
 const backEnd = require("./backendlogics")
+// const livePage = require("./livePage.js");
 const app = express()
 const bodyParser = require('body-parser');
 
@@ -25,7 +26,8 @@ app.use('*',(request, response, next) => {
   let nearTimeObject = backEnd.getNearTime(request, response)
   request.departTime = nearTimeObject.departure_time
   request.arriveAdress = nearTimeObject.arrive_adress
-  request.departrueAdress = nearTimeObject.arrive_adress
+  request.departrueAdress = nearTimeObject.departrue_adress;
+  console.log()
   next();
 })
 
@@ -189,12 +191,19 @@ app.get('/live', (request, response) => {
   if (request.session.is_logined === true) {
     let nearTime = backEnd.getNearTime(request, response).departure_time;
 
-    // frontEndPart
-    const title = edit.filterURL(pathname);
-    const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-    const body = template.funcname2(nearTime);
-    const HTML = template.HTML(title, header, body);
-    response.send(HTML);
+    // // frontEndPart
+    // const title = edit.filterURL(pathname);
+    // const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    // const body = template.funcname2(nearTime);
+    // // const HTML = template.HTML(title, header, body);
+    // const sX = 126.803066712453;  //출발지 x 좌표(ex: 126.803066712453)
+    // const sY = 37.4637380346779;  //출발지 y 좌표(ex: 37.4637380346779)
+    // const eX = 127.058338066917;
+    // const eY = 37.6193203481648;
+    // const HTML = livePage.livePage(request, response, title, sX, sY, eX, eY);
+
+
+    response.send("yet");
   } else {
     response.redirect('/login');
   }
@@ -216,14 +225,7 @@ app.get('/create_userloc', (request, response) => {
 app.post('/create_userloc_process', (request, response) => {
   const locationData = getData.getFormData(request,response)
   backEnd.createLocation(request, response, locationData);
-  
-  
-  
-  
-  
-  
- response.send('done') ;
-  // response.redirect('/create_userloc');
+  response.redirect('/create_userloc');
 })
 app.get("/edit_delete_userlocation", (request, response) => {
   if (request.session.is_logined === true) {
@@ -247,15 +249,23 @@ app.get("/edit_delete_userlocation", (request, response) => {
   } else
     response.redirect("/login");
 });
+app.post('/update_userlocation', (request, response) => {
+  let pathname = url.parse(request.url, true).pathname;
+  fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
+    if (request.session.is_logined === true) {
+      const title = edit.filterURL(pathname);
+      const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+      const body = template.edit_userLoc(request.body.userlocation_row);
+      const HTML = template.HTML(title, header, body);
+      response.send(HTML);
+    } else {
+      response.redirect("/login");
+    }
+  });
+})
 app.post('/update_userlocation_process', (request, response) => {
   if (request.session.is_logined === true) {
-    const userLocationTable = access.query(request, response , `SELECT * FROM Alert.user_location WHERE (user_id = '${request.session.userid}');`)
-    const editIndex = request.body.userlocation_row;
-    const selectedRow = userLocationTable[editIndex];
-    
-    access.insertQuery(request, response , 
-      `DELETE FROM Alert.user_location WHERE (user_id = '${selectedRow.user_id}' AND nickname = '${selectedRow.nickname}' AND adress = '${selectedRow.adress}');`)
-    response.redirect("/profile")
+    backEnd.editLocation(request, response, request.body);
   } else {
     response.redirect("/login");
   }

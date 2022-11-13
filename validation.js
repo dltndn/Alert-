@@ -66,14 +66,15 @@ module.exports = {
      }
    },
 
-
+  /**
+   * 현재 시간과 출발시간을 비교하여 시간을 넘겼는지 넘기지 않았는지 알려주는 로직
+   * @param {*} alarmTime 
+   * @returns boolean
+   */
   isOverTime : (alarmTime) => {
     let browserHours = new Date().getHours(); 
     let browserMinutes = new Date().getMinutes(); 
-
-    console.log("isoverTime")
     let alarmTimes = alarmTime.departure_time
-    console.log(alarmTimes)
     for (let col = 0 ;col < alarmTimes.length; col++) {
       if (alarmTimes.substring(col,col+1) === ":") {
         let departureHour = parseInt(alarmTimes.substring(0,col)); 
@@ -87,11 +88,15 @@ module.exports = {
         }
       }
     }
-    
-
-
   },
 
+  /**
+   * 사용자가 저장하려는 별명과 같은 별명이 있는지 알려주는 로직
+   * @param {*} request 
+   * @param {*} response 
+   * @param {*} nickname 별명 (String)
+   * @returns boolean
+   */
   isExistUserAdressNickname : (request, response, nickname) => {
     
     const userLocationNicknameList = access.query(request, response, `
@@ -107,5 +112,7 @@ module.exports = {
     }
 
   },
+
+   
 }
 
