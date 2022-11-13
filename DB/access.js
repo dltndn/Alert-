@@ -72,3 +72,14 @@ exports.updateAlarmData = function (alarmId, request, response, dayOfWeek, depar
   );
 };
 
+exports.updateUserLocationData = function (nickname , adress) {
+  this.insertQuery(request, response,
+    `UPDATE Alert.alarm SET 
+      day_of_week = '${dayOfWeek}', 
+      departure_time = '${departureTime}', 
+      alarm_time = '${alarmTime}', 
+      departrue_adress = '${departrueAdress}', 
+      arrive_adress = '${arriveAdress}'
+     WHERE (alarm_id = '${alarmId}');`
+  );
+};

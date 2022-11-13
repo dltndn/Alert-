@@ -162,6 +162,23 @@ exports.createAlarm = (request, response, formData) => {
 };
 
 
+exports.createLocation = (request, response, formData) => {
+  let adress = formData.adress;
+  let xpos = formData.xpos;
+  let ypos = formData.ypos;
+  let nickname = formData.location_nickname;
+  // 검증로직
+  const result = validation.isExistUserAdressNickname(request,response,nickname)
+  if (result) {
+    response.redirect('/create_userloc')
+  }
+  else {
+    access.insertQuery(request,response, 
+      `INSERT INTO Alert.user_location (user_id, nickname, adress, xpos, ypos) 
+      VALUES ('${request.session.userid}', '${nickname}', '${adress}', '${xpos}', '${ypos}');`)
+    response.redirect('/profile')
+  }
+};
 
 exports.editAlarm = (request, response, formData) => {
   let alarm_id = formData.exist_alarm_id;

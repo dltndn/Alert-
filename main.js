@@ -205,6 +205,7 @@ app.get('/create_userloc', (request, response) => {
     if (request.session.is_logined === true) {
       const title = edit.filterURL(pathname);
       const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+      const body = template.create_userLoc();
       const HTML = template.HTML(title, header, body);
       response.send(HTML);
     } else {
@@ -212,8 +213,65 @@ app.get('/create_userloc', (request, response) => {
     }
   });
 })
-app.get('/create_userloc_process', (request, response) => {
-  response.redirect('/create_userloc');
+app.post('/create_userloc_process', (request, response) => {
+  const locationData = getData.getFormData(request,response)
+  backEnd.createLocation(request, response, locationData);
+  
+  
+  
+  
+  
+  
+ response.send('done') ;
+  // response.redirect('/create_userloc');
+})
+app.get("/edit_delete_userlocation", (request, response) => {
+  if (request.session.is_logined === true) {
+    // backEndLogic
+    let pathname = url.parse(request.url, true).pathname;
+    const userLocationTable = access.query(request, response,`SELECT * FROM Alert.user_location where user_id = "${request.session.userid}";`);
+    let nicknameList = [];
+    let adressList = [];
+    for (let row = 0; row < userLocationTable.length;row++) {
+      nicknameList.push(userLocationTable[row].nickname);
+      adressList.push(userLocationTable[row].adress);      
+    }
+    
+    // front end part
+    let user_id = request.session.userid;
+    const title = edit.filterURL(pathname);
+    const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const body = template.edit_delete_userlocation(user_id,nicknameList,adressList);
+    const HTML = template.HTML(title, header, body);
+    response.send(HTML);
+  } else
+    response.redirect("/login");
+});
+app.post('/update_userlocation_process', (request, response) => {
+  if (request.session.is_logined === true) {
+    const userLocationTable = access.query(request, response , `SELECT * FROM Alert.user_location WHERE (user_id = '${request.session.userid}');`)
+    const editIndex = request.body.userlocation_row;
+    const selectedRow = userLocationTable[editIndex];
+    
+    access.insertQuery(request, response , 
+      `DELETE FROM Alert.user_location WHERE (user_id = '${selectedRow.user_id}' AND nickname = '${selectedRow.nickname}' AND adress = '${selectedRow.adress}');`)
+    response.redirect("/profile")
+  } else {
+    response.redirect("/login");
+  }
+})
+app.post('/delete_userlocation_process', (request, response) => {
+  if (request.session.is_logined === true) {
+    const userLocationTable = access.query(request, response , `SELECT * FROM Alert.user_location WHERE (user_id = '${request.session.userid}');`)
+    const deleteIndex = request.body.userlocation_row;
+    const selectedRow = userLocationTable[deleteIndex];
+
+    access.insertQuery(request, response , 
+      `DELETE FROM Alert.user_location WHERE (user_id = '${selectedRow.user_id}' AND nickname = '${selectedRow.nickname}' AND adress = '${selectedRow.adress}');`)
+    response.redirect("/profile")
+  } else {
+    response.redirect("/login");
+  }
 })
 
 app.use((request, response, next) => {

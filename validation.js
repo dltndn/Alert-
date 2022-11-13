@@ -1,5 +1,5 @@
 const access = require("./DB/access");
-const { alarm } = require("./template");
+
 
 module.exports = {
   /**
@@ -20,6 +20,8 @@ module.exports = {
       if (ID === idList[i] & password == userDataTable[i].user_password) {
         request.session.is_logined = true;
         request.session.userid = ID;
+        
+        
         response.redirect("/live");
         break; 
       } else if (rows - 1 == i) {
@@ -90,5 +92,20 @@ module.exports = {
 
   },
 
+  isExistUserAdressNickname : (request, response, nickname) => {
+    
+    const userLocationNicknameList = access.query(request, response, `
+    SELECT nickname FROM Alert.user_location WHERE user_id = '${request.session.userid}';`)
+    
+    for (let index = 0 ; index < userLocationNicknameList.length ;index++) {
+      if (userLocationNicknameList[index].nickname === nickname) {
+        return true;
+      }
+      else if (index === userLocationNicknameList.length -1) {
+        return false;
+      }
+    }
+
+  },
 }
 

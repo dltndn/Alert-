@@ -87,14 +87,35 @@ module.exports = {
     for (let i = 0; i < len; i++) {
       nick_adress_form += `<p><div>${nick[i]}</div><div> ${adress[i]}</div></p>`;
     }
-    return `<form method="post" action="">
+    return `
       <div>
           <p><span>${userID}</span><span>님</span></p>
           <div>${nick_adress_form}</div>
       </div>
       <p><input type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'"></p>
-      <button>수정,삭제</button>
-  </form>`;
+      <button name="edit_delete_userlocation" onClick="location.href='/edit_delete_userlocation'">수정,삭제</button>
+  `;
+  },
+
+  edit_delete_userlocation : (user_id, nick ,adress) => {
+    let userID = user_id;
+    let len = nick.length;
+    let nick_adress_form = ``;
+    for (let i = 0; i < len; i++) {
+      nick_adress_form += `<form name="edit" action="/update_userlocation_process" method="post">
+                            <input type="submit" value="수정" onclick="check()">
+                            <input type="hidden" name="userlocation_row" value="${i}"></form>`;
+      nick_adress_form += `<div>${nick[i]}</div><div> ${adress[i]}</div>`;
+      nick_adress_form += `<form name="delete" action="/delete_userlocation_process" method="post">
+                            <input type="submit" value="삭제" onclick="check()">
+                            <input type="hidden" name="userlocation_row" value="${i}">
+                            </form><br>`;
+    }
+    return `
+      <div>
+          <p><span>${userID}</span><span>님</span></p>
+          <div>${nick_adress_form}</div>
+      </div>`;
   },
 
   funcname2: (mock_start_time = "none") => {
@@ -119,6 +140,85 @@ module.exports = {
     <p><input type="button" name="redirect_create_alarm" onClick="location.href='/create_alarm'" value="알람 생성 버튼"></p><br>
     
     <button name="edit_delete_alarm" onClick="location.href='/edit_delete_alarm'">수정,삭제</button>`;
-  }
+  },
   
+  create_userLoc: function () {
+    const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
+
+    const getAdressScript = `
+      let xpos; 
+      let ypos;
+      var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+      mapOption = {
+          center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
+          level: 5 // 지도의 확대 레벨
+      };
+
+      //지도를 미리 생성
+      var map = new daum.maps.Map(mapContainer, mapOption);
+      //주소-좌표 변환 객체를 생성
+      var geocoder = new daum.maps.services.Geocoder();
+      //마커를 미리 생성
+      var marker = new daum.maps.Marker({
+          position: new daum.maps.LatLng(37.537187, 127.005476),
+          map: map
+      });
+
+      function sample5_execDaumPostcode() {
+          new daum.Postcode({
+              oncomplete: function(data) {
+                  var addr = data.address; // 최종 주소 변수
+
+                  
+                  // 주소 정보를 해당 필드에 넣는다.
+                  document.getElementById("sample5_address").value = addr;
+                  document.getElementById("adresss").value = addr;
+                  // 주소로 상세 정보를 검색
+                  geocoder.addressSearch(data.address, function(results, status) {
+                      // 정상적으로 검색이 완료됐으면
+                      if (status === daum.maps.services.Status.OK) {
+
+                          var result = results[0]; //첫번째 결과의 값을 활용
+                          console.log(result.road_address.x);
+                          console.log(result.road_address.y);
+                          
+                          // xy 좌표값
+                          xpos = result.road_address.x;
+                          ypos = result.road_address.y;
+                          
+                          document.getElementById("xpos").value = xpos;
+                          document.getElementById("ypos").value = ypos;
+                          // 해당 주소에 대한 좌표를 받아서
+                          var coords = new daum.maps.LatLng(result.y, result.x);
+                          // 지도를 보여준다.
+                          mapContainer.style.display = "block";
+                          map.relayout();
+                          // 지도 중심을 변경한다.
+                          map.setCenter(coords);
+                          // 마커를 결과값으로 받은 위치로 옮긴다.
+                          marker.setPosition(coords)
+                      }
+                  });
+                  
+              }
+          }).open();
+        } 
+    `;
+    return `
+    <input type="text" id="sample5_address" placeholder="주소">
+        <input type="button" onclick="sample5_execDaumPostcode()" value="주소 검색"><br>
+        <div id="map" style="width:300px;height:300px;margin-top:10px;display:none"></div>
+   
+        <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+        <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
+        <script>${getAdressScript}</script>
+    <form action="create_userloc_process" method="post">
+      
+      <input type="hidden" id="adresss" name="adress" >
+      <input type="hidden" id="xpos" name="xpos" >
+      <input type="hidden" id="ypos" name="ypos" >
+      <p>지역 별명 : <input type="text" name="location_nickname" ></p> 
+      <p><input type="submit" value="확인"></p>
+    </form>`;
+  },
 };
