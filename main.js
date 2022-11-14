@@ -8,6 +8,7 @@ const edit = require("./edit.js");
 const validation = require("./validation");
 const getData = require("./getData")
 const create = require("./create");
+const livePage = require("./livePage.js");
 const backEnd = require("./backendlogics")
 // const livePage = require("./livePage.js");
 const app = express()
@@ -27,7 +28,6 @@ app.use('*',(request, response, next) => {
   request.departTime = nearTimeObject.departure_time
   request.arriveAdress = nearTimeObject.arrive_adress
   request.departrueAdress = nearTimeObject.departrue_adress;
-  console.log()
   next();
 })
 
@@ -186,28 +186,6 @@ app.post('/delete_alarm_process', (request, response) => {
     response.redirect("/login");
   }
 })
-app.get('/live', (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
-  if (request.session.is_logined === true) {
-    let nearTime = backEnd.getNearTime(request, response).departure_time;
-
-    // // frontEndPart
-    // const title = edit.filterURL(pathname);
-    // const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-    // const body = template.funcname2(nearTime);
-    // // const HTML = template.HTML(title, header, body);
-    // const sX = 126.803066712453;  //출발지 x 좌표(ex: 126.803066712453)
-    // const sY = 37.4637380346779;  //출발지 y 좌표(ex: 37.4637380346779)
-    // const eX = 127.058338066917;
-    // const eY = 37.6193203481648;
-    // const HTML = livePage.livePage(request, response, title, sX, sY, eX, eY);
-
-
-    response.send("yet");
-  } else {
-    response.redirect('/login');
-  }
-})
 app.get('/create_userloc', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
@@ -283,7 +261,25 @@ app.post('/delete_userlocation_process', (request, response) => {
     response.redirect("/login");
   }
 })
-
+app.get('/live_before_process', (request, response) => {
+  let pathname = url.parse(request.url, true).pathname;
+  const sX = 126.803066712453;  //출발지 x 좌표(ex: 126.803066712453)
+  const sY = 37.4637380346779;  //출발지 y 좌표(ex: 37.4637380346779)
+  const eX = 127.058338066917;
+  const eY = 37.6193203481648;
+  const title = edit.filterURL(pathname);
+  const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+  
+  const HTML = livePage.livePage(request, response, title, header);
+  response.send(HTML);
+})
+app.get('/live', (request, response) => {
+  let pathname = url.parse(request.url, true).pathname;
+  console.log("passed live_before_process");
+  const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+  const HTML = template.liveBeforeProcess();
+  response.send(HTML);
+})
 app.use((request, response, next) => {
   response.status(404).send("404 Not Found")
 })

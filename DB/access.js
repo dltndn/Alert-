@@ -83,19 +83,21 @@ exports.updateAlarmData = (alarmId, request, response, dayOfWeek, departureTime,
   );
 };
 
-/**
- * 
- * @param {*} nickname 
- * @param {*} adress 
- */
-exports.updateUserLocationData = (nickname , adress) => {
-  this.insertQuery(request, response,
-    `UPDATE Alert.alarm SET 
-      day_of_week = '${dayOfWeek}', 
-      departure_time = '${departureTime}', 
-      alarm_time = '${alarmTime}', 
-      departrue_adress = '${departrueAdress}', 
-      arrive_adress = '${arriveAdress}'
-     WHERE (alarm_id = '${alarmId}');`
-  );
-};
+
+// /// 아직 진행 안함
+// /**
+//  * user_location 테이블에 행을 수정하는 로직
+//  * @param {*} nickname 주소의 별명
+//  * @param {*} adress 주소 
+//  */
+// exports.updateUserLocationData = (request, response , selectedRow) => {
+//   this.insertQuery(request, response,
+//     `UPDATE Alert.user_location SET 
+//       day_of_week = '${dayOfWeek}', 
+//       departure_time = '${departureTime}', 
+//       alarm_time = '${alarmTime}', 
+//       departrue_adress = '${departrueAdress}', 
+//       arrive_adress = '${arriveAdress}'
+//      WHERE (alarm_id = '${alarmId}');`
+//   );
+// };

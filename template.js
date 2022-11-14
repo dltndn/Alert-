@@ -1,3 +1,4 @@
+const getLiveData = require("./getLiveData.js");
 module.exports = {
   
   /**
@@ -102,21 +103,6 @@ module.exports = {
       </div>`;
   },
 
-  funcname2: (mock_start_time = "none") => {
-    let mock_estimated_time = "0:45";
-    let mock_arrival_time = "8:45";
-    return `<form method="post">
-    <div>
-      <p>예상 소요 시간:${mock_estimated_time}</p>
-      <div>
-        <p>출발시간:${mock_start_time}</p>
-        <p>도착시간:${mock_arrival_time}</p>
-      </div>
-    </div>
-    <p>지도API</p>
-    <p>cctv API</p>
-  </form>`;
-  },
 
   /**
    * 알람 틀을 제공하는 메서드
@@ -219,7 +205,7 @@ module.exports = {
    * 주소를 입력받을 수 있는 틀을 제공하는 메서드 (수정용)
    * @returns HTML 코드
    */
-   edit_userLoc: function (selectedRow) {
+  edit_userLoc: function (selectedRow) {
     const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
 
     const getAdressScript = `
@@ -298,4 +284,30 @@ module.exports = {
       <p><input type="submit" value="확인"></p>
     </form>`;
   },
+
+
+
+
+  liveForm : function (estimated_time) {
+    let mock_start_time = "8:00";
+    let mock_arrival_time = "계산로직 구현";
+    return `<form method="post">
+    <div>
+      <p>예상 소요 시간:${estimated_time}</p>
+      <div>
+        <p>출발시간:${mock_start_time}</p>
+        <p>도착시간:${mock_arrival_time}</p>
+      </div>
+    </div>
+  </form>`;
+  },
+  liveBeforeProcess : function () {
+    const title = "live_before_process";
+    const sX = 126.803066712453;  //출발지 x 좌표(ex: 126.803066712453)
+    const sY = 37.4637380346779;  //출발지 y 좌표(ex: 37.4637380346779)
+    const eX = 127.058338066917;
+    const eY = 37.6193203481648;
+    const getLD = getLiveData.getLiveData(title, sX, sY, eX, eY);
+    return getLD;
+  }
 };
