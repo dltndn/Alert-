@@ -70,16 +70,26 @@ module.exports = {
         console.log(cctvList[i][0].CCTVID);
     }
 
-    const tTimeData = JSON.parse(cookies.totalTime);
+    let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
     tTime = Math.round(tTime);
     tTime = tTime / 60;
-    let hour = Math.round(tTime); //최종 시
-    let min = tTime % 1;
+    let hour;
+    let min;
+    let estimated_time;
+    min = tTime % 1;
     min = Math.round(min * 100);
     min = min * 60 / 100;
     min = Math.round(min); //최종 분
-    let estimated_time = hour + "시간 " + min + "분"; //소요시간 string
+    if (tTime < 1) {
+        hour = 0;
+        estimated_time = min + "분"; //소요시간 string
+    } else {
+        hour = Math.round(tTime);  //최종 시
+        estimated_time = hour + "시간 " + min + "분"; //소요시간 string
+    }
+
+    
 
     const openAPIkey =
       "RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc"; //openData
@@ -104,7 +114,7 @@ module.exports = {
                     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${tMapAPIKEY}"></script>
                 </head>
                 <body onload="initTmap();">
-                    ${getTemplate.header}
+                    ${getTemplate.header()}
                     ${getTemplate.liveForm(estimated_time)}
                    
                     <div id="map_wrap" class="map_wrap">

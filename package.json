@@ -1,0 +1,27 @@
+{
+  "name": "alert2",
+  "version": "1.0.0",
+  "description": "## 🔧 주마다 해야 할 일",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dltndn/Alert-.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dltndn/Alert-/issues"
+  },
+  "homepage": "https://github.com/dltndn/Alert-#readme",
+  "dependencies": {
+    "cookie": "^0.5.0",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
+    "url": "^0.11.0",
+    "xlsx": "^0.18.5"
+  }
+}
