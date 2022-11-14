@@ -211,10 +211,10 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
   },
   liveBeforeProcess : function () {
     const title = "live_before_process";
-    const sX = 126.9850380932383;  //출발지 x 좌표(ex: 126.803066712453)
-    const sY = 37.566567545861645;  //출발지 y 좌표(ex: 37.4637380346779)
-    const eX = 127.10331814639885;
-    const eY = 37.403049076341794;
+    const sX = 126.803066712453;  //출발지 x 좌표(ex: 126.803066712453)
+    const sY = 37.4637380346779;  //출발지 y 좌표(ex: 37.4637380346779)
+    const eX = 126.733648687356;
+    const eY = 37.5792212937947;
     const getLD = getLiveData.getLiveData(title, sX, sY, eX, eY);
     return getLD;
   },

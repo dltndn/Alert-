@@ -63,8 +63,7 @@ module.exports = {
                 
                                                             var resultData = response.features;  
                                                             let tTime = resultData[0].properties.totalTime    
-                                                            document.cookie = "totalTime=" + tTime;            //소요 시간 cookie에 임시 저장(초단위)   
-                                                            console.log(tTime);                                                                                                                                    
+                                                            document.cookie = "totalTime=" + tTime;            //소요 시간 cookie에 임시 저장(초단위)                                                                                                                                                                                                   
 
                                                             //localStorage.setItem('totalTime', resultData[0].properties.totalTime);   //소요 시간 로컬스토리지에 임시 저장(초단위)
                                                             //localStorage.setItem('totalDistance', resultData[0].properties.totalDistance);   //총 거리 로컬스토리지에 임시 저장(m단위)
