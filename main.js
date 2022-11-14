@@ -263,13 +263,9 @@ app.post('/delete_userlocation_process', (request, response) => {
 })
 app.get('/live_before_process', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
-  const sX = 126.803066712453;  //출발지 x 좌표(ex: 126.803066712453)
-  const sY = 37.4637380346779;  //출발지 y 좌표(ex: 37.4637380346779)
-  const eX = 127.058338066917;
-  const eY = 37.6193203481648;
+  
   const title = edit.filterURL(pathname);
   const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-  
   const HTML = livePage.livePage(request, response, title, header);
   response.send(HTML);
 })
@@ -277,7 +273,7 @@ app.get('/live', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   console.log("passed live_before_process");
   const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-  const HTML = template.liveBeforeProcess();
+  const HTML = template.liveBeforeProcess(request,response);
   response.send(HTML);
 })
 app.use((request, response, next) => {

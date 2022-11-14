@@ -82,18 +82,24 @@ module.exports = {
     }
 
     // 설명 필 =====================================================================================================================================================================
-    const tTimeData = JSON.parse(cookies.totalTime);
-    console.log(tTimeData);
+    let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
     tTime = Math.round(tTime);
     tTime = tTime / 60;
-    let hour = Math.round(tTime); //최종 시
-    let min = tTime % 1;
+    let hour;
+    let min;
+    let estimated_time;
+    min = tTime % 1;
     min = Math.round(min * 100);
     min = min * 60 / 100;
     min = Math.round(min); //최종 분
-    let estimated_time = hour + "시간 " + min + "분"; //소요시간 string
-
+    if (tTime < 1) {
+        hour = 0;
+        estimated_time = min + "분"; //소요시간 string
+    } else {
+        hour = Math.round(tTime);  //최종 시
+        estimated_time = hour + "시간 " + min + "분"; //소요시간 string
+    }
     const openAPIkey =
       "EOjOA8lO2JOXmhT2dR7nyMXybjrrOxMihUgHegeYa2AtkL2lPr2mDUdx27Qa3Msw"; //openData
 

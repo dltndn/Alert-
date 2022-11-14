@@ -1,3 +1,4 @@
+const { response } = require("express");
 const getLiveData = require("./getLiveData.js");
 module.exports = {
   
@@ -301,13 +302,9 @@ module.exports = {
     </div>
   </form>`;
   },
-  liveBeforeProcess : function () {
+  liveBeforeProcess : function (request, response) {
     const title = "live_before_process";
-    const sX = 126.803066712453;  //출발지 x 좌표(ex: 126.803066712453)
-    const sY = 37.4637380346779;  //출발지 y 좌표(ex: 37.4637380346779)
-    const eX = 127.058338066917;
-    const eY = 37.6193203481648;
-    const getLD = getLiveData.getLiveData(title, sX, sY, eX, eY);
+    const getLD = getLiveData.getLiveData(request, response, title);
     return getLD;
   }
 };

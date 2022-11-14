@@ -1,27 +1,18 @@
 const cookie = require('cookie');
+const access = require('./DB/access')
 module.exports = {
-  getLiveData : function (title, sX, sY, eX, eY) {    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  getLiveData : function (request, response, title) {    
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";
-    const startX = sX; //출발지 x좌표
-    const startY = sY; //출발지 y좌표
-    const endX = eX; //도착지 x좌표
-    const endY = eY; //도착지 y좌표
+    let arriveData = access.query(request, response, 
+        `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
+    let departrueData = access.query(request, response, 
+        `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
+
+        const startX  = departrueData.xpos;
+        const startY = departrueData.ypos;
+        const endX = arriveData.xpos;
+        const endY = arriveData.ypos;
+    
     return `<!DOCTYPE html>
             <html>
                 <head>
