@@ -89,8 +89,6 @@ module.exports = {
         estimated_time = hour + "시간 " + min + "분"; //소요시간 string
     }
 
-    
-
     const openAPIkey =
       "RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc"; //openData
 
