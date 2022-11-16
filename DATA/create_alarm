@@ -1,4 +1,4 @@
-<form action="create_alarm_process" method="post">
+<form action="/create_alarm_process" method="post">
     <p><input type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'"> </p>
     <p>
         <input type="checkbox" name="Day_of_the_week" value="일" id="일">
@@ -35,10 +35,12 @@
     </select>
     </p>
 
+    알람시간
     <p>
         <input type="number" name="alarm_time_hour" min="0" max="23" value="0"> : <input type="number" name="alarm_time_min" min="0" max="59" value="0">
     </p>
     
+    도착예정시간
     <p>
         <input type="number" name="depart_time_hour" min="0" max="23" value="0"> : <input type="number" name="depart_time_min" min="0" max="59" value="0">
     </p>
