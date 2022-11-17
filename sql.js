@@ -16,3 +16,4 @@ connection.query('select * from user_data;', function (error, results, fields) {
 });
  
 connection.end();
+
