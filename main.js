@@ -94,8 +94,8 @@ var app1 = http.createServer(function (request, response) {
     const eY = 37.5792212937947;
     const title = edit.filterURL(pathname);
     const HTML = livePage.livePage(request, response, title, sX, sY, eX, eY);
-    console.log(response.header);
-    console.log("hoo");
+    console.log(response);
+    console.log("hooo");
     response.writeHead(200);
     response.end(HTML);
   }else if (pathname === "/live_before_process") { 
