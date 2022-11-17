@@ -97,7 +97,8 @@ module.exports = {
     const cctvCh = "20";
     const id = "null";
 
-    const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}&kind=${kind}&cctvch=${cctvCh}&id=${id}`;
+    //const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}&kind=${kind}&cctvch=${cctvCh}&id=${id}`;
+    const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}`;
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";
     const startX = sX; //출발지 x좌표
     const startY = sY; //출발지 y좌표
@@ -135,7 +136,7 @@ module.exports = {
                     var resultMarkerArr = [];
                 
                     function initTmap() {
-
+                        console.trace();
                         // 1. 지도 띄우기
                         map = new Tmapv2.Map("map_div", {
                             center : new Tmapv2.LatLng(${startY},
