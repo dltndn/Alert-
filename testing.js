@@ -4,6 +4,7 @@
  function StreamCctv(cctvid, mapType, callback){
 	if(cctvid.CCTVID != null) {
 		cctvid = cctvid.CCTVID ;
+		//test
 	}
 	var debugFlag = true;
 	var gCctv;
