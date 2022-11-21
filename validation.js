@@ -54,10 +54,10 @@ module.exports = {
            response.redirect("back");
            break;
          } else if (rows - 1 == i) {
-           access.InsertQuery(request, response, `INSERT INTO Alert.user_data (user_id, user_password) VALUES ('${ID}', '${password}');`);
+           access.insertQuery(request, response, `INSERT INTO Alert.user_data (user_id, user_password) VALUES ('${ID}', '${password}');`);
            request.session.is_logined = true;
            request.session.userid = ID;
-           response.redirect("/live");
+           response.redirect("/profile");
            break;
          }
        }

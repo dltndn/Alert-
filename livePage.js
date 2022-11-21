@@ -49,16 +49,20 @@ const getCctvList = function (centerX, centerY) {  //return type -> arr
 };
 
 module.exports = {
-  livePage: function (request,response, title, header) {
+  livePage: function (request,response, title, header, cssFile) {
     let arriveData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
     let departrueData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
 
-    let departrueXPos = departrueData.xpos;
-    let departrueYPos = departrueData.ypos;
-    let arriveXPos = arriveData.xpos;
-    let arriveYPos = arriveData.ypos;
+    // let departrueXPos = departrueData.xpos;
+    // let departrueYPos = departrueData.ypos;
+    // let arriveXPos = arriveData.xpos;
+    // let arriveYPos = arriveData.ypos;
+    const departrueXPos  = 126.787101543581;
+    const departrueYPos = 37.4528612784565; //test: 집
+    const arriveXPos = 127.107967944506;
+    const arriveYPos = 37.5457267681008;  //test: 예스24라이브홀
 
     let cctvList = [];     //정체구간 근방 cctv 데이터
     const cookies = cookie.parse(request.headers.cookie);
@@ -109,6 +113,7 @@ module.exports = {
     const id = "null";
 
     const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}&kind=${kind}&cctvch=${cctvCh}&id=${id}`;
+    //const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc`;
     const tMapAPIKEY = "l7xx16b2283d260c4bbabae01b727e1a8b75";
     const startX = departrueXPos; //출발지 x좌표
     const startY = departrueYPos; //출발지 y좌표
@@ -123,6 +128,7 @@ module.exports = {
                     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${tMapAPIKEY}"></script>
                 </head>
                 <body onload="initTmap();">
+                    <link href=${cssFile} rel="stylesheet" type="text/css">
                     ${header}
                     ${getTemplate.liveForm(estimated_time)}
                    
@@ -131,8 +137,8 @@ module.exports = {
                     </div>
                     <div class="map_act_btn_wrap clear_box"></div>
                     <br />
-                    <embed src=${cctvUrl} width="320px" height="280px">
-                    <script type="text/javascript">
+                    <embed src=${cctvUrl} class="cctv">                   
+                    <script type="text/javascript"> 
                     var map;
                     var markerInfo;
                     //출발지,도착지 마커
@@ -145,7 +151,7 @@ module.exports = {
                     var resultdrawArr = [];
                     var resultMarkerArr = [];
                 
-                    function initTmap() {
+                    function initTmap() {        
 
                         // 1. 지도 띄우기
                         map = new Tmapv2.Map("map_div", {

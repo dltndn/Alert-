@@ -306,5 +306,8 @@ module.exports = {
     const title = "live_before_process";
     const getLD = getLiveData.getLiveData(request, response, title);
     return getLD;
-  }
+  }, 
+  cctvForm : function () {
+    
+  },
 };

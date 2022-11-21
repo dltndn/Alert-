@@ -10,9 +10,10 @@ const getData = require("./getData")
 const create = require("./create");
 const livePage = require("./livePage.js");
 const backEnd = require("./backendlogics")
-// const livePage = require("./livePage.js");
+const testPage = require("./testing.js");
 const app = express();
 const bodyParser = require('body-parser');
+const axios = require('axios');
 
 app.use(session({
     key: "is_logined",
@@ -75,7 +76,7 @@ app.get("/signUp", (request, response) => {
   });
 });
 app.post('/signUp_process', (request, response) => {
-  let object = validation.getFormData(request, response);
+  let object = getData.getFormData(request, response);
   validation.verifySignup(request, response, object);
 })
 app.get("/profile", (request, response) => {
@@ -261,7 +262,7 @@ app.post('/delete_userlocation_process', (request, response) => {
     response.redirect("/login");
   }
 })
-app.get('/live_before_process', (request, response) => {
+app.get('/live', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   
   const title = edit.filterURL(pathname);
@@ -269,11 +270,28 @@ app.get('/live_before_process', (request, response) => {
   const HTML = livePage.livePage(request, response, title, header);
   response.send(HTML);
 })
-app.get('/live', (request, response) => {
+app.get('/live_before_process', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   console.log("passed live_before_process");
   const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
   const HTML = template.liveBeforeProcess(request,response);
+  response.send(HTML);
+})
+let cctvUrlTest = 'http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc';
+let cctvUrlTest2 = 'https://openapi.its.go.kr:9443/cctvInfo?d81d3254072d4f96ac9338294785d036=test';
+let cctvUrlTest3 = 'https://openapi.its.go.kr:9443/cctvInfo?apiKey=d81d3254072d4f96ac9338294785d036&type=ex&cctvType=1&minX=127.100000&maxX=128.890000&minY=34.100000&maxY=39.100000&getType=json';
+app.get('/cctvTest', (request, response) => {
+  axios({
+    url: cctvUrlTest3,
+    method:'get',
+  }).then(function(res) {
+    let info = res.data;
+    console.log(info.response.data.length);
+  })
+  const src = `http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbG0DvLODltOV34mmMKVnhkbw==`;
+  const tt = testPage.test(src);
+  
+  const HTML = tt;
   response.send(HTML);
 })
 app.use((request, response, next) => {

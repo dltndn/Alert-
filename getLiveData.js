@@ -3,15 +3,15 @@ const access = require('./DB/access')
 module.exports = {
   getLiveData : function (request, response, title) {    
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";
-    let arriveData = access.query(request, response, 
-        `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
-    let departrueData = access.query(request, response, 
-        `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
+    // let arriveData = access.query(request, response, 
+    //     `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
+    // let departrueData = access.query(request, response, 
+    //     `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
 
-        const startX  = departrueData.xpos;
-        const startY = departrueData.ypos;
-        const endX = arriveData.xpos;
-        const endY = arriveData.ypos;
+        const startX  = 126.787101543581;
+        const startY = 37.4528612784565; //test: 집
+        const endX = 127.107967944506;
+        const endY = 37.5457267681008;  //test: 예스24라이브홀
     
     return `<!DOCTYPE html>
             <html>
