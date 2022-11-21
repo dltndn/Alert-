@@ -82,7 +82,6 @@ exports.getAlarmTable = (request, response) => {
   }
   // 요일 비교 - 알람이없는 경우
   if (alarmList.length === 0) {
-    console.log("등록된 알람이 없음")
     return "등록된 알람이 없음";
   }
 
@@ -141,7 +140,7 @@ exports.getAlarmTable = (request, response) => {
   
   if (alarmTable.length === 0) {
     access.insertAlarmData(request, response, dayOfWeek, departureTime, alarmTime, departrueAdress, arriveAdress);
-    response.redirect('/alarm');
+    this.alertRedirect(request, response, "알림이 생성되었습니다." , "/alarm")
   }
   else {
     for (let row = 0; row < alarmTable.length;row++) {
@@ -149,12 +148,11 @@ exports.getAlarmTable = (request, response) => {
       if (alarmTableData.user_id === request.session.userid && alarmTableData.day_of_week === dayOfWeek && 
         alarmTableData.departure_time === departureTime && alarmTableData.alarm_time === alarmTime &&
         alarmTableData.departrue_adress === departrueAdress && alarmTableData.arrive_adress === arriveAdress)  {
-          console.log("중복");
-          response.redirect('back');
+          this.alertRedirect(request, response, "중복된 알림이 있습니다." , "/create_alarm")
           break;
         } else if (row === alarmTable.length - 1) {
           access.insertAlarmData(request, response, dayOfWeek, departureTime, alarmTime, departrueAdress, arriveAdress);
-          response.redirect('/alarm');
+          this.alertRedirect(request, response, "알람이 생성되었습니다." , "/alarm")
           break;
         }
       }
@@ -297,7 +295,7 @@ exports.editAlarm = (request, response, formData) => {
   
   if (alarmTable.length === 0) {
     access.updateAlarmData(alarm_id, request, response, dayOfWeek, departureTime, alarmTime, departrueAdress, arriveAdress);
-    response.redirect('/alarm');
+    this.alertRedirect(request, response, "알림이 생성되었습니다." , "/alarm")
   }
   else {
     for (let row = 0; row < alarmTable.length;row++) {
@@ -305,12 +303,12 @@ exports.editAlarm = (request, response, formData) => {
       if (alarmTableData.user_id === request.session.userid && alarmTableData.day_of_week === dayOfWeek && 
         alarmTableData.departure_time === departureTime && alarmTableData.alarm_time === alarmTime &&
         alarmTableData.departrue_adress === departrueAdress && alarmTableData.arrive_adress === arriveAdress)  {
-          console.log("중복");
+          this.alertRedirect(request, response, "중복된 알림이 있습니다." , "/create_alarm")
           response.redirect('back');
           break;
         } else if (row === alarmTable.length - 1) {
           access.updateAlarmData(alarm_id, request, response, dayOfWeek, departureTime, alarmTime, departrueAdress, arriveAdress);
-          response.redirect('/alarm');
+          this.alertRedirect(request, response, "알림이 생성되었습니다." , "/alarm")
           break;
         }
       }
@@ -338,7 +336,6 @@ exports.editLocation = (request, response, formData) => {
     response.redirect('/create_userloc')
   }
   else {
-    console.log("test")
     access.insertQuery(request,response, 
       `UPDATE Alert.user_location SET 
       user_id = '${request.session.userid}', 
@@ -349,4 +346,15 @@ exports.editLocation = (request, response, formData) => {
      WHERE (user_id = '${request.session.userid}' AND nickname = '${originalUserlocationNickname}');`);
     response.redirect('/profile')
   }
+};
+
+/**
+ * alert()함수실행 후 페이지를 이동하는 로직 
+ * @param {*} request 
+ * @param {*} response 
+ * @param {*} message alert 메세지
+ * @param {*} pageLocation 이동할 페이지
+ */
+exports.alertRedirect = (request, response, message, pageLocation) => {
+  response.send(`<script>alert('${message}');window.location=\"${pageLocation}\"</script>`);
 };

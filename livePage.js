@@ -85,18 +85,44 @@ module.exports = {
         console.log(cctvList[i][0].CCTVID);
     }
 
-    // 설명 필 =====================================================================================================================================================================
     let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
     tTime = Math.round(tTime);
     tTime = tTime / 60;
-    let hour;
-    let min;
+    let hour = 0;
+    let min = 0;
     let estimated_time;
     min = tTime % 1;
     min = Math.round(min * 100);
     min = min * 60 / 100;
     min = Math.round(min); //최종 분
+
+    
+    //let departureTime = request.departTime;
+    let departureTime = "8:00";
+    let departureHour;
+    let departureMin ;
+    for (let col = 0; col < departureTime.length ;col++) {
+        if (departureTime.substring(col,col+1) === ":") {
+            departureHour = parseInt(departureTime.substring(0,col)); 
+            departureMin = parseInt(departureTime.substring(col+1,parseInt(departureTime.length + 1)))
+            departureMin += min;
+            departureHour += hour;
+            break;
+        }
+    }
+    if (departureMin >= 60){
+        departrueMin %= 60;
+        departureHour++;
+        if (departureHour >= 24) {
+            departureHour%=24
+        }
+    }else {
+        if (departureHour >= 24) {
+            departureHour%=24
+        }
+    }
+    let expectTime = departureHour + ":" + departureMin
     if (tTime < 1) {
         hour = 0;
         estimated_time = min + "분"; //소요시간 string
@@ -128,9 +154,8 @@ module.exports = {
                     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${tMapAPIKEY}"></script>
                 </head>
                 <body onload="initTmap();">
-                    <link href=${cssFile} rel="stylesheet" type="text/css">
                     ${header}
-                    ${getTemplate.liveForm(estimated_time)}
+                    ${getTemplate.liveForm(estimated_time,departureTime,expectTime )}
                    
                     <div id="map_wrap" class="map_wrap">
                         <div id="map_div"></div>
