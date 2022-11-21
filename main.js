@@ -93,7 +93,7 @@ app.get("/profile", (request, response) => {
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else
-    response.redirect("/login");
+    response.redirect("/");
 });
 app.get('/alarm', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
@@ -107,7 +107,7 @@ app.get('/alarm', (request, response) => {
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
-    response.redirect("/login");
+    response.redirect("/");
   }
 })
 app.get('/create_alarm', (request, response) => {
@@ -124,7 +124,7 @@ app.get('/create_alarm', (request, response) => {
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
-    response.redirect("/login");
+    response.redirect("/");
   }
 })
 app.post('/create_alarm_process', (request, response) => {
@@ -143,7 +143,7 @@ app.get('/edit_delete_alarm', (request, response) => {
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
-    response.redirect("/login");
+    response.redirect("/");
   }
 })
 app.post('/update_alarm', (request, response) => {
@@ -159,7 +159,7 @@ app.post('/update_alarm', (request, response) => {
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
-    response.redirect("/login");
+    response.redirect("/");
   }
 })
 app.post('/update_alarm_process', (request, response) => {
@@ -168,7 +168,7 @@ app.post('/update_alarm_process', (request, response) => {
     const alarmFomData = getData.getFormData(request,response)
     backEnd.editAlarm(request, response, alarmFomData);
   } else {
-    response.redirect("/login");
+    response.redirect("/");
   }
 })
 app.post('/delete_alarm_process', (request, response) => {
@@ -178,7 +178,7 @@ app.post('/delete_alarm_process', (request, response) => {
     // access.query(request, response , `DELETE FROM Alert.connect WHERE alarm_id = '${alarm_id}';`);
     response.redirect("/alarm");
   } else {
-    response.redirect("/login");
+    response.redirect("/");
   }
 })
 app.get('/create_userloc', (request, response) => {
@@ -191,7 +191,7 @@ app.get('/create_userloc', (request, response) => {
       const HTML = template.HTML(title, header, body);
       response.send(HTML);
     } else {
-      response.redirect("/login");
+      response.redirect("/");
     }
   });
 })
@@ -220,7 +220,7 @@ app.get("/edit_delete_userlocation", (request, response) => {
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else
-    response.redirect("/login");
+    response.redirect("/");
 });
 app.post('/update_userlocation', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
@@ -232,7 +232,7 @@ app.post('/update_userlocation', (request, response) => {
       const HTML = template.HTML(title, header, body);
       response.send(HTML);
     } else {
-      response.redirect("/login");
+      response.redirect("/");
     }
   });
 })
@@ -240,7 +240,7 @@ app.post('/update_userlocation_process', (request, response) => {
   if (request.session.is_logined === true) {
     backEnd.editLocation(request, response, request.body);
   } else {
-    response.redirect("/login");
+    response.redirect("/");
   }
 })
 app.post('/delete_userlocation_process', (request, response) => {
@@ -253,7 +253,7 @@ app.post('/delete_userlocation_process', (request, response) => {
       `DELETE FROM Alert.user_location WHERE (user_id = '${selectedRow.user_id}' AND nickname = '${selectedRow.nickname}' AND adress = '${selectedRow.adress}');`)
     response.redirect("/profile")
   } else {
-    response.redirect("/login");
+    response.redirect("/");
   }
 })
 app.get('/live_before_process', (request, response) => {
