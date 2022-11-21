@@ -55,14 +55,14 @@ module.exports = {
     let departrueData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
 
-    // let departrueXPos = departrueData.xpos;
-    // let departrueYPos = departrueData.ypos;
-    // let arriveXPos = arriveData.xpos;
-    // let arriveYPos = arriveData.ypos;
-    const departrueXPos  = 126.787101543581;
-    const departrueYPos = 37.4528612784565; //test: 집
-    const arriveXPos = 127.107967944506;
-    const arriveYPos = 37.5457267681008;  //test: 예스24라이브홀
+    let departrueXPos = departrueData.xpos;
+    let departrueYPos = departrueData.ypos;
+    let arriveXPos = arriveData.xpos;
+    let arriveYPos = arriveData.ypos;
+    // const departrueXPos  = 126.787101543581;
+    // const departrueYPos = 37.4528612784565; //test: 집
+    // const arriveXPos = 127.107967944506;
+    // const arriveYPos = 37.5457267681008;  //test: 예스24라이브홀
 
     let cctvList = [];     //정체구간 근방 cctv 데이터
     const cookies = cookie.parse(request.headers.cookie);
@@ -98,7 +98,7 @@ module.exports = {
     min = Math.round(min); //최종 분
 
     
-    //let departureTime = request.departTime;
+    //let departureTime = request.departureTime;
     let departureTime = "8:00";
     let departureHour;
     let departureMin ;
