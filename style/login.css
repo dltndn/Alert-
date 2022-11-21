@@ -35,15 +35,20 @@
 }
 
 #inputs * {
+    all: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
 
     border: 0px;
-    margin: 0.5em;
+    padding: 1em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
     align-items: center;
-
+    box-sizing: border-box;
     display: block;
+
+    
 }
 
 .textbox {
@@ -54,7 +59,7 @@
     
     width: 80%;
     margin: auto;
-    padding: 1em;
+    
 
     background-color: rgb(245, 245, 245);
     border-radius: 1.5em;
@@ -78,7 +83,7 @@
   
   width: 80%;
   margin: auto;
-  padding: 1em;
+  
   
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   
@@ -88,10 +93,11 @@
 }
 
 #inputs a {
-    margin-top: 2em;
-    margin-bottom: 2em;
     color: #0d6efd;
     text-decoration-line: none;
+    width: fit-content;
+    padding: 0px;
+    margin: auto;
 }
 
 
@@ -109,4 +115,5 @@
     --button-hover-bg-color: lightgray;
     background: var(--button-bg-color);
     color: var(--button-color);    
+    color: #0d6efd;
 }

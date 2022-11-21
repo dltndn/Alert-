@@ -1,14 +1,14 @@
 const access = require("./DB/access");
 const backEnd = require("./backendlogics")
 
-module.exports = {
+
   /**
    * 로그인 검증 로직
    * @param {*} request 
    * @param {*} response 
    * @param {*} userInput : 유저정보에 대한 객체를 매개변수로 추가 getFormData() 사용 
    */
-  verifyLogin  (request, response, userInput) {
+   exports.verifyLogin = (request, response, userInput) => {
     const userData = access.userData(request, response);
     const userDataTable = userData.userDataTable;
     const idList = userData.idList;
@@ -36,7 +36,7 @@ module.exports = {
    * @param {*} userInput : 유저정보에 대한 객체를 매개변수로 추가 getFormData() 사용
    * @returns 
    */
-   verifySignup  (request, response, userInput) {
+   exports.verifySignup = (request, response, userInput) => {
      const userData = access.userData(request, response);
      const idList = userData.idList;
      const rows = userData.userDataTableRowsCount;
@@ -67,7 +67,7 @@ module.exports = {
    * @param {*} alarmTime 
    * @returns boolean
    */
-  isOverTime : (alarmTime) => {
+   exports.isOverTime = (alarmTime) => {
     let browserHours = new Date().getHours(); 
     let browserMinutes = new Date().getMinutes(); 
     let alarmTimes = alarmTime.departure_time
@@ -93,7 +93,7 @@ module.exports = {
    * @param {*} nickname 별명 (String)
    * @returns boolean
    */
-  isExistUserAdressNickname : (request, response, nickname) => {
+   exports.isExistUserAdressNickname = (request, response, nickname) => {
     
     const userLocationNicknameList = access.query(request, response, `
     SELECT nickname FROM Alert.user_location WHERE user_id = '${request.session.userid}';`)
@@ -107,8 +107,5 @@ module.exports = {
       }
     }
 
-  },
-
-   
-}
+  }
 

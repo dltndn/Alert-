@@ -121,6 +121,10 @@ exports.header = (statusbar = "알람이 없습니다.", loginOrLogout="login", 
             `;
   },
 
+  /**
+   * 로그인 팝업
+   * @returns 로그인 팝업 HTML
+   */
 exports.login = () => {
   return `
           <link rel="stylesheet" type="text/css" href="./login.css">
@@ -367,9 +371,6 @@ exports.funcname = (user_id, nick ,adress) => {
     </form>`;
   },
 
-
-
-
   exports.liveForm = function (estimated_time, departure_time, expect_time) {
     return `<form method="post">
     <div>
@@ -381,6 +382,7 @@ exports.funcname = (user_id, nick ,adress) => {
     </div>
   </form>`;
   },
+
   exports.liveBeforeProcess = function (request, response) {
     const title = "live_before_process";
     const getLD = getLiveData.getLiveData(request, response, title);

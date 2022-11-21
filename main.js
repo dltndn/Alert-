@@ -46,19 +46,6 @@ app.get('/', (request, response) => {
   })
   
 })
-app.get("/login", (request, response) => {
-  if (request.session.is_logined === true) {
-    response.redirect("back");
-  } else {
-    let pathname = url.parse(request.url, true).pathname;
-    const title = edit.filterURL(pathname);
-    const header = template.header("로그인 이후 이용 가능 합니다.");
-    const loginPage = template.login();
-    const HTML = template.HTML(title, header, loginPage);
-    response.send(HTML);
-    
-  }
-});
 app.post('/login_process', (request, response) => {
   let formData = getData.getFormData(request, response);
   validation.verifyLogin(request, response, formData);
