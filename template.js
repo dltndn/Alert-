@@ -1,4 +1,7 @@
 const getLiveData = require("./getLiveData.js");
+const getCctvData = require("./getCctvData");
+const cookie = require('cookie');
+const session = require('express-session');
 
   /**
    * 웹 사이트의 헤더 부분 (statusbar + 링크들)
@@ -387,6 +390,33 @@ exports.funcname = (user_id, nick ,adress) => {
     const title = "live_before_process";
     const getLD = getLiveData.getLiveData(request, response, title);
     return getLD;
+  }, 
+  exports.loadingLive = async function (request, response) {
+    const itsAPIKEY = 'd81d3254072d4f96ac9338294785d036';
+    let cctvUrlList = [];
+    let cctvDataList = [];     //정체구간 근방 cctv src url데이터
+    const cookies = cookie.parse(request.headers.cookie);
+    if (request.headers.cookie !== undefined){
+      const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
+      for await(const jamSection of jamSectionList) {
+          let cenY = jamSection.lat;
+          let cenX = jamSection.lng;
+          let cctvUrl = getCctvData.getCctvUrl(itsAPIKEY, cenX, cenY);    
+          let cctvSrc = await getCctvData.getCctvSrc(cctvUrl);
+          if (cctvSrc.length > 1) {
+              for (const ob in cctvSrc) {
+                cctvDataList.push(cctvSrc[ob]);
+              }            
+          } else if (cctvSrc.length == 1) {
+            cctvDataList.push(cctvSrc);
+          } else {
+              console.log("empty src list");
+          }
+      }
+    } else {
+      console.log("empty cookie");
+    }
+    request.session.cctvDataList = cctvDataList;
   }, 
   exports.cctvForm = function () {
     return``;

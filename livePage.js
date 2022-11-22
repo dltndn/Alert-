@@ -6,50 +6,6 @@ const access = require('./DB/access');
 const getCctvData = require('./getCctvData');
 const axios = require("axios");
 
-
-// cctv 엑셀 파일 json 데이터로 추출
-const cctvFile = xlsx.readFile("./OpenDataCCTV.xlsx");
-const sheetName = cctvFile.SheetNames[0];
-const firstSheet = cctvFile.Sheets[sheetName];
-const cctvData = xlsx.utils.sheet_to_json(firstSheet);
-const cctvDataClone = []; //x, y좌표 타입이 num으로 변경된 딕셔너리
-let obj;
-for (let i = 0; i < cctvData.length; i++) {
-  // cctv 엑셀 파일 json 데이터 x, y좌표 타입 num으로 변경
-  let x = cctvData[i].XCOORD;
-  let y = cctvData[i].YCOORD;
-  x = parseFloat(x);
-  y = parseFloat(y);
-  obj = {
-    CCTVID: cctvData[i].CCTVID,
-    XCOORD: x,
-    YCOORD: y,
-  };
-  cctvDataClone.push(obj);
-}
-
-
-const getCctvList = function (centerX, centerY) {  //return type -> arr
-  //중심 좌표를 기준으로 반경 500m 범위 내 cctv 목록 계산
-  const k = 0.0050445;
-  const minX = centerX - k;
-  const maxX = centerX + k;
-  const minY = centerY - k;
-  const maxY = centerY + k;
-  let targetCctvArr = [];
-  for (let i=0; i<cctvDataClone.length; i++) {
-    let x = cctvDataClone[i].XCOORD;
-    let y = cctvDataClone[i].YCOORD;
-    if (x > minX && x < maxX) {
-        if (y > minY && y < maxY) {
-            targetCctvArr.push(cctvDataClone[i]);
-        }
-    }
-  }
-   
-  return targetCctvArr;
-};
-
 module.exports = {
   livePage: async function (request,response, title, header, cssFile) {
     const itsAPIKEY = 'd81d3254072d4f96ac9338294785d036';
@@ -58,40 +14,20 @@ module.exports = {
     let departrueData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
 
-    let departrueXPos = departrueData.xpos;
-    let departrueYPos = departrueData.ypos;
-    let arriveXPos = arriveData.xpos;
-    let arriveYPos = arriveData.ypos;
-    // const departrueXPos  = 126.787101543581;
-    // const departrueYPos = 37.4528612784565; //test: 집
-    // const arriveXPos = 127.107967944506;
-    // const arriveYPos = 37.5457267681008;  //test: 예스24라이브홀
-    let cctvSrcList = [];     //정체구간 근방 cctv src url데이터
+    // let departrueXPos = departrueData.xpos;
+    // let departrueYPos = departrueData.ypos;
+    // let arriveXPos = arriveData.xpos;
+    // let arriveYPos = arriveData.ypos;
+    const departrueXPos  = 126.787101543581;
+    const departrueYPos = 37.4528612784565; //test: 집
+    const arriveXPos = 127.107967944506;
+    const arriveYPos = 37.5457267681008;  //test: 예스24라이브홀
+
     const cookies = cookie.parse(request.headers.cookie);
-    if (request.headers.cookie !== undefined){
-        const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
-        for await(const jamSection of jamSectionList) {
-            let cenY = jamSection.lat;
-            let cenX = jamSection.lng;
-            let cctvUrl = getCctvData.getCctvUrl(itsAPIKEY, cenX, cenY);    
-            let cctvSrc = await getCctvData.getCctvSrc(cctvUrl);
-            if (cctvSrc.length > 1) {
-                for (const ob in cctvSrc) {
-                    cctvSrcList.push(cctvSrc[ob]);
-                }            
-            } else if (cctvSrc.length == 1) {
-                cctvSrcList.push(cctvSrc);
-            } else {
-                console.log("empty src list");
-            }
-        }
-    } else {
-        console.log("empty cookie");
-    }
-    await console.log("cctvSrcList : " + cctvSrcList[0].src);
-    // for(let i=0; i<cctvList.length; i++) { //정체구간 근방 cctv 데이터 출력 방식
-    //     console.log(cctvList[i][0].CCTVID);
-    // }
+
+    //get cctv data from session
+    const cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
+    console.log("cctvData for live" + cctvDataList);
 
     let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
@@ -511,7 +447,7 @@ module.exports = {
                         resultdrawArr = [];
                     }
                 </script>
-                ${getCctvData.cctvVideoScript(cctvSrcList[0].src)}
+                ${getCctvData.cctvVideoScript(cctvDataList[0].src)}
                 </body>
             </html>
             `;

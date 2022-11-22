@@ -1,5 +1,4 @@
 const access = require('./DB/access');
-const cookie = require('cookie');
 module.exports = {
   getLiveData : function (request, response, title) {    
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";

@@ -263,12 +263,17 @@ app.get('/live', async (request, response) => {
   const HTML = await livePage.livePage(request, response, title, header);
   response.send(HTML);
 })
+app.get('/loading_live', async(request, response) => {
+  console.log("passed loading_live");
+  await template.loadingLive(request,response);
+  response.redirect("/live");
+})
 app.get('/live_before_process', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   console.log("passed live_before_process");
   const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
   const HTML = template.liveBeforeProcess(request,response);
-  response.send(HTML);  
+  response.redirect("/loading_live");  
 })
 let cctvUrlTest = 'http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc';
 let cctvUrlTest2 = 'https://openapi.its.go.kr:9443/cctvInfo?d81d3254072d4f96ac9338294785d036=test';
