@@ -15,6 +15,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const axios = require('axios');
 
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('style'));
 app.use(session({
@@ -255,11 +256,11 @@ app.post('/delete_userlocation_process', (request, response) => {
     response.redirect("/");
   }
 })
-app.get('/live', (request, response) => {
+app.get('/live', async (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   const title = edit.filterURL(pathname);
   const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-  const HTML = livePage.livePage(request, response, title, header);
+  const HTML = await livePage.livePage(request, response, title, header);
   response.send(HTML);
 })
 app.get('/live_before_process', (request, response) => {
@@ -267,20 +268,55 @@ app.get('/live_before_process', (request, response) => {
   console.log("passed live_before_process");
   const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
   const HTML = template.liveBeforeProcess(request,response);
-  response.send(HTML);
+  response.send(HTML);  
 })
 let cctvUrlTest = 'http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc';
 let cctvUrlTest2 = 'https://openapi.its.go.kr:9443/cctvInfo?d81d3254072d4f96ac9338294785d036=test';
 let cctvUrlTest3 = 'https://openapi.its.go.kr:9443/cctvInfo?apiKey=d81d3254072d4f96ac9338294785d036&type=ex&cctvType=1&minX=127.100000&maxX=128.890000&minY=34.100000&maxY=39.100000&getType=json';
 app.get('/cctvTest', (request, response) => {
+  const testObj = [
+    { lat: 37.5432900176718, lng: 126.728080590524 },
+    { lat: 37.3588602423595, lng: 127.105206334597 },
+    { lat: 37.3816540411178, lng: 126.858749243127 }
+  ];
+  const i = 0;
+  let xx = testObj[i].lng;
+  let yy = testObj[i].lat;
+  const k = 0.0550445;
+  let minX = xx - k;
+  let maxX = xx + k;
+  let minY = yy - k;
+  let maxY = yy + k;
+
+  
+  let cctvUrlTest4 = `https://openapi.its.go.kr:9443/cctvInfo?apiKey=d81d3254072d4f96ac9338294785d036&type=ex&cctvType=1&minX=${minX}&maxX=${maxX}&minY=${minY}&maxY=${maxY}&getType=json`;
   axios({
-    url: cctvUrlTest3,
+    url: cctvUrlTest4,
     method:'get',
   }).then(function(res) {
-    let info = res.data;
-    console.log(info.response.data.length);
+    let info = res.data.response.data; //cctvList
+    // console.log(res.data);
+    console.log(info);
+    //console.log(info.length);
   })
-  const src = `http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbG0DvLODltOV34mmMKVnhkbw==`;
+  xx = testObj[1].lng;
+  yy = testObj[1].lat;
+  minX = xx - k;
+  maxX = xx + k;
+  minY = yy - k;
+  maxY = yy + k;
+
+  let cctvUrlTest5 = `https://openapi.its.go.kr:9443/cctvInfo?apiKey=d81d3254072d4f96ac9338294785d036&type=ex&cctvType=1&minX=${minX}&maxX=${maxX}&minY=${minY}&maxY=${maxY}&getType=json`;
+  axios({
+    url: cctvUrlTest5,
+    method:'get',
+  }).then(function(res) {
+    let info = res.data.response.data; //cctvList
+    // console.log(res.data);
+    console.log(info);
+    //console.log(info.length);
+  })
+  const src = `http://cctvsec.ktict.co.kr/99/Fw3TACE8OqcJS+hXblDjn0++LcsbonERrj+FjHUNtL+6NovldC0F68mgcxf4LKR6+sT9uz2Yr2CPyiPPKjVew9ITK/D54U+SNoVmLYFAJKY=`;
   const tt = testPage.test(src);
   
   const HTML = tt;

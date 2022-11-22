@@ -1,5 +1,5 @@
+const access = require('./DB/access');
 const cookie = require('cookie');
-const access = require('./DB/access')
 module.exports = {
   getLiveData : function (request, response, title) {    
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";
@@ -7,11 +7,11 @@ module.exports = {
     //     `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
     // let departrueData = access.query(request, response, 
     //     `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
-
-        const startX  = 126.787101543581;
-        const startY = 37.4528612784565; //test: 집
-        const endX = 127.107967944506;
-        const endY = 37.5457267681008;  //test: 예스24라이브홀
+   
+    const startX  = 126.787101543581;
+    const startY = 37.4528612784565; //test: 집
+    const endX = 127.105206334597;
+    const endY = 37.3588602423595;  //test: 네이버 본사
     
     return `<!DOCTYPE html>
             <html>
@@ -153,7 +153,7 @@ module.exports = {
                                                     });
                                             //JSON TYPE EDIT [E]
                                             if (cctvArr.length == 0) {
-                                                console.log("정체구간 없음");
+                                                document.cookie = "trafficJamList=null"; //정체구간 없을 시 cookie에 null 저장
                                             } else {
                                                 let cctvData = [];
                                                 let lat = 0;
@@ -168,7 +168,7 @@ module.exports = {
                                                     }                                                
                                                     cctvData.push(objj);
                                                 }                                                                                            
-                                                document.cookie = "cctvList=" + JSON.stringify(cctvData); //cctv객체 배열 쿠키에 저장
+                                               document.cookie = "trafficJamList=" + JSON.stringify(cctvData); //cctv객체 배열 쿠키에 저장                                               
                                                 
                                             }                                            
                     }

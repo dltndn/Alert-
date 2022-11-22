@@ -3,6 +3,8 @@ const getTemplate = require("./template.js");
 const xlsx = require("xlsx");
 const cookie = require('cookie');
 const access = require('./DB/access');
+const getCctvData = require('./getCctvData');
+const axios = require("axios");
 
 
 // cctv 엑셀 파일 json 데이터로 추출
@@ -49,7 +51,8 @@ const getCctvList = function (centerX, centerY) {  //return type -> arr
 };
 
 module.exports = {
-  livePage: function (request,response, title, header, cssFile) {
+  livePage: async function (request,response, title, header, cssFile) {
+    const itsAPIKEY = 'd81d3254072d4f96ac9338294785d036';
     let arriveData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
     let departrueData = access.query(request, response, 
@@ -63,27 +66,32 @@ module.exports = {
     // const departrueYPos = 37.4528612784565; //test: 집
     // const arriveXPos = 127.107967944506;
     // const arriveYPos = 37.5457267681008;  //test: 예스24라이브홀
-
-    let cctvList = [];     //정체구간 근방 cctv 데이터
+    let cctvSrcList = [];     //정체구간 근방 cctv src url데이터
     const cookies = cookie.parse(request.headers.cookie);
     if (request.headers.cookie !== undefined){
-        const jamSectionList = JSON.parse(cookies.cctvList);
-        for (let i=0; i<jamSectionList.length; i++) {
-            const lat = jamSectionList[i].lat;
-            const lng = jamSectionList[i].lng;
-            const arr = getCctvList(lng, lat);           
-            if (arr.length > 1) {
-                cctvList.concat(arr);               
-            }else if (arr.length == 1) {
-                cctvList.push(arr);               
-            }else {
-                
+        const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
+        for await(const jamSection of jamSectionList) {
+            let cenY = jamSection.lat;
+            let cenX = jamSection.lng;
+            let cctvUrl = getCctvData.getCctvUrl(itsAPIKEY, cenX, cenY);    
+            let cctvSrc = await getCctvData.getCctvSrc(cctvUrl);
+            if (cctvSrc.length > 1) {
+                for (const ob in cctvSrc) {
+                    cctvSrcList.push(cctvSrc[ob]);
+                }            
+            } else if (cctvSrc.length == 1) {
+                cctvSrcList.push(cctvSrc);
+            } else {
+                console.log("empty src list");
             }
         }
+    } else {
+        console.log("empty cookie");
     }
-    for(let i=0; i<cctvList.length; i++) { //정체구간 근방 cctv 데이터 출력 방식
-        console.log(cctvList[i][0].CCTVID);
-    }
+    await console.log("cctvSrcList : " + cctvSrcList[0].src);
+    // for(let i=0; i<cctvList.length; i++) { //정체구간 근방 cctv 데이터 출력 방식
+    //     console.log(cctvList[i][0].CCTVID);
+    // }
 
     let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
@@ -130,16 +138,7 @@ module.exports = {
         hour = Math.round(tTime);  //최종 시
         estimated_time = hour + "시간 " + min + "분"; //소요시간 string
     }
-    const openAPIkey =
-      "EOjOA8lO2JOXmhT2dR7nyMXybjrrOxMihUgHegeYa2AtkL2lPr2mDUdx27Qa3Msw"; //openData
-
-    const cctvId = "E350030";
-    const kind = "CC";
-    const cctvCh = "20";
-    const id = "null";
-
-    const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}&kind=${kind}&cctvch=${cctvCh}&id=${id}`;
-    //const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc`;
+    
     const tMapAPIKEY = "l7xx16b2283d260c4bbabae01b727e1a8b75";
     const startX = departrueXPos; //출발지 x좌표
     const startY = departrueYPos; //출발지 y좌표
@@ -162,7 +161,7 @@ module.exports = {
                     </div>
                     <div class="map_act_btn_wrap clear_box"></div>
                     <br />
-                    <embed src=${cctvUrl} class="cctv">                   
+                    <video id="video" width="500" height="500" controls></video>
                     <script type="text/javascript"> 
                     var map;
                     var markerInfo;
@@ -512,6 +511,7 @@ module.exports = {
                         resultdrawArr = [];
                     }
                 </script>
+                ${getCctvData.cctvVideoScript(cctvSrcList[0].src)}
                 </body>
             </html>
             `;
