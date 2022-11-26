@@ -1,6 +1,5 @@
 
 const getTemplate = require("./template.js");
-const xlsx = require("xlsx");
 const cookie = require('cookie');
 const access = require('./DB/access');
 const getCctvData = require('./getCctvData');
@@ -20,8 +19,8 @@ module.exports = {
     // let arriveYPos = arriveData.ypos;
     const departrueXPos  = 126.787101543581;
     const departrueYPos = 37.4528612784565; //test: 집
-    const arriveXPos = 127.107967944506;
-    const arriveYPos = 37.5457267681008;  //test: 예스24라이브홀
+    const arriveXPos = 126.728080590524;
+    const arriveYPos = 37.5432900176718;  //test: ㄱ계산역
 
     const cookies = cookie.parse(request.headers.cookie);
 
@@ -29,6 +28,7 @@ module.exports = {
     const cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
     console.log("cctvData for live" + cctvDataList);
 
+    //const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
     let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
     tTime = Math.round(tTime);
@@ -234,8 +234,11 @@ module.exports = {
                                                                         };
                                                                         // 마커 추가
                                                                         addMarkers(routeInfoObj);
+                                                                    
                                                                     }
                                                                 }//for문 [E]
+                                                                let infoObj;
+                                                                ${getCctvData.addCctvMarkers(cctvDataList)}
                                                                         
                                                         },
                                                         error : function(request, status, error) {
@@ -261,7 +264,7 @@ module.exports = {
                 
                         if (infoObj.pointType == "P") { //포인트점일때는 아이콘 크기를 줄입니다.
                             size = new Tmapv2.Size(8, 8);
-                        }
+                        } 
                 
                         marker_p = new Tmapv2.Marker({
                             position : new Tmapv2.LatLng(infoObj.lat, infoObj.lng),
@@ -446,6 +449,7 @@ module.exports = {
                         resultMarkerArr = [];
                         resultdrawArr = [];
                     }
+                    
                 </script>
                 ${getCctvData.cctvVideoScript(cctvDataList[0].src)}
                 </body>

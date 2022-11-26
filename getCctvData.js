@@ -27,7 +27,7 @@ exports.getCctvUrl = (apiKey, centerX, centerY) => { //중심좌표 근방 cctv 
 
   //중심 좌표를 기준으로 반경 500m 범위 내 cctv 목록 계산
 //   const k = 0.0050445;
-   const k = 0.0150445;
+   const k = 0.0100445;
   const minX = centerX - k;
   const maxX = centerX + k;
   const minY = centerY - k;
@@ -36,7 +36,37 @@ exports.getCctvUrl = (apiKey, centerX, centerY) => { //중심좌표 근방 cctv 
   return url;
 };
 
+exports.addCctvMarkers = (cctvDataList) => {
+    let script;
+    if (cctvDataList == undefined) {
+        return ``;
+    }
+    for (let i=0; i<cctvDataList.length; i++) {
+        let s = addMarkers(cctvDataList[i].coordx, cctvDataList[i].coordy);
+        script += s;
+    }
+    return script;
+}
+
+const addMarkers = (coordx, coordy) => {
+    const cctvIcon = "https://cdn-icons-png.flaticon.com/512/4601/4601587.png"
+    return`
+    infoObj = {
+        markerImage : "${cctvIcon}",
+        lng : ${coordx},  //127.xxx
+        lat : ${coordy},  //37.xxx
+        pointType : ""
+    };
+    // 마커 추가
+    addMarkers(infoObj);
+    `;
+}
+
+
 exports.cctvVideoScript = (src) => {
+    if (src ==undefined) {
+        return ``;
+    } else {
   return `
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
@@ -55,4 +85,5 @@ exports.cctvVideoScript = (src) => {
         });
     }
 </script>`;
+    }
 };

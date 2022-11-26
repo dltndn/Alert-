@@ -9,8 +9,8 @@ module.exports = {
    
     const startX  = 126.787101543581;
     const startY = 37.4528612784565; //test: 집
-    const endX = 127.105206334597;
-    const endY = 37.3588602423595;  //test: 네이버 본사
+    const endX = 126.728080590524;
+    const endY = 37.5432900176718;  //test: ㄱ계산역
     
     return `<!DOCTYPE html>
             <html>
@@ -27,6 +27,9 @@ module.exports = {
                     <div class="map_act_btn_wrap clear_box"></div>
                     <br />
                     <script type="text/javascript">
+                    function goToLoadingLive() {
+                        document.location.href="/loading_live";
+                    }
                     var map;
                     var markerInfo;
                     //출발지,도착지 마커
@@ -103,6 +106,7 @@ module.exports = {
                                                                         }
                 
                                                                         const arrr = drawLine(sectionInfos, trafficArr);
+                                                                        console.log(arrr);
                                                                         if (arrr.length != 0) {
                                                                             cctvArr = cctvArr.concat(arrr);                                                                            
                                                                         }                                                                                                                                                
@@ -166,9 +170,10 @@ module.exports = {
                                                         lng: lng
                                                     }                                                
                                                     cctvData.push(objj);
+                                                    console.log(objj);
                                                 }                                                                                            
                                                document.cookie = "trafficJamList=" + JSON.stringify(cctvData); //cctv객체 배열 쿠키에 저장                                               
-                                                
+                                               goToLoadingLive();
                                             }                                            
                     }
             
@@ -398,6 +403,8 @@ module.exports = {
                         resultMarkerArr = [];
                         resultdrawArr = [];
                     }
+                    
+                   
                 </script>
                 </body>
             </html>

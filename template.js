@@ -398,7 +398,7 @@ exports.funcname = (user_id, nick ,adress) => {
     const cookies = cookie.parse(request.headers.cookie);
     if (request.headers.cookie !== undefined){
       const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
-      for await(const jamSection of jamSectionList) {
+      for (const jamSection of jamSectionList) {
           let cenY = jamSection.lat;
           let cenX = jamSection.lng;
           let cctvUrl = getCctvData.getCctvUrl(itsAPIKEY, cenX, cenY);    
@@ -417,6 +417,7 @@ exports.funcname = (user_id, nick ,adress) => {
       console.log("empty cookie");
     }
     request.session.cctvDataList = cctvDataList;
+    
   }, 
   exports.cctvForm = function () {
     return``;
