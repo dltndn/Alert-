@@ -1,390 +1,99 @@
+exports.create_userLoc = function () {
+    const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
 
+    const getAdressScript = `
+    let xpos; 
+    let ypos;
 
-    //             //    document.write('<script	src="https://code.jquery.com/jquery-3.2.1.min.js"></script>')
-    //             //    document.write('<script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=l7xxe9af889efd6246dfaf8320875443feb3"></script>') 
-                    
-                
-                
-    //                 var map;
-    //                 var markerInfo;
-    //                 //출발지,도착지 마커
-    //                 var marker_s, marker_e, marker_p;
-    //                 //경로그림정보
-    //                 var drawInfoArr = [];
-    //                 var drawInfoArr2 = [];
-                
-    //                 var chktraffic = [];
-    //                 var resultdrawArr = [];
-    //                 var resultMarkerArr = [];
-    //                 const tMapAPIKEY = "l7xxe9af889efd6246dfaf8320875443feb3";
-    //                 const startX  = 126.787101543581;
-    // const startY = 37.4528612784565; //test: 집
-    // const endX = 127.107967944506;
-    // const endY = 37.5457267681008;  //test: 예스24라이브홀
-                
-    //                 function initTmap() {
+    // 우편번호 찾기 찾기 화면을 넣을 element
+    var element_wrap = document.getElementById('wrap');
 
+    var geocoder = new daum.maps.services.Geocoder();
+
+    function foldDaumPostcode() {
+        // iframe을 넣은 element를 안보이게 한다.
+        element_wrap.style.display = 'none';
+    }
+
+    function sample3_execDaumPostcode() {
+        // 현재 scroll 위치를 저장해놓는다.
+        var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
+        new daum.Postcode({
+            oncomplete: function(data) {
+                console.log(geocoder);
+                // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById("sample3_address").value = addr;
+
+                // iframe을 넣은 element를 안보이게 한다.
+                // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)
+                element_wrap.style.display = 'none';
+
+                // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
+                document.body.scrollTop = currentScroll;
+                geocoder.addressSearch(data.address, function(results, status) {
+                    // 정상적으로 검색이 완료됐으면
+                    if (status === daum.maps.services.Status.OK) {
+
+                        var result = results[0]; //첫번째 결과의 값을 활용
+                        console.log(result.road_address.x);
+                        console.log(result.road_address.y);
                         
-    //                     console.log("asdf");
-    //                     // 3. 경로탐색 API 사용요청                                                                                                   
-    //                                         var searchOption = $("#selectLevel").val();
-                
-    //                                         var trafficInfochk = "Y"; //교통 정보 표시                                            
-    //                                         let cctvArr = [];
-    //                                         //JSON TYPE EDIT [S]
-    //                                         $
-    //                                                 .ajax({
-    //                                                     type : "POST",
-    //                                                     url : "https://apis.openapi.sk.com/tmap/routes?version=1&format=json&callback=result",
-    //                                                     async : false,
-    //                                                     data : {
-    //                                                         "appKey" : tMapAPIKEY,
-    //                                                         "startX" : startX,
-    //                                                         "startY" : startY,
-    //                                                         "endX" : endX,
-    //                                                         "endY" : endY,
-    //                                                         "reqCoordType" : "WGS84GEO",
-    //                                                         "resCoordType" : "EPSG3857",
-    //                                                         "searchOption" : searchOption,
-    //                                                         "trafficInfo" : trafficInfochk
-    //                                                     },
-    //                                                     success : function(response) {
-                
-    //                                                         var resultData = response.features;  
-    //                                                         let tTime = resultData[0].properties.totalTime    
-    //                                                         // document.cookie = "totalTime=" + tTime;            //소요 시간 cookie에 임시 저장(초단위)   
-    //                                                         console.log(tTime);
-                                                            
-                                                            
+                        // xy 좌표값
+                        xpos = result.road_address.x;
+                        ypos = result.road_address.y;
+                        
+                        document.getElementById("xpos").value = xpos;
+                        document.getElementById("ypos").value = ypos;                        
+                    }
+                });
+            },
+            // 우편번호 찾기 화면 크기가 조정되었을때 실행할 코드를 작성하는 부분. iframe을 넣은 element의 높이값을 조정한다.
+            onresize : function(size) {
+                element_wrap.style.height = size.height+'px';
+            },
+            width : '100%',
+            height : '100%'
+        }).embed(element_wrap);
 
-    //                                                         localStorage.setItem('totalTime', resultData[0].properties.totalTime);   //소요 시간 로컬스토리지에 임시 저장(초단위)
-    //                                                         //localStorage.setItem('totalDistance', resultData[0].properties.totalDistance);   //총 거리 로컬스토리지에 임시 저장(m단위)
-    //                                                         //localStorage.setItem('totalFare', resultData[0].properties.totalFare);   //총 요금 로컬스토리지에 임시 저장(won단위)                                                                                                                  
-                                                            
-    //                                                             for ( var i in resultData) { //for문 [S]
-    //                                                                 var geometry = resultData[i].geometry;
-    //                                                                 var properties = resultData[i].properties;                                                                    
-                                                                    
-                                                                    
-    //                                                                 if (geometry.type == "LineString") {
-    //                                                                     //교통 정보도 담음
-    //                                                                     chktraffic
-    //                                                                             .push(geometry.traffic);
-    //                                                                     var sectionInfos = [];
-    //                                                                     var trafficArr = geometry.traffic;
-                                                                        
-                
-    //                                                                     for ( var j in geometry.coordinates) {
-    //                                                                         // 경로들의 결과값들을 포인트 객체로 변환 
-    //                                                                         var latlng = new Tmapv2.Point(
-    //                                                                                 geometry.coordinates[j][0],
-    //                                                                                 geometry.coordinates[j][1]);
-    //                                                                         // 포인트 객체를 받아 좌표값으로 변환
-    //                                                                         var convertPoint = new Tmapv2.Projection.convertEPSG3857ToWGS84GEO(
-    //                                                                                 latlng);
-                                                                                    
-    //                                                                         sectionInfos
-    //                                                                                 .push(convertPoint);
-                                                                                   
-    //                                                                     }
-                
-    //                                                                     const arrr = drawLine(sectionInfos, trafficArr);
-                                                                        
-    //                                                                     if (arrr.length != 0) {
-    //                                                                         cctvArr = cctvArr.concat(arrr);                                                                            
-    //                                                                     }                                                                                                                                                
-
-    //                                                                 } else {
-                
-    //                                                                     var markerImg = "";
-    //                                                                     var pType = "";
-                
-    //                                                                     if (properties.pointType == "S") { //출발지 마커
-    //                                                                         markerImg = "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_s.png";
-    //                                                                         pType = "S";
-    //                                                                     } else if (properties.pointType == "E") { //도착지 마커
-    //                                                                         markerImg = "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_e.png";
-    //                                                                         pType = "E";
-    //                                                                     } else { //각 포인트 마커
-    //                                                                         markerImg = "http://topopen.tmap.co.kr/imgs/point.png";
-    //                                                                         pType = "P"
-    //                                                                     }
-                
-    //                                                                     // 경로들의 결과값들을 포인트 객체로 변환 
-    //                                                                     var latlon = new Tmapv2.Point(
-    //                                                                             geometry.coordinates[0],
-    //                                                                             geometry.coordinates[1]);
-    //                                                                     // 포인트 객체를 받아 좌표값으로 다시 변환
-    //                                                                     var convertPoint = new Tmapv2.Projection.convertEPSG3857ToWGS84GEO(
-    //                                                                             latlon);
-                
-    //                                                                     var routeInfoObj = {
-    //                                                                         markerImage : markerImg,
-    //                                                                         lng : convertPoint._lng,
-    //                                                                         lat : convertPoint._lat,
-    //                                                                         pointType : pType
-    //                                                                     };
-                                                                        
-    //                                                                 }
-    //                                                             }//for문 [E]
-                                                                        
-    //                                                     },
-    //                                                     error : function(request, status, error) {
-    //                                                         console.log("code:"
-    //                                                                 + request.status +
-    //                                                                 + "message:"
-    //                                                                 + request.responseText
-    //                                                                 + "error:" + error);
-    //                                                     }
-    //                                                 });
-    //                                         //JSON TYPE EDIT [E]
-    //                                         if (cctvArr.length == 0) {
-    //                                             // document.cookie = "trafficJamList=null"; //정체구간 없을 시 cookie에 null 저장
-    //                                         } else {
-    //                                             let cctvData = [];
-    //                                             let lat = 0;
-    //                                             let lng = 0;
-    //                                             let objj = {};
-    //                                             for (let i=0; i<cctvArr.length; i++) {
-    //                                                 lat = cctvArr[i]._lat;
-    //                                                 lng = cctvArr[i]._lng;
-    //                                                 objj = {
-    //                                                     lat: lat,
-    //                                                     lng: lng
-    //                                                 }                                                
-    //                                                 cctvData.push(objj);
-                                                    
-    //                                             }                                                                                            
-    //                                         //    document.cookie = "trafficJamList=" + JSON.stringify(cctvData); //cctv객체 배열 쿠키에 저장       
-    //                                         console.log(cctvData);                                        
-                                                
-    //                                         }                                            
-    //                 }
-            
-                
-    //                 //라인그리기
-    //                 function drawLine(arrPoint, traffic) {
-    //                     var polyline_;
-    //                     let drawLineCctvArr = [];
-    //                     if (chktraffic.length != 0) {
-                
-    //                         // 교통정보 혼잡도를 체크
-    //                         // strokeColor는 교통 정보상황에 다라서 변화
-    //                         // traffic :  0-정보없음, 1-원활, 2-서행, 3-지체, 4-정체  (black, green, yellow, orange, red)
-                            
-    //                         var lineColor = "";
-                            
-    //                         if (traffic != "0") {
-    //                             if (traffic.length == 0) { //length가 0인것은 교통정보가 없으므로 검은색으로 표시
-                
-    //                                 lineColor = "#06050D";
-    //                                 //라인그리기[S]
-    //                                 polyline_ = new Tmapv2.Polyline({
-    //                                     path : arrPoint,
-    //                                     strokeColor : lineColor,
-    //                                     strokeWeight : 6,
-    //                                     map : map
-    //                                 });
-    //                                 resultdrawArr.push(polyline_);
-    //                                 //라인그리기[E]
-    //                             } else { //교통정보가 있음
-                
-    //                                 if (traffic[0][0] != 0) { //교통정보 시작인덱스가 0이 아닌경우
-    //                                     let cctvDataList = []; //정체구간 cctv 리스트 arr
-    //                                     var trafficObject = "";
-    //                                     var tInfo = [];                                        
-    //                                     for (var z = 0; z < traffic.length; z++) {
-    //                                         trafficObject = {
-    //                                             "startIndex" : traffic[z][0],
-    //                                             "endIndex" : traffic[z][1],
-    //                                             "trafficIndex" : traffic[z][2],
-    //                                         };                                
-    //                                         tInfo.push(trafficObject)
-    //                                     }
-                
-    //                                     var noInfomationPoint = [];
-                
-    //                                     for (var p = 0; p < tInfo[0].startIndex; p++) {
-    //                                         noInfomationPoint.push(arrPoint[p]);
-    //                                     }
-                
-    //                                     //라인그리기[S]
-    //                                     polyline_ = new Tmapv2.Polyline({
-    //                                         path : noInfomationPoint,
-    //                                         strokeColor : "#06050D",
-    //                                         strokeWeight : 6,
-    //                                         map : map
-    //                                     });
-                                        
-    //                                     //라인그리기[E]
-    //                                     resultdrawArr.push(polyline_);
-    //                                     let trafficIndexTem = tInfo[0].trafficIndex;  //출발지 혼잡도 값                                    
-    //                                     for (var x = 0; x < tInfo.length; x++) {
-    //                                         var sectionPoint = []; //구간선언
-                                                            
-    //                                         for (var y = tInfo[x].startIndex; y <= tInfo[x].endIndex; y++) {
-    //                                             sectionPoint.push(arrPoint[y]);
-    //                                         }
-                                            
-    //                                         if (tInfo[x].trafficIndex == 0) {
-    //                                             lineColor = "#06050D";
-    //                                             if (trafficIndexTem == 4) {                                                    
-    //                                                 cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
-    //                                                 trafficIndexTem = tInfo[x].trafficIndex;
-    //                                             }
-    //                                         } else if (tInfo[x].trafficIndex == 1) {
-    //                                             lineColor = "#61AB25";
-    //                                             if (trafficIndexTem == 4) {
-    //                                                 cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
-    //                                                 trafficIndexTem = tInfo[x].trafficIndex;
-    //                                             }
-    //                                         } else if (tInfo[x].trafficIndex == 2) {
-    //                                             lineColor = "#FFFF00";
-    //                                             if (trafficIndexTem == 4) {
-    //                                                 cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
-    //                                                 trafficIndexTem = tInfo[x].trafficIndex;
-    //                                             }
-    //                                         } else if (tInfo[x].trafficIndex == 3) {
-    //                                             lineColor = "#E87506";
-    //                                             if (trafficIndexTem == 4) {
-    //                                                 cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
-    //                                                 trafficIndexTem = tInfo[x].trafficIndex;
-    //                                             }
-    //                                         } else if (tInfo[x].trafficIndex == 4) {
-    //                                             lineColor = "#D61125";
-    //                                             if (trafficIndexTem != 4) {  
-    //                                                 cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                                                                      
-    //                                                 trafficIndexTem = tInfo[x].trafficIndex;                                                                    
-    //                                             }       
-    //                                         }                                                
-                
-    //                                         //라인그리기[S]
-    //                                         polyline_ = new Tmapv2.Polyline({
-    //                                             path : sectionPoint,
-    //                                             strokeColor : lineColor,
-    //                                             strokeWeight : 6,
-    //                                             map : map
-    //                                         });
-                                            
-    //                                         //라인그리기[E]
-    //                                         resultdrawArr.push(polyline_);  
-                                                                                
-    //                                     }                                                                                                                               
-    //                                     if (cctvDataList.length != 0) {                                    
-    //                                         drawLineCctvArr.push(cctvDataList);
-    //                                     }                                                            
-    //                                 } else { //0부터 시작하는 경우
-    //                                     let cctvDataList = []; //정체구간 cctv 리스트 arr
-    //                                     var trafficObject = "";
-    //                                     var tInfo = [];                                        
-    //                                     for (var z = 0; z < traffic.length; z++) {
-    //                                         trafficObject = {
-    //                                             "startIndex" : traffic[z][0],
-    //                                             "endIndex" : traffic[z][1],
-    //                                             "trafficIndex" : traffic[z][2],
-    //                                         };                                                 
-                                            
-    //                                         tInfo.push(trafficObject);
-    //                                     }
-    //                                     let trafficIndexTem = tInfo[0].trafficIndex;  //출발지 혼잡도 값                                        
-    //                                     for (var x = 0; x < tInfo.length; x++) {
-    //                                         var sectionPoint = []; //구간선언                                            
-    //                                         for (var y = tInfo[x].startIndex; y <= tInfo[x].endIndex; y++) {
-    //                                             sectionPoint.push(arrPoint[y]);
-    //                                         }
-                                             
-    //                                         if (tInfo[x].trafficIndex == 0) {
-    //                                             lineColor = "#06050D";
-    //                                             if (trafficIndexTem == 4) {
-    //                                                 cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
-    //                                                 trafficIndexTem = tInfo[x].trafficIndex;
-    //                                             }
-    //                                         } else if (tInfo[x].trafficIndex == 1) {
-    //                                             lineColor = "#61AB25";
-    //                                             if (trafficIndexTem == 4) {
-    //                                                 cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
-    //                                                 trafficIndexTem = tInfo[x].trafficIndex;
-    //                                             }
-    //                                         } else if (tInfo[x].trafficIndex == 2) {
-    //                                             lineColor = "#FFFF00";
-    //                                             if (trafficIndexTem == 4) {
-    //                                                 cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
-    //                                                 trafficIndexTem = tInfo[x].trafficIndex;
-    //                                             }
-    //                                         } else if (tInfo[x].trafficIndex == 3) {
-    //                                             lineColor = "#E87506";
-    //                                             if (trafficIndexTem == 4) {
-    //                                                 cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                                    
-    //                                                 trafficIndexTem = tInfo[x].trafficIndex;                                                    
-    //                                             }
-    //                                         } else if (tInfo[x].trafficIndex == 4) {
-    //                                             lineColor = "#D61125";
-    //                                             if (trafficIndexTem != 4) {  
-    //                                                 cctvDataList.push(arrPoint[tInfo[x].startIndex]);                                             
-    //                                                 trafficIndexTem = tInfo[x].trafficIndex;                                                                    
-    //                                             }                                                
-    //                                         }                                        
-                                            
-                
-    //                                         //라인그리기[S]
-    //                                         polyline_ = new Tmapv2.Polyline({
-    //                                             path : sectionPoint,
-    //                                             strokeColor : lineColor,
-    //                                             strokeWeight : 6,
-    //                                             map : map
-    //                                         });
-                                            
-    //                                         //라인그리기[E]
-    //                                         resultdrawArr.push(polyline_);                                            
-    //                                     }  
-    //                                     if (cctvDataList.length != 0) {                                            
-    //                                         drawLineCctvArr.push(cctvDataList);
-    //                                     }                             
-    //                                 }   
-    //                             }
-    //                         } else {
-                
-    //                         }
-    //                     } else {
-    //                         polyline_ = new Tmapv2.Polyline({
-    //                             path : arrPoint,
-    //                             strokeColor : "#DD0000",
-    //                             strokeWeight : 6,
-    //                             map : map
-    //                         });
-                            
-    //                         resultdrawArr.push(polyline_);
-    //                     }
-    //                     let rtrnCctvArr = [];
-    //                     if (drawLineCctvArr.length != 0) {                                                       
-    //                         for (let i=0; i<drawLineCctvArr[0].length; i++) {
-    //                             rtrnCctvArr.push(drawLineCctvArr[0][i]);
-    //                         }                            
-    //                     }                        
-    //                     return rtrnCctvArr;
-    //                 }
-                
-    //                 //초기화 기능
-    //                 function resettingMap() {
-    //                     //기존마커는 삭제
-    //                     marker_s.setMap(null);
-    //                     marker_e.setMap(null);
-                
-    //                     if (resultMarkerArr.length > 0) {
-    //                         for (var i = 0; i < resultMarkerArr.length; i++) {
-    //                             resultMarkerArr[i].setMap(null);
-    //                         }
-    //                     }
-                
-    //                     if (resultdrawArr.length > 0) {
-    //                         for (var i = 0; i < resultdrawArr.length; i++) {
-    //                             resultdrawArr[i].setMap(null);
-    //                         }
-    //                     }
-                
-    //                     chktraffic = [];
-    //                     drawInfoArr = [];
-    //                     resultMarkerArr = [];
-    //                     resultdrawArr = [];
-    //                 }
-    //                 initTmap();
+        // iframe을 넣은 element를 보이게 한다.
+        element_wrap.style.display = 'block';
+    }`;
+    return `
+    <link rel="stylesheet" type="text/css" href="./userLoc.css">
+    <div class="userLoc">
+    <input type="text" id="sample3_address" placeholder="주소">
+    <input type="button" onclick="sample3_execDaumPostcode()" value="우편번호 찾기"><br>
+    
+    <div id="wrap" style="display:none;border:1px solid;width:500px;height:300px;margin:5px 0;position:relative">
+    <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnFoldWrap" style="cursor:pointer;position:absolute;right:0px;top:-1px;z-index:1" onclick="foldDaumPostcode()" alt="접기 버튼">
+    </div>
+    
+          <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+          <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
+          <script>${getAdressScript}</script>
+      <form action="create_userloc_process" method="post">
+        
+        <input type="hidden" id="adresss" name="adress" >
+        <input type="hidden" id="xpos" name="xpos" >
+        <input type="hidden" id="ypos" name="ypos" >
+        <p>지역 별명 : <input type="text" name="location_nickname" ></p> 
+        <p><input type="submit" value="확인"></p>
+      </form>
+      <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnFoldWrap" style="cursor:pointer;position:absolute;right:0px;top:-1px;z-index:1" onclick="foldDaumPostcode()" alt="접기 버튼">
+    </div>
+    `;
+  }

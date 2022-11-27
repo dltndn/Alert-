@@ -27,17 +27,17 @@ exports.header = (statusbar = "알람이 없습니다.", loginOrLogout="login", 
   return `
           ${script}
           <link rel="stylesheet" type="text/css" href="./header.css">
-          <div class="header_background">
-            <div class="headerTop">
-              <div class="statusbar">${statusbar}</div>
-              <button class="login_button" onclick="showPopup()" >${text}</button>
+            <div class="header_background">
+              <div class="headerTop">
+                <div class="statusbar">${statusbar}</div>
+                <button class="login_button" onclick="showPopup()" >${text}</button>
+              </div>
+              <ul>
+                <li><a href="/profile">프로필 페에지</a></li>
+                <li><a href="/alarm">알람 페에지</a></li>
+                <li><a href="/live">실시간 페에지</a></li>
+              </ul>
             </div>
-            <ul>
-              <li><a href="/profile">프로필 페에지</a></li>
-              <li><a href="/alarm">알람 페에지</a></li>
-              <li><a href="/live">실시간 페에지</a></li>
-            </ul>
-          </div>
           `;
 },
 
@@ -214,80 +214,101 @@ exports.funcname = (user_id, nick ,adress) => {
     const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
 
     const getAdressScript = `
-      let xpos; 
-      let ypos;
-      var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-      mapOption = {
-          center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
-          level: 5 // 지도의 확대 레벨
-      };
+    let xpos; 
+    let ypos;
 
-      //지도를 미리 생성
-      var map = new daum.maps.Map(mapContainer, mapOption);
-      //주소-좌표 변환 객체를 생성
-      var geocoder = new daum.maps.services.Geocoder();
-      //마커를 미리 생성
-      var marker = new daum.maps.Marker({
-          position: new daum.maps.LatLng(37.537187, 127.005476),
-          map: map
-      });
+    // 우편번호 찾기 찾기 화면을 넣을 element
+    var element_wrap = document.getElementById('wrap');
 
-      function sample5_execDaumPostcode() {
-          new daum.Postcode({
-              oncomplete: function(data) {
-                  var addr = data.address; // 최종 주소 변수
+    var geocoder = new daum.maps.services.Geocoder();
 
-                  
-                  // 주소 정보를 해당 필드에 넣는다.
-                  document.getElementById("sample5_address").value = addr;
-                  document.getElementById("adresss").value = addr;
-                  // 주소로 상세 정보를 검색
-                  geocoder.addressSearch(data.address, function(results, status) {
-                      // 정상적으로 검색이 완료됐으면
-                      if (status === daum.maps.services.Status.OK) {
+    function foldDaumPostcode() {
+        // iframe을 넣은 element를 안보이게 한다.
+        element_wrap.style.display = 'none';
+    }
 
-                          var result = results[0]; //첫번째 결과의 값을 활용
-                          console.log(result.road_address.x);
-                          console.log(result.road_address.y);
-                          
-                          // xy 좌표값
-                          xpos = result.road_address.x;
-                          ypos = result.road_address.y;
-                          
-                          document.getElementById("xpos").value = xpos;
-                          document.getElementById("ypos").value = ypos;
-                          // 해당 주소에 대한 좌표를 받아서
-                          var coords = new daum.maps.LatLng(result.y, result.x);
-                          // 지도를 보여준다.
-                          mapContainer.style.display = "block";
-                          map.relayout();
-                          // 지도 중심을 변경한다.
-                          map.setCenter(coords);
-                          // 마커를 결과값으로 받은 위치로 옮긴다.
-                          marker.setPosition(coords)
-                      }
-                  });
-                  
-              }
-          }).open();
-        } 
-    `;
+    function sample3_execDaumPostcode() {
+        // 현재 scroll 위치를 저장해놓는다.
+        var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
+        new daum.Postcode({
+            oncomplete: function(data) {
+                console.log(geocoder);
+                // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById("sample3_address").value = addr;
+                document.getElementById("adresss").value = addr;
+
+                // iframe을 넣은 element를 안보이게 한다.
+                // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)
+                element_wrap.style.display = 'none';
+
+                // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
+                document.body.scrollTop = currentScroll;
+                geocoder.addressSearch(data.address, function(results, status) {
+                    // 정상적으로 검색이 완료됐으면
+                    if (status === daum.maps.services.Status.OK) {
+
+                        var result = results[0]; //첫번째 결과의 값을 활용
+                        console.log(result.road_address.x);
+                        console.log(result.road_address.y);
+                        
+                        // xy 좌표값
+                        xpos = result.road_address.x;
+                        ypos = result.road_address.y;
+                        
+                        document.getElementById("xpos").value = xpos;
+                        document.getElementById("ypos").value = ypos;                        
+                    }
+                });
+            },
+            // 우편번호 찾기 화면 크기가 조정되었을때 실행할 코드를 작성하는 부분. iframe을 넣은 element의 높이값을 조정한다.
+            onresize : function(size) {
+                element_wrap.style.height = size.height+'px';
+            },
+            width : '100%',
+            height : '100%'
+        }).embed(element_wrap);
+
+        // iframe을 넣은 element를 보이게 한다.
+        element_wrap.style.display = 'block';
+    }`;
     return `
-    <input type="text" id="sample5_address" placeholder="주소">
-        <input type="button" onclick="sample5_execDaumPostcode()" value="주소 검색"><br>
-        <div id="map" style="width:300px;height:300px;margin-top:10px;display:none"></div>
-   
-        <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-        <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
-        <script>${getAdressScript}</script>
-    <form action="create_userloc_process" method="post">
-      
-      <input type="hidden" id="adresss" name="adress" >
-      <input type="hidden" id="xpos" name="xpos" >
-      <input type="hidden" id="ypos" name="ypos" >
-      <p>지역 별명 : <input type="text" name="location_nickname" ></p> 
-      <p><input type="submit" value="확인"></p>
-    </form>`;
+    <link rel="stylesheet" type="text/css" href="./userLoc.css">
+    <div class="userLoc">
+    <input type="text" id="sample3_address" placeholder="주소">
+    <input type="button" onclick="sample3_execDaumPostcode()" value="우편번호 찾기"><br>
+    
+    <div id="wrap" style="display:none;border:1px solid;width:500px;height:300px;margin:5px 0;position:relative">
+    <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnFoldWrap" style="cursor:pointer;position:absolute;right:0px;top:-1px;z-index:1" onclick="foldDaumPostcode()" alt="접기 버튼">
+    </div>
+    
+          <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+          <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
+          <script>${getAdressScript}</script>
+      <form action="create_userloc_process" method="post">
+        
+        <input type="hidden" id="adresss" name="adress" >
+        <input type="hidden" id="xpos" name="xpos" >
+        <input type="hidden" id="ypos" name="ypos" >
+        <p>지역 별명 : <input type="text" name="location_nickname" ></p> 
+        <p><input type="submit" value="확인"></p>
+      </form>
+      <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnFoldWrap" style="cursor:pointer;position:absolute;right:0px;top:-1px;z-index:1" onclick="foldDaumPostcode()" alt="접기 버튼">
+    </div>
+    `;
   },
 
   /**
