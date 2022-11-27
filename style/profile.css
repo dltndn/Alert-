@@ -1,0 +1,74 @@
+.profile {
+    display: flex;
+    flex-direction: column;
+}
+
+.table {
+    display: flex;
+    flex-direction: column;
+}
+
+.dataBox {
+    display: inline-flex;
+    vertical-align: middle;
+    margin:0.5em;
+    border: 0.5em solid rgb(245 245 245);
+    background-color: rgb(245 245 245);
+  border-radius: 1rem;
+  
+  font-size: 1.3rem;
+  font-weight: 600;
+  align-items:center;
+    width:-webkit-fill-available;
+    height:60px;
+    border-left-width: 18px;
+    margin-bottom: 0;
+}
+
+.idTemplate {
+    font-size: 2rem;
+  font-weight: 700;
+  padding-left: 2rem;
+  display: flex;
+}
+
+.title {
+    font-size: 1.3rem;
+  font-weight: 600;
+  margin-left: 25px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.nickName {
+    padding-right: 1rem;
+}
+
+.address {
+    padding-left: 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.createBtn {
+    --button-color: #ffffff;
+    --button-bg-color: #0d6efd;
+    --button-hover-bg-color: #025ce2;
+    background: var(--button-bg-color);
+    color: var(--button-color);
+    
+        font-size: 1rem;
+        font-weight: 400;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+        border-radius: 1.5em;
+        margin: auto;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+        cursor: pointer;
+        transition: 0.5s;
+    
+      width: 97%;
+      height: 40px;
+      margin-left: 7px;
+}

@@ -25,9 +25,14 @@ module.exports = {
     const cookies = cookie.parse(request.headers.cookie);
 
     //get cctv data from session
-    const cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
-    console.log("cctvData for live" + cctvDataList);
-
+    let cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
+    if (cctvDataList == undefined) {
+        cctvDataList = [];
+        let a = {
+            src : "http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbGWtUOHSErYTddpGAU31Gtog=="
+        };
+        cctvDataList.push(a);
+    }
     //const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
     let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
@@ -89,15 +94,14 @@ module.exports = {
                     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${tMapAPIKEY}"></script>
                 </head>
                 <body onload="initTmap();">
+                <link rel="stylesheet" type="text/css" href="./live.css">
                     ${header}
-                    ${getTemplate.liveForm(estimated_time,departureTime,expectTime )}
+                    ${getTemplate.liveForm(estimated_time,departureTime,expectTime)}
                    
                     <div id="map_wrap" class="map_wrap">
                         <div id="map_div"></div>
                     </div>
-                    <div class="map_act_btn_wrap clear_box"></div>
-                    <br />
-                    <video id="video" width="500" height="500" controls></video>
+                    <video id="video" class="cctvStreaming" width="500" height="500" controls></video>
                     <script type="text/javascript"> 
                     var map;
                     var markerInfo;

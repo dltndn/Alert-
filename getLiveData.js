@@ -157,6 +157,7 @@ module.exports = {
                                             //JSON TYPE EDIT [E]
                                             if (cctvArr.length == 0) {
                                                 document.cookie = "trafficJamList=null"; //정체구간 없을 시 cookie에 null 저장
+                                                goToLoadingLive();
                                             } else {
                                                 let cctvData = [];
                                                 let lat = 0;

@@ -152,15 +152,19 @@ exports.funcname = (user_id, nick ,adress) => {
     let len = nick.length;
     let nick_adress_form = ``;
     for (let i = 0; i < len; i++) {
-      nick_adress_form += `<p><div>${nick[i]}</div><div> ${adress[i]}</div></p>`;
+      nick_adress_form += `<div class="dataBox"><span class="nickName">${nick[i]}</span><span style="font-weight: 350;">|</span><span class="address">${adress[i]}</span></div>`;
     }
     return `
-      <div>
-          <p><span>${userID}</span><span>님</span></p>
-          <div>${nick_adress_form}</div>
-      </div>
-      <p><input type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'"></p>
-      <button name="edit_delete_userlocation" onClick="location.href='/edit_delete_userlocation'">수정,삭제</button>
+    <link rel="stylesheet" type="text/css" href="./profile.css">
+      <p class="idTemplate"><span>ID</span><span style="flex-grow:1;text-align: end;">${userID}</span><span style="padding-left: 1rem;">님</span></p>
+      <div class="profile">
+        <div class="table">
+            <p class="title"><span style="padding-left: 1rem;">별칭</span><span style="padding-left: 5rem;">주소</span></p>
+            ${nick_adress_form}
+        </div>
+        <input class="createBtn" type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'">
+        <button name="edit_delete_userlocation" onClick="location.href='/edit_delete_userlocation'">수정,삭제</button>
+      </div>  
   `;
   },
 
@@ -303,7 +307,7 @@ exports.funcname = (user_id, nick ,adress) => {
           <input type="hidden" id="adresss" name="adress" >
           <input type="hidden" id="xpos" name="xpos" >
           <input type="hidden" id="ypos" name="ypos" >
-          <input class="textBox" type="text" name="location_nickname" placeholder="지역별명">
+          <input class="textBox" type="text" name="location_nickname" placeholder="지역 별명">
           <input class="formSubmit" type="submit" value="확인">
         </form>
 
@@ -397,15 +401,15 @@ exports.funcname = (user_id, nick ,adress) => {
   },
 
   exports.liveForm = function (estimated_time, departure_time, expect_time) {
-    return `<form method="post">
-    <div>
+    return `
+    <div class="dataTag">
       <p>예상 소요 시간:${estimated_time}</p>
-      <div>
-        <p>출발시간:${departure_time}</p>
-        <p>도착시간:${expect_time}</p>
+      <div class="timeTag">
+        <p class="timeTagP" style="margin-right: 0.2rem;">출발시간:${departure_time}</p>
+        <p class="timeTagP" style="margin-left: 0.2rem;">도착시간:${expect_time}</p>
       </div>
     </div>
-  </form>`;
+    `;
   },
 
   exports.liveBeforeProcess = function (request, response) {
@@ -420,6 +424,9 @@ exports.funcname = (user_id, nick ,adress) => {
     const cookies = cookie.parse(request.headers.cookie);
     if (request.headers.cookie !== undefined){
       const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
+      if(jamSectionList == null) {
+        return ;
+      }
       for (const jamSection of jamSectionList) {
           let cenY = jamSection.lat;
           let cenX = jamSection.lng;

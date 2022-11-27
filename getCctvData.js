@@ -49,7 +49,10 @@ exports.addCctvMarkers = (cctvDataList) => {
 }
 
 const addMarkers = (coordx, coordy) => {
-    const cctvIcon = "https://cdn-icons-png.flaticon.com/512/4601/4601587.png"
+    const cctvIcon = "https://cdn-icons-png.flaticon.com/512/4601/4601587.png";
+    if (coordx == undefined) {
+        return ;
+    }
     return`
     infoObj = {
         markerImage : "${cctvIcon}",
@@ -64,6 +67,7 @@ const addMarkers = (coordx, coordy) => {
 
 
 exports.cctvVideoScript = (src) => {
+    console.log(src);
     if (src ==undefined) {
         return ``;
     } else {
