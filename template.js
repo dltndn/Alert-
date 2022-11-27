@@ -284,29 +284,30 @@ exports.funcname = (user_id, nick ,adress) => {
 
         // iframe을 넣은 element를 보이게 한다.
         element_wrap.style.display = 'block';
-    }`;
+    }
+    sample3_execDaumPostcode()
+    `;
     return `
     <link rel="stylesheet" type="text/css" href="./userLoc.css">
     <div class="userLoc">
-    <input type="text" id="sample3_address" placeholder="주소">
-    <input type="button" onclick="sample3_execDaumPostcode()" value="우편번호 찾기"><br>
     
-    <div id="wrap" style="display:none;border:1px solid;width:500px;height:300px;margin:5px 0;position:relative">
-    <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnFoldWrap" style="cursor:pointer;position:absolute;right:0px;top:-1px;z-index:1" onclick="foldDaumPostcode()" alt="접기 버튼">
-    </div>
-    
-          <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-          <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
-          <script>${getAdressScript}</script>
-      <form action="create_userloc_process" method="post">
+      <div id="wrap" style="display:none;border:1px solid;width:388px;height:388px;margin:5px 0;position:relative">
+      </div>
+      
+            <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+            <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
+            <script>${getAdressScript}</script>
+            <input class="textBox" type="text" id="sample3_address" placeholder="주소">
+        <form action="create_userloc_process" method="post">
+          
+          <input type="hidden" id="adresss" name="adress" >
+          <input type="hidden" id="xpos" name="xpos" >
+          <input type="hidden" id="ypos" name="ypos" >
+          <input class="textBox" type="text" name="location_nickname" placeholder="지역별명">
+          <input class="formSubmit" type="submit" value="확인">
+        </form>
+
         
-        <input type="hidden" id="adresss" name="adress" >
-        <input type="hidden" id="xpos" name="xpos" >
-        <input type="hidden" id="ypos" name="ypos" >
-        <p>지역 별명 : <input type="text" name="location_nickname" ></p> 
-        <p><input type="submit" value="확인"></p>
-      </form>
-      <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnFoldWrap" style="cursor:pointer;position:absolute;right:0px;top:-1px;z-index:1" onclick="foldDaumPostcode()" alt="접기 버튼">
     </div>
     `;
   },
