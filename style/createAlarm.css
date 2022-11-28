@@ -1,0 +1,68 @@
+#background {
+    display : flex;
+    position: fixed;
+    top: 0px;
+    backdrop-filter: blur(3px);   
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items : center;
+}
+
+#background.hide {
+    display: none;
+}
+
+.createAlarmForm {
+    text-align: center;
+    font-weight: bold;
+}
+
+.createAlarmForm input,
+.createAlarmForm button {
+    margin-top: .5em;
+    box-sizing: border-box;
+}
+
+.container * {
+    margin: auto;
+}
+
+.button {
+    --button-color: #ffffff;
+    --button-bg-color: #0d6efd;
+    --button-hover-bg-color: #025ce2;
+    background: var(--button-bg-color);
+    color: var(--button-color);   
+
+    margin-top: .5em;
+    width: 80%;
+    padding: 1em;
+    border-radius: 1.5em;
+    margin-bottom: .5em;
+}
+
+#submit {
+    --button-color: #ffffff;
+    --button-bg-color: #0d6efd;
+    --button-hover-bg-color: #025ce2;
+    background: var(--button-bg-color);
+    color: var(--button-color);    
+    margin-top: 3em;
+}
+
+.cancel {
+    --button-color:gray;
+    --button-bg-color: rgb(245, 245, 245);
+    --button-hover-bg-color: lightgray;
+    background: var(--button-bg-color);
+    color: var(--button-color);    
+    color: #0d6efd;
+}
+
+.dayCheckBox {
+    border-radius: 10000em;
+    border: 0px;
+    width: 2em;
+    height: 2em;
+}

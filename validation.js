@@ -23,7 +23,7 @@ const backEnd = require("./backendlogics")
         response.redirect("/live");
         break; 
       } else if (rows - 1 == i) {
-        response.send("<script>alert('아이디가 혹은 패스워드가 잘못 되었습니다.');window.location=\"/login\"</script>");
+        response.send("<script>alert('아이디가 혹은 패스워드가 잘못 되었습니다.');window.location=\"/\"</script>");
         break;
       }
     }
@@ -68,18 +68,17 @@ const backEnd = require("./backendlogics")
    * @returns boolean
    */
    exports.isOverTime = (alarmTime) => {
-    let browserHours = new Date().getHours(); 
-    let browserMinutes = new Date().getMinutes(); 
-    let alarmTimes = alarmTime.departure_time
-    for (let col = 0 ;col < alarmTimes.length; col++) {
-      if (alarmTimes.substring(col,col+1) === ":") {
-        let departureHour = parseInt(alarmTimes.substring(0,col)); 
-        let departureMin = parseInt(alarmTimes.substring(col+1,parseInt(alarmTimes.length + 1)))    
-        if (browserHours < departureHour) {
+    let browserTime = new Date();
+
+    for (let col = 0; col < alarmTime.departure_time.length ;col++) {
+      if (alarmTime.departure_time.substring(col,col+1) === ":") {
+        let hour = parseInt(alarmTime.departure_time.substring(0,col)); 
+        let min = parseInt(alarmTime.departure_time.substring(col+1,parseInt(alarmTime.departure_time.length + 1)))
+        if (hour * 100 + min >= browserTime.getHours() * 100 + browserTime.getMinutes()) {
+          
           return false;
-        } else if (browserHours === departureHour && browserMinutes <= departureMin) {
-          return false;
-        } else {
+        }
+        else {
           return true;
         }
       }

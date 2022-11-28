@@ -3,23 +3,43 @@ const validation = require("./validation");
 
 
 /**
- * 알람 내역을 문자열로 리턴하는 로직
+ * 사용자의 알람 내역을 렌더링하는 로직
  * @param {*} request 
  * @param {*} response 
  * @returns HTML코드
  */
  exports.getAlarmData = (request, response) => {
   const alarmData = this.parseAlarmTable(request, response)
+
   let data ="";
   
   for (let row = 0; row < alarmData.length; row++) {
+    let on_off = ""
+    if (alarmData[row].on_off == 1) on_off = 'checked';
     data += `<div>`
     data += alarmData[row].alarm_day + " "
     data += alarmData[row].departure_time + " "
     data += alarmData[row].alarm_time + " "
     data += alarmData[row].departrue_adress + " "
     data += alarmData[row].arrive_adress + " "
+    data += `<input type="checkbox" name="alarm_id" value="${alarmData[row].alarm_id}" class="alarmOnOff${alarmData[row].alarm_id}" ${on_off}>`
     data += `</div><br>`
+    data += `<form action="turnOnOffAlarm" method="post">
+              <input type="hidden" name="alarm_id" value="${alarmData[row].alarm_id}">
+              <input type="hidden" name="onOff" value="${on_off}">
+              <input type="submit" class="button${alarmData[row].alarm_id}" style="display: none;">
+            </form>`
+    data += `<script>
+              const checkBox${alarmData[row].alarm_id} = document.querySelector('.alarmOnOff${alarmData[row].alarm_id}');
+
+              checkBox${alarmData[row].alarm_id}.addEventListener('click', () => {
+                if (checkBox${alarmData[row].alarm_id}.checked) {
+                  document.querySelector('.button${alarmData[row].alarm_id}').click();
+                } else {
+                  document.querySelector('.button${alarmData[row].alarm_id}').click();
+                }
+              });
+            </script>`
   }
   return data;
 };
@@ -30,7 +50,7 @@ const validation = require("./validation");
  * @param {*} response 
  * @returns 로그인된 유저의 알람 테이블을 리턴
  */
-exports.getAlarmTable = (request, response) => {
+ exports.getAlarmTable = (request, response) => {
     let userid = request.session.userid;
     let alarmTable = access.query(request, response, `SELECT * FROM Alert.alarm where user_id = '${userid}';`);
     return  alarmTable;
@@ -40,76 +60,89 @@ exports.getAlarmTable = (request, response) => {
  * 현재시간과 비교하여 가장 가까운 알람의 데이터를 반환하는 로직
  * @param {*} request 
  * @param {*} response 
- * @returns 현재시간과 비교하여 가장 가까운 알람의 정보를 객체로 반환한다.
+ * @returns 현재시간과 비교하여 가장 가까운 알람의 정보를 객체로 리턴
  */
  exports.getNearTime = (request, response) => {
+  
+  
   let browserDate = new Date().getDay();
   // DB에서 테이블 가지고온 후 요일 문자열 비교 => 출발 시간 비교
   let alarmTable = this.getAlarmTable(request, response);
-  let rowCount = alarmTable.length
 
   let alarmList = []
 
-  // 요일 비교 - 현재 요일보다 이후 요일에 알람이 있는 경우
-  for (let row = 0; row < rowCount ;row++) {
-    for (let col = 0; col < alarmTable[row].day_of_week.length ;col++) {
-      if (browserDate < parseInt(alarmTable[row].day_of_week.substring(col,col+1))) {
-        alarmList.push(alarmTable[row])
-        break;
+  recall = (browserDate) => {
+    for (let row = 0; row < alarmTable.length ;row++) {
+      for (let col = 0; col < alarmTable[row].day_of_week.length ;col++) {
+        if (browserDate === parseInt(alarmTable[row].day_of_week.substring(col,col+1)) && alarmTable[row].on_off === 1) {
+          alarmList.push(alarmTable[row])
+          break;
+        }
       }
-      // 금일과 같은 요일인 경우 시간과 분까지 비교해주는 로직
-      else if (browserDate === parseInt(alarmTable[row].day_of_week.substring(col,col+1)) && 
-        !(validation.isOverTime(alarmTable[row]))) {
-        alarmList.push(alarmTable[row])
-        break;
-      }
-    }
+    }  
   }
-  
-  // 요일 비교 - 현재 요일보다 이후 요일이 없는 경우 (현재 요일 : 금요일, 알람 요일 : 월요일)
-  if (alarmList.length === 0) {
-    let min = 6;
-    for (let row = 0; row < rowCount; row++) {
-      if (min >= parseInt(alarmTable[row].day_of_week.substring(0, 1))) {
-        min = parseInt(alarmTable[row].day_of_week.substring(0, 1));
+
+  cleanMinTime = (alarmTimeList, alarmTimeid) => {
+    for (let index = 0; index < alarmList.length;index++) {
+      for (let col = 0; col < alarmList[index].departure_time.length ;col++) {
+        if (alarmList[index].departure_time.substring(col,col+1) === ":") {
+          let hour = parseInt(alarmList[index].departure_time.substring(0,col)); 
+          let min = parseInt(alarmList[index].departure_time.substring(col+1,parseInt(alarmList[index].departure_time.length + 1)))
+          alarmTimeList.push(hour*100 + min)
+          alarmTimeid.push(alarmList[index].alarm_id)
+          break;
+        }
       }
     }
-    for (let row = 0; row < rowCount; row++) {
-      if (min === parseInt(alarmTable[row].day_of_week.substring(0, 1))) {
-        alarmList.push(alarmTable[row]);
-      }
-    }
+    return {"alarmTimeList" : alarmTimeList, "alarmTimeid" : alarmTimeid};
   }
-  // 요일 비교 - 알람이없는 경우
-  if (alarmList.length === 0) {
-    return "등록된 알람이 없음";
+
+  findMinTime = (alarmTimeList, alarmTimeid) => {
+    let minDepartTime = Math.min.apply(null, alarmTimeList);
+    let minIndex;
+    for (let index = 0; index <alarmTimeList.length ;index++) {
+      if (minDepartTime === alarmTimeList[index]) {
+        minIndex = index;
+      }
+    }
+    return alarmTimeid[minIndex];
   }
 
   let alarmTimeList = [];
   let alarmTimeid = [];
+  
+  let minAlarmId;
+  // 초회
+  recall(browserDate);
 
-  // 필터링
-  for (let row = 0; row < alarmList.length ;row++) {
-    for (let col = 0; col < alarmList[row].departure_time.length ;col++) {
-      if (alarmList[row].departure_time.substring(col,col+1) === ":") {
-        let hour = parseInt(alarmList[row].departure_time.substring(0,col)); 
-        let min = parseInt(alarmList[row].departure_time.substring(col+1,parseInt(alarmList[row].departure_time.length + 1)))
-        alarmTimeList.push(hour*100 + min)
-        alarmTimeid.push(alarmList[row].alarm_id)
+  for (let index = 0; index < alarmList.length;index++) {
+    if (validation.isOverTime(alarmList[index])) {
+      alarmList.splice(index,1);
+      index--;
+    }
+  }
+  if (!(alarmList.length === 0)) {
+    // 최저시간찾기
+    let minTimeObject = cleanMinTime(alarmTimeList, alarmTimeid);
+    minAlarmId = findMinTime (minTimeObject.alarmTimeList, minTimeObject.alarmTimeid);
+  }
+  else if (alarmList.length === 0) {
+    // 사이클 한번 돌아야함
+    for (let day = 0; day < 9;day++) {
+      console.log(browserDate)
+      browserDate++;
+      if (browserDate === 7) browserDate = 0; 
+      recall(browserDate);
+      if (!(alarmList.length === 0)) {
+        //최저시간찾기
+        let minTimeObject = cleanMinTime(alarmTimeList, alarmTimeid);
+        minAlarmId = findMinTime (minTimeObject.alarmTimeList, minTimeObject.alarmTimeid);
         break;
       }
     }
-  }
-  
-  let departTime = Math.min.apply(null, alarmTimeList);
-  let minIndex;
-  for (let index = 0; index <alarmTimeList.length ;index++) {
-    if (departTime === alarmTimeList[index]) {
-      minIndex = index;
-    }
-  }
-  let minAlarm = alarmTimeid[minIndex];
-  return access.query(request, response, `select * from Alert.alarm where user_id = '${request.session.userid}' and alarm_id = '${minAlarm}';`)[0];
+  } 
+
+  return access.query(request, response, `select * from Alert.alarm where user_id = '${request.session.userid}' and alarm_id = '${minAlarmId}';`)[0];
 };
 
 /**
@@ -233,6 +266,7 @@ exports.parseAlarmTable = (request, response) => {
       alarm_time: alarmTable[row].alarm_time,
       departrue_adress: alarmTable[row].departrue_adress,
       arrive_adress: alarmTable[row].arrive_adress,
+      on_off : alarmTable[row].on_off
     });
   }
   return resultList;
@@ -250,7 +284,7 @@ exports.editAlarmData = (request, response) => {
   
   for (let row = 0; row < alarmData.length; row++) {
     data += `<div><form name="edit" action="/update_alarm" method="post">
-             <input type="submit" value="수정" onclic2k="check()">
+             <input type="submit" value="수정" onclick="check()">
              <input type="hidden" name="alarm_id" value="${alarmData[row].alarm_id}">
              </form>`;
     data += alarmData[row].alarm_day + " "
@@ -357,4 +391,89 @@ exports.editLocation = (request, response, formData) => {
  */
 exports.alertRedirect = (request, response, message, pageLocation) => {
   response.send(`<script>alert('${message}');window.location=\"${pageLocation}\"</script>`);
+};
+
+exports.turnOnOffAlarm = (request, response, formData) => {
+  let on_off = 1;
+  if (formData.onOff === 'checked') on_off = 0;
+  access.query(request, response, `UPDATE Alert.alarm SET on_off = '${on_off}' WHERE (alarm_id = '${formData.alarm_id}');`)
+  response.redirect('/alarm');
+};
+
+exports.sendNotification = (request, response) => {
+  let nearTime = this.getNearTime(request,response);
+  
+  const date = new Date();
+  let alertedTimeObject = {
+    "day" : date.getDay(),
+    "hour" : date.getHours(),
+    "min" : date.getMinutes()
+  }
+    return `
+    <script>
+    
+    const date = new Date();
+    let alertedTimeObject = {
+      "day" : date.getDay(),
+      "hour" : date.getHours(),
+      "min" : date.getMinutes()
+    }
+    
+    localStorage.setItem("alerted_time", JSON.stringify(alertedTimeObject))
+
+    
+    for(let col = 0; col < "${nearTime.day_of_week}".length; col++) {
+      console.log("test");
+      if (parseInt("${nearTime.day_of_week}".substring(col, col+1)) === date.getDay()){
+        
+        console.log("${nearTime.alarm_time}");
+        console.log(date.getHours()+":"+date.getMinutes());
+        if ("${nearTime.alarm_time}" === date.getHours()+":"+date.getMinutes()) {
+          console.log('test');
+        }
+
+        
+
+        setInterval(() => {
+          location.reload();
+        }, 1000 * (60 - date.getSeconds()));   
+        
+      }
+    }
+
+
+    alertNow = () => {
+      window.setTimeout(function(){notifyMe();}, 0);
+      function notifyMe() {
+        if (!("Notification" in window)) {
+          alert("This browser does not support desktop notification");
+        }
+        else if (Notification.permission === "granted") {
+          title = "Alert!";
+          body = "출발할 시간입니다.";
+          var notification = new Notification(title, {'body': body});
+          notification.onclick = (event) => {
+              event.preventDefault(); // prevent the browser from focusing the Notification's tab
+              window.open('http://localhost:3000/live', '_blank');
+          }
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+              var notification = new Notification("really");
+            }
+          });
+        }
+      }
+    }
+    
+      
+    
+
+      
+    
+
+
+
+
+    </script>`;    
 };
