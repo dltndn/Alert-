@@ -89,7 +89,8 @@ module.exports = {
             <html>
                 <head>
                     <title>${title}</title>
-                    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+                    <meta http-equiv="X-UA-Compatible" content="text/html; charset=utf-8">
+                    <meta name="viewport" content="width=device-width initial-scale=1.0">
                     <script	src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
                     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${tMapAPIKEY}"></script>
                 </head>

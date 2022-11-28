@@ -1,3 +1,7 @@
+html {
+    -webkit-locale: "ko";
+}
+
 body {
     display: flex;
     flex-direction: column;
