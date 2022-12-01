@@ -28,14 +28,14 @@ app.use('*',(request, response, next) => {
     request.arriveAdress = nearTimeObject.arrive_adress
     request.departrueAdress = nearTimeObject.departrue_adress;
     request.departureTime = nearTimeObject.departure_time;
-    console.log(request.departrueAdress , request.departTime, request.arriveAdress);  
+    console.log(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress);  
   }
   next();
 })
 
 
 app.get('/', (request, response) => {
-  let header = template.header(request,`로그인 이후 이용 가능 합니다.`);
+  let header = template.header(request,`<div class="message">로그인 이후 이용 가능 합니다.</div>`);
   if (request.session.is_logined === true){
     header = template.header(request, request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
   }

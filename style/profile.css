@@ -1,0 +1,89 @@
+.profile {
+    display: flex;
+    flex-direction: column;
+}
+
+.table {
+    display: flex;
+    flex-direction: column;
+}
+
+.dataBox {
+    display: inline-flex;
+    vertical-align: middle;
+    margin:0.5em;
+    border: 0.5em solid rgb(245 245 245);
+    background-color: rgb(245 245 245);
+  border-radius: 1rem;
+  
+  font-size: 1.3rem;
+  font-weight: 600;
+  align-items:center;
+    width:-webkit-fill-available;
+    height:60px;
+    border-left-width: 18px;
+    margin-bottom: 0;
+}
+
+.idTemplate {
+    font-size: 2rem;
+  font-weight: 700;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  display: flex;
+}
+
+.title {
+    font-size: 1.3rem;
+  font-weight: 600;
+  margin-left: 25px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.nickName {
+    padding-right: 1rem;
+}
+
+.address {
+    padding-left: 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.createBtn {
+    display: flex;
+
+    position: fixed;
+    bottom: 10rem;
+    right: 2rem;
+
+    height: 2rem;
+    border: none;
+    border-radius: 50%;
+    background: #28a745;
+    color: white;
+    padding: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0px 5px 15px gray;
+    cursor: pointer;
+    z-index:3;
+}
+
+.edit_delete_btn {
+    display: flex;
+
+    position: fixed;
+    bottom: 6rem;
+    right: 2rem;
+    
+    border: none;
+    border-radius: 50%;
+    background: #ffc107;
+    color: white;
+    padding: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0px 5px 15px gray;
+    cursor: pointer;
+    z-index:3;
+}
