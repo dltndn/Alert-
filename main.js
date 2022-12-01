@@ -1,6 +1,7 @@
 const fs = require("fs");
 const url = require("url");
 const express = require('express')
+const bodyParser = require('body-parser');
 const session = require('express-session');
 const access = require("./DB/access");
 const template = require("./template.js");
@@ -10,12 +11,8 @@ const getData = require("./getData")
 const create = require("./create");
 const livePage = require("./livePage.js");
 const backEnd = require("./backendlogics")
-const testPage = require("./testing.js");
 const app = express();
-const bodyParser = require('body-parser');
-const axios = require('axios');
 
-const testCs = require('./testing');
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -28,12 +25,16 @@ app.use(session({
 }));
 app.use('*',(request, response, next) => {
   let nearTimeObject = backEnd.getNearTime(request, response)
-  request.departTime = nearTimeObject.departure_time
-  request.arriveAdress = nearTimeObject.arrive_adress
-  request.departrueAdress = nearTimeObject.departrue_adress;
-  request.departureTime = nearTimeObject.departure_time;
+  if (nearTimeObject !== undefined) {
+    request.departTime = nearTimeObject.departure_time
+    request.arriveAdress = nearTimeObject.arrive_adress
+    request.departrueAdress = nearTimeObject.departrue_adress;
+    request.departureTime = nearTimeObject.departure_time;
+    console.log(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress);  
+  }
   next();
 })
+
 
 app.get('/', (request, response) => {
   fs.readFile("./style/images/map.svg", (err, img)=>{
@@ -64,12 +65,13 @@ app.get("/logout_process", (request, response) => {
 });
 app.get("/signUp", (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
-  fs.readFile(`DATA/${pathname}`, "utf-8", (err, body) => {
+  
+    const body = template.register();
     const title = edit.filterURL(pathname);
-    const header = template.header("로그인 이후 이용 가능 합니다.");
+    const header = template.header(request,"로그인 이후 이용 가능 합니다.");
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
-  });
+  
 });
 app.post('/signUp_process', (request, response) => {
   let object = getData.getFormData(request, response);
@@ -90,8 +92,9 @@ app.get("/profile", (request, response) => {
     // front end part
     let user_id = request.session.userid;
     const title = edit.filterURL(pathname);
-    const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-    const body = template.funcname(user_id,nicknameList,adressList);
+    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    let body = template.funcname(user_id,nicknameList,adressList);
+    
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else
@@ -104,7 +107,7 @@ app.get('/alarm', (request, response) => {
     //backEndLogic
     let alarmData = backEnd.getAlarmData(request,response);
     // frontEndPart
-    const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
     const body = template.alarm(alarmData);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
@@ -113,7 +116,7 @@ app.get('/alarm', (request, response) => {
   }
 })
 app.get('/create_alarm', (request, response) => {
-  if (request.session.is_logined === true) {
+  //if (request.session.is_logined === true) {
     let pathname = url.parse(request.url, true).pathname;
 
     // backEndLogic
@@ -122,12 +125,12 @@ app.get('/create_alarm', (request, response) => {
 
     // frontEndPart
     const title = edit.filterURL(pathname);
-    const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
-  } else {
+  //} else {
     response.redirect("/");
-  }
+  //}
 })
 app.post('/create_alarm_process', (request, response) => {
   const alarmFomData = getData.getFormData(request,response)
@@ -140,8 +143,8 @@ app.get('/edit_delete_alarm', (request, response) => {
     //backEndLogic
     let alarmData = backEnd.editAlarmData(request,response);
     // frontEndPart
-    const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-    const body = template.alarm(alarmData);
+    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const body = template.editAlarm(alarmData);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
@@ -157,7 +160,7 @@ app.post('/update_alarm', (request, response) => {
 
     // frontEndPart
     const title = edit.filterURL(pathname);
-    const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
@@ -182,6 +185,10 @@ app.post('/delete_alarm_process', (request, response) => {
   } else {
     response.redirect("/");
   }
+})
+app.post("/turnOnOffAlarm", (request, response) => {
+  let formData = getData.getFormData(request, response);
+  backEnd.turnOnOffAlarm(request, response, formData);
 })
 app.get('/create_userloc', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
@@ -217,7 +224,7 @@ app.get("/edit_delete_userlocation", (request, response) => {
     // front end part
     let user_id = request.session.userid;
     const title = edit.filterURL(pathname);
-    const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
     const body = template.edit_delete_userlocation(user_id,nicknameList,adressList);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
@@ -271,15 +278,10 @@ app.get('/loading_live', async (request, response) => {
   response.redirect("/live");
 })
 app.get('/live_before_process', (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
   console.log("passed live_before_process");
-  const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
   const HTML = template.liveBeforeProcess(request,response);
   response.end(HTML);
 })
-let cctvUrlTest = 'http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc';
-let cctvUrlTest2 = 'https://openapi.its.go.kr:9443/cctvInfo?d81d3254072d4f96ac9338294785d036=test';
-let cctvUrlTest3 = 'https://openapi.its.go.kr:9443/cctvInfo?apiKey=d81d3254072d4f96ac9338294785d036&type=ex&cctvType=1&minX=127.100000&maxX=128.890000&minY=34.100000&maxY=39.100000&getType=json';
 app.get('/cctvTab', (request, response) => {
   const HTML = template.cctvTabForm(request);
   response.send(HTML);

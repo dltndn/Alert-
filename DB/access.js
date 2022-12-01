@@ -50,8 +50,8 @@ exports.insertQuery = (request, response, query) => {
  */
 exports.insertAlarmData = (request, response, dayOfWeek, departureTime, alarmTime, departrueAdress, arriveAdress) => {
   this.insertQuery(request, response, 
-    `INSERT INTO Alert.alarm (user_id, day_of_week, departure_time, alarm_time, departrue_adress, arrive_adress) 
-     VALUES ('${request.session.userid}', '${dayOfWeek}', '${departureTime}', '${alarmTime}', '${departrueAdress}', '${arriveAdress}');`)
+    `INSERT INTO Alert.alarm (user_id, day_of_week, departure_time, alarm_time, departrue_adress, arrive_adress, on_off) 
+     VALUES ('${request.session.userid}', '${dayOfWeek}', '${departureTime}', '${alarmTime}', '${departrueAdress}', '${arriveAdress}', 1);`)
   
   const alarmID = this.query(request, response, 
     `select Max(alarm_id) as alarm_id from Alert.alarm where user_id = '${request.session.userid}';`)[0].alarm_id

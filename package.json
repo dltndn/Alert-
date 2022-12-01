@@ -6,7 +6,11 @@
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "mysql": "^2.18.1",
+<<<<<<< HEAD
     "request": "^2.88.2",
+=======
+    "node-notifier": "^10.0.1",
+>>>>>>> 0518ce47928a6e230681bc2cbb50139a60bbf6a2
     "sync-mysql": "^3.0.1",
     "xlsx": "^0.18.5"
   }

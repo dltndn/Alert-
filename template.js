@@ -3,131 +3,141 @@ const getCctvData = require("./getCctvData");
 const cookie = require('cookie');
 const session = require('express-session');
 
-  /**
-   * 웹 사이트의 헤더 부분 (statusbar + 링크들)
-   * @param {*} loginOrLogout 로그인과 로그아웃 링크
-   * @param {*} text 로그인과 로그아웃 텍스트
-   * @param {*} statusbar 상태바
-   * @returns 
-   */
-exports.header = (statusbar = "알람이 없습니다.", loginOrLogout="login", text="로그인") => {
+/**
+ * 웹 사이트의 헤더 부분 (statusbar + 링크들)
+ * @param {*} loginOrLogout 로그인과 로그아웃 링크
+ * @param {*} text 로그인과 로그아웃 텍스트
+ * @param {*} statusbar 상태바
+ * @returns 
+ */
+exports.header = (request, statusbar = "알람이 없습니다.", loginOrLogout="login", text="로그인") => {
+  console.log(request.session);
   if (statusbar === "undefined undefined undefined") {
     statusbar = "알람이 없습니다."
   }
-  let script = `  <script>
-  showPopup = () => {
-    const background = document.querySelector('#background');
-    background.classList.remove('hide');
-  }
-  closePopup = () => {
-    const background = document.querySelector('#background');
-    background.classList.add('hide');
-  }
+  let event;
+  let script = `  
+  <script>
+    showPopup = () => {
+      const background = document.querySelector('#background');
+      background.classList.remove('hide');
+    }
+    closePopup = () => {
+      const background = document.querySelector('#background');
+      background.classList.add('hide');
+    }
   </script>`;
+  if (request.session.is_logined === undefined) {
+    event = 'showPopup()';
+  }else{
+    event = `location.href='/logout_process'`;
+  }
   return `
           ${script}
           <link rel="stylesheet" type="text/css" href="./header.css">
-            <div class="header_background">
-              <div class="headerTop">
-                <div class="statusbar">${statusbar}</div>
-                <button class="login_button" onclick="showPopup()" >${text}</button>
-              </div>
-              <ul>
-                <li><a href="/profile">프로필 페에지</a></li>
-                <li><a href="/alarm">알람 페에지</a></li>
-                <li><a href="/live">실시간 페에지</a></li>
-              </ul>
+          <div class="header_background">
+            <div class="headerTop">
+              <div class="statusbar">${statusbar}</div>
+              <button class="login_button" onclick="${event}" >${text}</button>
             </div>
+            <ul>
+            <li><a href="/profile">프로필 페에지</a></li>
+            <li><a href="/alarm">알람 페에지</a></li>
+            <li><a href="/live">실시간 페에지</a></li>
+          </ul>
+          </div>
           `;
 },
 
-  /**
-   * 비로그인시 사용자에게 보여지는 body 부분
-   * @returns HTML 코드
-   */
-  exports.body = () => {
+/**
+ * 비로그인시 사용자에게 보여지는 body 부분
+ * @returns HTML 코드
+ */
+exports.body = () => {
+return `
+<link rel="stylesheet" type="text/css" href="./mainPageBody.css">
+<div class="icon_img"></div>
+<div class="description">
+
+  <h1>Alert!</h1>
+  <p>Alert!는 출발지와 도착지간 예상시간을<br>
+      사용자에게 미리 알려줍니다.</p>
+  <h1>기능</h1>
+  <p>Alert!는 다음 기능들을 지원 합니다.</p>
+
+  <h2>프로필</h2>
+  <p>사용자가 등록한 위치를 관리할 수 있습니다. <br>
+      이러한 위치는 알람을 등록할 때 사용됩니다.</p>
+
+  <h2>알람</h2>
+  <p>알람은 알람으로 등록, 수정, 삭제하여<br>
+      특정 시간에 사용자에게 알림을 줍니다.</p>
+
+  <h2>실시간 확인</h2>
+  <p>실시간 확인은 최적 경로와<br> 현재 교통정보와 CCTV 상황을 알려줍니다.</p>
+</div>
+<div class="details">
+  <h1>프로필 관리</h1>
+  <p>사용자가 지정한 위치의 별명을 관리합니다.</p>
+  
+  
+  <h2>알람 등록</h2>
+  <p>출발지와 도착지의 예상시간을 바로 알려줍니다.</p>
+
+
+  <h2>실시간 확인</h2>
+  <p>알람을 등록할 수 있습니다.</p>
+</div>
+<div class="stacks">
+  <h1>stacks</h1>
+</div>
+<div class="developer">
+  <div>개발자 1 정보 </div>
+  <div>개발자 2 정보 </div>
+</div>
+
+        `;
+},
+
+/**
+ * 웹 사이트의 틀을 구성하는 메서드 
+ * @param {*} title 웹 브라우저의 탭 이름 (문자열)
+ * @param {*} header 상태바와 링크 부분 (HTML 코드)
+ * @param {*} body 본문 부분 (HTML 코드)
+ * @returns HTML 코드
+ */
+  exports.HTML = (title, header, body) => {
+  let login = this.login();
   return `
-  <link rel="stylesheet" type="text/css" href="./mainPageBody.css">
-  
-  <div id="description"  class="description">
-    <h1>Alert!</h1>
-    <p>Alert!는 출발지와 도착지간 예상시간을<br>
-        사용자에게 미리 알려줍니다.</p>
-    <h1>기능</h1>
-    <p>Alert!는 다음 기능들을 지원 합니다.</p>
-
-    <h2>프로필</h2>
-    <p>사용자가 등록한 위치를 관리할 수 있습니다. <br>
-        이러한 위치는 알람을 등록할 때 사용됩니다.</p>
-
-    <h2>알람</h2>
-    <p>알람은 알람으로 등록, 수정, 삭제하여<br>
-        특정 시간에 사용자에게 알림을 줍니다.</p>
-
-    <h2>실시간 확인</h2>
-    <p>실시간 확인은 최적 경로와<br> 현재 교통정보와 CCTV 상황을 알려줍니다.</p>
-  </div>
-  <div id="details" class="details">
-    <h1>프로필 관리</h1>
-    <p>사용자가 지정한 위치의 별명을 관리합니다.</p>
-    
-    
-    <h2>알람 등록</h2>
-    <p>출발지와 도착지의 예상시간을 바로 알려줍니다.</p>
-
-
-    <h2>실시간 확인</h2>
-    <p>알람을 등록할 수 있습니다.</p>
-  </div>
-  <div id="stacks" class="stacks">
-    <h1>stacks</h1>
-  </div>
-  <div id="developer" class="developer">
-    <div>개발자 1 정보 </div>
-    <div>개발자 2 정보 </div>
-  </div>
-  
+  <!DOCTYPE html>
+  <html lang="ko">
+    <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${title}</title>
+      <link rel="icon" href="./images/icon.jpg">
+    </head>
+    <body>
+      <header>
+        ${header}
+      </header>
+      <link rel="stylesheet" type="text/css" href="./main.css">
+      <main>
+        ${body}
+      </main>
+      <div>
+        ${login}
+      </div>
+    </body>
+  </html>
           `;
 },
 
-  /**
-   * 웹 사이트의 틀을 구성하는 메서드 
-   * @param {*} title 웹 브라우저의 탭 이름 (문자열)
-   * @param {*} header 상태바와 링크 부분 (HTML 코드)
-   * @param {*} body 본문 부분 (HTML 코드)
-   * @returns HTML 코드
-   */
-   exports.HTML = (title, header, body) => {
-    let login = this.login();
-    return `
-    <!DOCTYPE html>
-    <html lang="ko">
-      <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${title}</title>
-      </head>
-      <body>
-        <header>
-          ${header}
-        </header>
-        <link rel="stylesheet" type="text/css" href="./main.css">
-        <main>
-          ${body}
-        </main>
-        <div>
-          ${login}
-        </div>
-      </body>
-    </html>
-            `;
-  },
-
-  /**
-   * 로그인 팝업
-   * @returns 로그인 팝업 HTML
-   */
+/**
+ * 로그인 팝업
+ * @returns 로그인 팝업 HTML
+ */
 exports.login = () => {
   return `
           <link rel="stylesheet" type="text/css" href="./login.css">
@@ -141,12 +151,87 @@ exports.login = () => {
                   <input class="textbox" id="password" type="password" name="PW" placeholder="PW">
                   <div><a href="http://localhost:3000/signUp" value="회원가입">회원가입</a></div>
                   <input class="button" id="submit" type="submit" value="확인" onclick="closePopup()">
-                  <input class="button" id="cancel" type="button" value="취소" onClick="location.href='/'">
+                  <input class="button" id="cancel" type="button" value="취소" onClick="location.href='/';">
               </form>
             </div>
           </div>`
 },
   
+exports.register = () => {
+  return `
+  <link rel="stylesheet" type="text/css" href="./register.css">
+  <div id="background">
+    <div class="container">
+      
+      <div class="title">회원가입</div>
+      <form class="registerForm" name="signup" action="signUp_process" method="post">
+        <div><input type="ID" id="id" class="textbox" name="ID" minlength="8" placeholder="아이디를 입력하세요" required>
+        <button class="doubleCheck" name="verification" onclick="">중복확인</button></div>
+        <input type="password" class="textbox" name="pwd" minlength="4" placeholder="패스워드를 입력해주세요" required>
+        <input type="password" class="textbox" name="contrastPwd" minlength="4" placeholder="패스워드를 입력해주세요" required>
+        <input type="submit"  id="submit" class="button" value="확인" onclick="">
+        <button name="cancel" id="cancel" class="button" onClick="location.href='/'">취소</button>
+      </form>
+    </div>
+  </div>`
+},
+  
+exports.createAlarm = () => {
+  return `
+         <form action="/create_alarm_process" method="post">
+          <input type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'">
+          
+            <input type="checkbox" name="Day_of_the_week" value="일" id="일">
+            <label for="일">일</label>
+            <input type="checkbox" name="Day_of_the_week" value="월" id="월">
+            <label for="월">월</label>
+            <input type="checkbox" name="Day_of_the_week" value="화" id="화">
+            <label for="화">화</label>
+            <input type="checkbox" name="Day_of_the_week" value="수" id="수">
+            <label for="수">수</label>
+            <input type="checkbox" name="Day_of_the_week" value="목" id="목">
+            <label for="목">목</label>
+            <input type="checkbox" name="Day_of_the_week" value="금" id="금">
+            <label for="금">금</label>
+            <input type="checkbox" name="Day_of_the_week" value="토" id="토">    
+            <label for="토">토</label>
+          
+              
+          
+            <select name="출발지">
+              <option value="">출발지 선택</option>
+              <option value="지역 1">지역 1</option>
+              <option value="지역 2">지역 2</option>
+              <option value="지역 3">지역 3</option>
+            </select>
+
+          =>
+
+            <select name="도착지">
+              <option value="">도착지 선택</option>
+              <option value="지역 1">지역 1</option>
+              <option value="지역 2">지역 2</option>
+              <option value="지역 3">지역 3</option>
+            </select>
+          
+
+          알람시간
+          <p>
+            <input type="number" name="alarm_time_hour" min="0" max="23" value="0"> : <input type="number" name="alarm_time_min" min="0" max="59" value="0">
+          </p>
+          
+          도착예정시간
+          <p>
+            <input type="number" name="depart_time_hour" min="0" max="23" value="0"> : <input type="number" name="depart_time_min" min="0" max="59" value="0">
+          </p>
+
+          <p><input type="submit" value="확인"></p>
+          <p><input type="button" value="취소" onClick="location.href='/alarm'"> </p>
+        </form>
+      </div>
+    </div>`;
+}
+
 exports.funcname = (user_id, nick ,adress) => {
     let userID = user_id;
     let len = nick.length;
@@ -324,80 +409,102 @@ exports.funcname = (user_id, nick ,adress) => {
     const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
 
     const getAdressScript = `
-      let xpos; 
-      let ypos;
-      var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-      mapOption = {
-          center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
-          level: 5 // 지도의 확대 레벨
-      };
+    let xpos; 
+    let ypos;
 
-      //지도를 미리 생성
-      var map = new daum.maps.Map(mapContainer, mapOption);
-      //주소-좌표 변환 객체를 생성
-      var geocoder = new daum.maps.services.Geocoder();
-      //마커를 미리 생성
-      var marker = new daum.maps.Marker({
-          position: new daum.maps.LatLng(37.537187, 127.005476),
-          map: map
-      });
+    // 우편번호 찾기 찾기 화면을 넣을 element
+    var element_wrap = document.getElementById('wrap');
 
-      function sample5_execDaumPostcode() {
-          new daum.Postcode({
-              oncomplete: function(data) {
-                  var addr = data.address; // 최종 주소 변수
+    var geocoder = new daum.maps.services.Geocoder();
 
-                  
-                  // 주소 정보를 해당 필드에 넣는다.
-                  document.getElementById("sample5_address").value = addr;
-                  document.getElementById("adresss").value = addr;
-                  // 주소로 상세 정보를 검색
-                  geocoder.addressSearch(data.address, function(results, status) {
-                      // 정상적으로 검색이 완료됐으면
-                      if (status === daum.maps.services.Status.OK) {
+    function foldDaumPostcode() {
+        // iframe을 넣은 element를 안보이게 한다.
+        element_wrap.style.display = 'none';
+    }
 
-                          var result = results[0]; //첫번째 결과의 값을 활용
-                          console.log(result.road_address.x);
-                          console.log(result.road_address.y);
-                          
-                          // xy 좌표값
-                          xpos = result.road_address.x;
-                          ypos = result.road_address.y;
-                          
-                          document.getElementById("xpos").value = xpos;
-                          document.getElementById("ypos").value = ypos;
-                          // 해당 주소에 대한 좌표를 받아서
-                          var coords = new daum.maps.LatLng(result.y, result.x);
-                          // 지도를 보여준다.
-                          mapContainer.style.display = "block";
-                          map.relayout();
-                          // 지도 중심을 변경한다.
-                          map.setCenter(coords);
-                          // 마커를 결과값으로 받은 위치로 옮긴다.
-                          marker.setPosition(coords)
-                      }
-                  });
-                  
-              }
-          }).open();
-        } 
+    function sample3_execDaumPostcode() {
+        // 현재 scroll 위치를 저장해놓는다.
+        var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
+        new daum.Postcode({
+            oncomplete: function(data) {
+                console.log(geocoder);
+                // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById("sample3_address").value = addr;
+                document.getElementById("adresss").value = addr;
+
+                // iframe을 넣은 element를 안보이게 한다.
+                // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)
+                element_wrap.style.display = 'none';
+
+                // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
+                document.body.scrollTop = currentScroll;
+                geocoder.addressSearch(data.address, function(results, status) {
+                    // 정상적으로 검색이 완료됐으면
+                    if (status === daum.maps.services.Status.OK) {
+
+                        var result = results[0]; //첫번째 결과의 값을 활용
+                        console.log(result.road_address.x);
+                        console.log(result.road_address.y);
+                        
+                        // xy 좌표값
+                        xpos = result.road_address.x;
+                        ypos = result.road_address.y;
+                        
+                        document.getElementById("xpos").value = xpos;
+                        document.getElementById("ypos").value = ypos;                        
+                    }
+                });
+            },
+            // 우편번호 찾기 화면 크기가 조정되었을때 실행할 코드를 작성하는 부분. iframe을 넣은 element의 높이값을 조정한다.
+            onresize : function(size) {
+                element_wrap.style.height = size.height+'px';
+            },
+            width : '100%',
+            height : '100%'
+        }).embed(element_wrap);
+
+        // iframe을 넣은 element를 보이게 한다.
+        element_wrap.style.display = 'block';
+    }
+    sample3_execDaumPostcode()
     `;
     return `
-    <input type="text" id="sample5_address" placeholder="주소">
-        <input type="button" onclick="sample5_execDaumPostcode()" value="주소 검색"><br>
-        <div id="map" style="width:300px;height:300px;margin-top:10px;display:none"></div>
-   
-        <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-        <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
-        <script>${getAdressScript}</script>
-    <form action="/update_userlocation_process" method="post">
-      <input type="hidden" name="origin" value = ${selectedRow}>
-      <input type="hidden" id="adresss" name="adress" >
-      <input type="hidden" id="xpos" name="xpos" >
-      <input type="hidden" id="ypos" name="ypos" >
-      <p>지역 별명 : <input type="text" name="location_nickname" ></p> 
-      <p><input type="submit" value="확인"></p>
-    </form>`;
+    <link rel="stylesheet" type="text/css" href="./userLoc.css">
+    <div class="userLoc">
+    
+      <div id="wrap" style="display:none;border:1px solid;width:388px;height:388px;margin:5px 0;position:relative">
+      </div>
+      
+            <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+            <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
+            <script>${getAdressScript}</script>
+            <input class="textBox" type="text" id="sample3_address" placeholder="주소">
+        <form action="create_userloc_process" method="post">
+        <input type="hidden" name="origin" value = ${selectedRow}>
+          <input type="hidden" id="adresss" name="adress" >
+          <input type="hidden" id="xpos" name="xpos" >
+          <input type="hidden" id="ypos" name="ypos" >
+          <input class="textBox" type="text" name="location_nickname" placeholder="지역 별명">
+          <input class="formSubmit" type="submit" value="확인">
+        </form>
+
+        
+    </div>
+    `;
   },
 
   exports.liveForm = function (estimated_time, departure_time, expect_time) {
@@ -449,12 +556,9 @@ exports.funcname = (user_id, nick ,adress) => {
   }, 
   exports.cctvTabForm = function (request) {
     const cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
-    console.log(cctvDataList);
     const cookies = cookie.parse(request.headers.cookie);
     let cctvArrIndex = cookies.cctvArrIndex;  //유저가 선택한 cctv데이터 배열 endIndex
     cctvArrIndex = parseInt(cctvArrIndex);
-    console.log(cctvArrIndex);
-    console.log(typeof(cctvArrIndex));
     const src = cctvDataList[cctvArrIndex].src;
     return`
     <!DOCTYPE html>
@@ -491,4 +595,8 @@ exports.funcname = (user_id, nick ,adress) => {
     </body>
     </html>
     `;
-  }
+}
+ 
+
+
+

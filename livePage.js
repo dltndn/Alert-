@@ -6,7 +6,7 @@ const getCctvData = require('./getCctvData');
 const axios = require("axios");
 
 module.exports = {
-  livePage: async function (request,response, title, header, cssFile) {
+  livePage: async function (request,response, title, header) {
     const itsAPIKEY = 'd81d3254072d4f96ac9338294785d036';
     let arriveData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];

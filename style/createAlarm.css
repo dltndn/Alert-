@@ -1,0 +1,146 @@
+#background {
+    display : flex;
+    position: fixed;
+    top: 0px;
+    backdrop-filter: blur(3px);   
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items : center;
+}
+
+#background.hide {
+    display: none;
+}
+
+.createAlarmForm {
+    text-align: center;
+    font-weight: bold;
+}
+
+.createAlarmForm input,
+.createAlarmForm button {
+    margin-top: .5em;
+    box-sizing: border-box;
+}
+
+
+
+.container * {
+    margin: auto;
+}
+
+.button {
+    --button-color: #ffffff;
+    --button-bg-color: #0d6efd;
+    --button-hover-bg-color: #025ce2;
+    background: var(--button-bg-color);
+    color: var(--button-color);   
+
+    margin-top: .5em;
+    width: 80%;
+    padding: 1em;
+    border-radius: 1.5em;
+    margin-bottom: .5em;
+}
+
+#submit {
+    --button-color: #ffffff;
+    --button-bg-color: #0d6efd;
+    --button-hover-bg-color: #025ce2;
+    background: var(--button-bg-color);
+    color: var(--button-color);    
+    margin-top: 3em;
+}
+
+.cancel {
+    --button-color:gray;
+    --button-bg-color: rgb(245, 245, 245);
+    --button-hover-bg-color: lightgray;
+    background: var(--button-bg-color);
+    color: var(--button-color);    
+    color: #0d6efd;
+}
+
+.dayCheckBox {
+    display: none;
+}
+
+.checkboxLabel {
+    display: inline-block;
+    text-align: center;
+    line-height:150%;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: .3em;
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+    border-radius: 50%;
+    color: #0d6efd;
+    background-color:  rgb(245, 245, 245);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dayCheckBox:checked + .checkboxLabel {
+    color: white;
+    background-color: #0d6efd;
+}
+
+.select_options {
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+}
+
+select 
+{
+    -o-appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+    
+.select {
+    width: 7rem;
+    height: 2rem;
+    border: 0px;
+    background: url('https://freepikpsd.com/media/2019/10/down-arrow-icon-png-7-Transparent-Images.png') calc(100% - 5px) center no-repeat;
+    background-size: 20px;
+    background-color: rgb(245, 245, 245);
+    border-radius: .5rem;
+    outline: 0 none;
+}
+.select option {
+    background: black;
+    color: #fff;
+    padding: 3px 0;
+}
+.select option:hover {
+    background: rgb(58, 58, 58)
+}
+
+input[type="number"] {
+    
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+    width: 5rem;
+    height: 2rem;
+    border: 0px;
+    background: url('https://freepikpsd.com/media/2019/10/down-arrow-icon-png-7-Transparent-Images.png') calc(100% - 5px) center no-repeat;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background-color: rgb(245, 245, 245);
+    border-radius: .5rem;
+    outline: 0 none;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    width: 2rem;
+    height: 2rem;
+    border: 0px;
+    background: url('https://freepikpsd.com/media/2019/10/down-arrow-icon-png-7-Transparent-Images.png') calc(100% - 5px) center no-repeat;
+    background-color: rgb(245, 245, 245);
+    border-radius: .5rem;
+    outline: 0 none;
+}
+

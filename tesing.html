@@ -397,3 +397,71 @@
                 </script>
                 </body>
             </html>
+<script>
+    
+
+    notifyMe = () => {
+          if (!("Notification" in window)) {
+            alert("This browser does not support desktop notification");
+          }
+          else if (Notification.permission === "granted") {
+            let title = "Alert!";
+            let body = "출발할 시간입니다.";
+            let icon = './images/main-img-1.png';
+            let sound = './sound/note.mp3';
+            
+            var notification = new Notification(title, {'body': body , 'icon' : icon});
+            var alertSount = new Audio(sound).play();
+            notification.onclick = (event) => {
+                event.preventDefault(); 
+                window.open('http://localhost:3000/live', '_blank');
+            }
+          } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(function (permission) {
+              if (permission === "granted") {
+                var notification = new Notification("really");
+              }
+            });
+          }
+        }
+     
+
+
+
+
+        
+
+
+
+
+
+
+
+
+  </script>
+
+
+<script>
+    window.setTimeout(function(){notifyMe();}, 5000);
+    function notifyMe() {
+      if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+      } 
+      else if (Notification.permission === "granted") {
+        var data = []
+        data['title'] = "notification's title";
+        data['body'] = "notification's body";
+        var notification = new Notification(data['title'], {'body': data['body']});
+        notification.onclick = (event) => {
+            event.preventDefault(); // prevent the browser from focusing the Notification's tab
+            window.open('http://www.naver.com', '_blank');
+        }
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(function (permission) {
+          if (permission === "granted") {
+            var notification = new Notification("really");
+          }
+        });
+      }
+    }
+</script>
