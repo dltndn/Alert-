@@ -23,7 +23,7 @@ exports.header = (statusbar = "알람이 없습니다.", loginOrLogout="login", 
     const background = document.querySelector('#background');
     background.classList.add('hide');
   }
-  </script>`
+  </script>`;
   return `
           ${script}
           <link rel="stylesheet" type="text/css" href="./header.css">
@@ -446,8 +446,49 @@ exports.funcname = (user_id, nick ,adress) => {
       console.log("empty cookie");
     }
     request.session.cctvDataList = cctvDataList;
-    
   }, 
-  exports.cctvForm = function () {
-    return``;
+  exports.cctvTabForm = function (request) {
+    const cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
+    console.log(cctvDataList);
+    const cookies = cookie.parse(request.headers.cookie);
+    let cctvArrIndex = cookies.cctvArrIndex;  //유저가 선택한 cctv데이터 배열 endIndex
+    cctvArrIndex = parseInt(cctvArrIndex);
+    console.log(cctvArrIndex);
+    console.log(typeof(cctvArrIndex));
+    const src = cctvDataList[cctvArrIndex].src;
+    return`
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <title>CCTV</title>
+    </head>
+    <body>
+          <link rel="stylesheet" type="text/css" href="./cctvTab.css">
+          <video id="video" class="cctvStreaming" width="auto" height="auto" controls autoplay></video>
+          <input type="button" class="closeTab" value="돌아가기" onclick="winClose()">
+          <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+          <script>
+          const video = document.getElementById('video');
+          const videoSrc = '${src}';
+      
+          if (Hls.isSupported()) {
+              const hls = new Hls();
+      
+              hls.loadSource(videoSrc);
+              hls.attachMedia(video);                    
+          } else if (video,canPlayType('application/vnd.apple.mpegurl')) {
+              video.src = videoSrc;
+              video.addEventListener('loadedmetadata', () => {
+                  video.play();
+              });
+          }
+          const winClose = () => {
+            window.open('','_self').close();
+          }
+        </script>
+    </body>
+    </html>
+    `;
   }

@@ -65,9 +65,7 @@ const addMarkers = (coordx, coordy) => {
     `;
 }
 
-
 exports.cctvVideoScript = (src) => {
-    console.log(src);
     if (src ==undefined) {
         return ``;
     } else {
@@ -88,6 +86,42 @@ exports.cctvVideoScript = (src) => {
             video.play();
         });
     }
-</script>`;
+</script>
+`;
     }
+};
+
+exports.newTabLauncher = (request) => {
+    const cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
+    let divTag ="";
+    for (let i=0; i<cctvDataList.length; i++) {
+        divTag += addSrcImg(i, cctvDataList[i].name);
+    }
+    return `
+    ${divTag}
+    <script>
+        const goCctvTab = (i) => {
+            document.cookie = "cctvArrIndex=" + (i).toString();
+            const new_window_width = 300;
+            const new_window_height = 300;
+            const positionX = ( window.screen.width / 2 ) - ( new_window_width / 2 );
+            const positionY = ( window.screen.height / 2 ) - ( new_window_height / 2 );
+            window.open(
+                "http://localhost:3000/cctvTab",
+                "cctv",
+                "width=" + new_window_width + ", height=" + new_window_height + ", top=" + positionY + ", left=" + positionX,                               
+              );
+        }
+    </script>
+    `;
+};
+
+const addSrcImg = (i, name) => {
+    const cctvImg = "https://cdn-icons-png.flaticon.com/512/4601/4601587.png";
+    return `
+    <div onclick="goCctvTab(${i})" class="cctvImgTag">
+        <img src="${cctvImg}" class="cctvIconImg">
+        ${name}
+    </div>
+    `;
 };

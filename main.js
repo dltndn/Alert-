@@ -280,53 +280,8 @@ app.get('/live_before_process', (request, response) => {
 let cctvUrlTest = 'http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=RDIm1i1mP1Dxx0uoxlV1JJFA3tBNSU2WxpUISZkIq9k0YT2FWjnDv887EHHDMxc';
 let cctvUrlTest2 = 'https://openapi.its.go.kr:9443/cctvInfo?d81d3254072d4f96ac9338294785d036=test';
 let cctvUrlTest3 = 'https://openapi.its.go.kr:9443/cctvInfo?apiKey=d81d3254072d4f96ac9338294785d036&type=ex&cctvType=1&minX=127.100000&maxX=128.890000&minY=34.100000&maxY=39.100000&getType=json';
-app.get('/cctvTest', (request, response) => {
-  const testObj = [
-    { lat: 37.5432900176718, lng: 126.728080590524 },
-    { lat: 37.3588602423595, lng: 127.105206334597 },
-    { lat: 37.3816540411178, lng: 126.858749243127 }
-  ];
-  const i = 0;
-  let xx = testObj[i].lng;
-  let yy = testObj[i].lat;
-  const k = 0.0550445;
-  let minX = xx - k;
-  let maxX = xx + k;
-  let minY = yy - k;
-  let maxY = yy + k;
-
-  
-  let cctvUrlTest4 = `https://openapi.its.go.kr:9443/cctvInfo?apiKey=d81d3254072d4f96ac9338294785d036&type=ex&cctvType=1&minX=${minX}&maxX=${maxX}&minY=${minY}&maxY=${maxY}&getType=json`;
-  axios({
-    url: cctvUrlTest4,
-    method:'get',
-  }).then(function(res) {
-    let info = res.data.response.data; //cctvList
-    // console.log(res.data);
-    console.log(info);
-    //console.log(info.length);
-  })
-  xx = testObj[1].lng;
-  yy = testObj[1].lat;
-  minX = xx - k;
-  maxX = xx + k;
-  minY = yy - k;
-  maxY = yy + k;
-
-  let cctvUrlTest5 = `https://openapi.its.go.kr:9443/cctvInfo?apiKey=d81d3254072d4f96ac9338294785d036&type=ex&cctvType=1&minX=${minX}&maxX=${maxX}&minY=${minY}&maxY=${maxY}&getType=json`;
-  axios({
-    url: cctvUrlTest5,
-    method:'get',
-  }).then(function(res) {
-    let info = res.data.response.data; //cctvList
-    // console.log(res.data);
-    console.log(info);
-    //console.log(info.length);
-  })
-  const src = `http://cctvsec.ktict.co.kr/99/Fw3TACE8OqcJS+hXblDjn0++LcsbonERrj+FjHUNtL+6NovldC0F68mgcxf4LKR6+sT9uz2Yr2CPyiPPKjVew9ITK/D54U+SNoVmLYFAJKY=`;
-  const tt = testPage.test(src);
-  
-  const HTML = tt;
+app.get('/cctvTab', (request, response) => {
+  const HTML = template.cctvTabForm(request);
   response.send(HTML);
 })
 app.use((request, response, next) => {

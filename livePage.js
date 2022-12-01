@@ -29,7 +29,10 @@ module.exports = {
     if (cctvDataList == undefined) {
         cctvDataList = [];
         let a = {
-            src : "http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbGWtUOHSErYTddpGAU31Gtog=="
+            name : "[수도권제1순환선] 성남",
+            src : "http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbGWtUOHSErYTddpGAU31Gtog==",
+            coordx : 127.12361,
+            coordy : 37.42889
         };
         cctvDataList.push(a);
     }
@@ -85,12 +88,13 @@ module.exports = {
     const startY = departrueYPos; //출발지 y좌표
     const endX = arriveXPos; //도착지 x좌표
     const endY = arriveYPos; //도착지 y좌표
+
     return `<!DOCTYPE html>
             <html>
                 <head>
                     <title>${title}</title>
                     <meta http-equiv="X-UA-Compatible" content="text/html; charset=utf-8">
-                    <meta name="viewport" content="width=device-width initial-scale=1.0">
+                    <meta name="viewport" content="width=device-width">
                     <script	src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
                     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${tMapAPIKEY}"></script>
                 </head>
@@ -98,11 +102,10 @@ module.exports = {
                 <link rel="stylesheet" type="text/css" href="./live.css">
                     ${header}
                     ${getTemplate.liveForm(estimated_time,departureTime,expectTime)}
-                   
                     <div id="map_wrap" class="map_wrap">
                         <div id="map_div"></div>
                     </div>
-                    <video id="video" class="cctvStreaming" width="500" height="500" controls></video>
+                    ${getCctvData.newTabLauncher(request)}
                     <script type="text/javascript"> 
                     var map;
                     var markerInfo;
@@ -456,7 +459,6 @@ module.exports = {
                     }
                     
                 </script>
-                ${getCctvData.cctvVideoScript(cctvDataList[0].src)}
                 </body>
             </html>
             `;

@@ -157,6 +157,8 @@ module.exports = {
                                             //JSON TYPE EDIT [E]
                                             if (cctvArr.length == 0) {
                                                 document.cookie = "trafficJamList=null"; //정체구간 없을 시 cookie에 null 저장
+                                                // const dddata = [{"lat":37.45525326987871,"lng":126.7971490103368},{"lat":37.45682526188185,"lng":126.79447143261505},{"lat":37.48557942585608,"lng":126.74785821174484},{"lat":37.543080827902216,"lng":126.73413007896661},{"lat":37.54334458503499,"lng":126.72843336927583}];
+                                                // document.cookie = "trafficJamList=" + JSON.stringify(dddata);
                                                 goToLoadingLive();
                                             } else {
                                                 let cctvData = [];

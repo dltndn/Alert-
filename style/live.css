@@ -5,7 +5,7 @@ html {
 body {
     display: flex;
     flex-direction: column;
-    width: 537px;
+    width: 100%;
 }
 
 .dataTag {
@@ -16,7 +16,7 @@ body {
     display: inline-flex;
     vertical-align: middle;
     
-  
+  width: 33rem;
   font-size: 1.5rem;
   font-weight: 700;
   align-items:center;
@@ -24,6 +24,7 @@ body {
     border-left-width: 18px;
     margin-bottom: 0;
     text-align: center;
+    padding-left: 0.5rem;
 
 }
 
@@ -57,7 +58,16 @@ body {
     margin-right: 1rem;
 }
 
+#background.hide {
+    display: none;
+}
+
 .cctvStreaming {
     margin-left: 1rem;
     margin-right: 1rem;
+}
+
+.cctvIconImg {
+    width: 5rem;
+    height: 5rem;
 }
