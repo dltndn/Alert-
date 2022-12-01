@@ -176,7 +176,6 @@ app.post('/delete_alarm_process', (request, response) => {
   if (request.session.is_logined === true) {
     const alarm_id = request.body.alarm_id;
     access.query(request, response , `DELETE FROM Alert.alarm WHERE alarm_id = '${alarm_id}';`);
-    // access.query(request, response , `DELETE FROM Alert.connect WHERE alarm_id = '${alarm_id}';`);
     response.redirect("/alarm");
   } else {
     response.redirect("/");
