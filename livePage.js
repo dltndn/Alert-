@@ -151,7 +151,7 @@ module.exports = {
                             height : "400px",
                             zoom : 11,
                             zoomControl : true,
-                            scrollwheel : false
+                            scrollwheel : true
                         });
                 
                         // 2. 시작, 도착 심볼찍기
