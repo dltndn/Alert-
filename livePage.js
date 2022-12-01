@@ -3,7 +3,6 @@ const getTemplate = require("./template.js");
 const cookie = require('cookie');
 const access = require('./DB/access');
 const getCctvData = require('./getCctvData');
-const axios = require("axios");
 
 module.exports = {
   livePage: async function (request,response, title, header) {
