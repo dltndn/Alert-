@@ -20,7 +20,7 @@ const backEnd = require("./backendlogics")
       if (ID === idList[i] & password == userDataTable[i].user_password) {
         request.session.is_logined = true;
         request.session.userid = ID;
-        response.redirect("/live");
+        response.redirect("/live_before_process");
         break; 
       } else if (rows - 1 == i) {
         response.send("<script>alert('아이디가 혹은 패스워드가 잘못 되었습니다.');window.location=\"/\"</script>");
@@ -50,7 +50,7 @@ const backEnd = require("./backendlogics")
            backEnd.alertRedirect(request, response, "사용중인 아이디 입니다.", "/signUp")
            break;
          } else if (rows - 1 == i) {
-           access.InsertQuery(request, response, `INSERT INTO Alert.user_data (user_id, user_password) VALUES ('${ID}', '${password}');`);
+           access.insertQuery(request, response, `INSERT INTO Alert.user_data (user_id, user_password) VALUES ('${ID}', '${password}');`);
            request.session.is_logined = true;
            request.session.userid = ID;
            backEnd.alertRedirect(request, response, "회원가입이 완료되었습니다.", "/profile")

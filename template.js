@@ -1,4 +1,7 @@
 const getLiveData = require("./getLiveData.js");
+const getCctvData = require("./getCctvData");
+const cookie = require('cookie');
+const session = require('express-session');
 
 /**
  * 웹 사이트의 헤더 부분 (statusbar + 링크들)
@@ -8,6 +11,7 @@ const getLiveData = require("./getLiveData.js");
  * @returns 
  */
 exports.header = (request, statusbar = "알람이 없습니다.", loginOrLogout="login", text="로그인") => {
+  console.log(request.session);
   if (statusbar === "undefined undefined undefined") {
     statusbar = "알람이 없습니다."
   }
@@ -23,7 +27,6 @@ exports.header = (request, statusbar = "알람이 없습니다.", loginOrLogout=
       background.classList.add('hide');
     }
   </script>`;
-
   if (request.session.is_logined === undefined) {
     event = 'showPopup()';
   }else{
@@ -50,10 +53,10 @@ exports.header = (request, statusbar = "알람이 없습니다.", loginOrLogout=
               <button class="login_button" onclick="${event}" >${text}</button>
             </div>
             <ul>
-              <li><a href="/profile">프로필 페에지</a></li>
-              <li><a href="/alarm">알람 페에지</a></li>
-              <li><a href="/live">실시간 페에지</a></li>
-            </ul>
+            <li><a href="/profile">프로필 페에지</a></li>
+            <li><a href="/alarm">알람 페에지</a></li>
+            <li><a href="/live_before_process">실시간 페에지</a></li>
+          </ul>
           </div>
           `;
 },
@@ -246,54 +249,61 @@ exports.funcname = (user_id, nick ,adress) => {
     let len = nick.length;
     let nick_adress_form = ``;
     for (let i = 0; i < len; i++) {
-      nick_adress_form += `<p><div>${nick[i]}</div><div> ${adress[i]}</div></p>`;
+      nick_adress_form += `<div class="dataBox"><span class="nickName">${nick[i]}</span><span style="font-weight: 350;">|</span><span class="address">${adress[i]}</span></div>`;
     }
     return `
-      <div>
-          <p><span>${userID}</span><span>님</span></p>
-          <div>${nick_adress_form}</div>
-      </div>
-      <p><input type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'"></p>
-      <button name="edit_delete_userlocation" onClick="location.href='/edit_delete_userlocation'">수정,삭제</button>
+    <link rel="stylesheet" type="text/css" href="./profile.css">
+      <p class="idTemplate"><span>ID</span><span style="flex-grow:1;text-align: end;">${userID}</span><span style="padding-left: 1rem;">님</span></p>
+      <div class="profile">
+        <div class="table">
+            <p class="title"><span style="padding-left: 1rem;">별칭</span><span style="padding-left: 5rem;">주소</span></p>
+            ${nick_adress_form}
+        </div>
+        <input class="createBtn" type="button" onClick="location.href='/create_userloc'">
+        <button name="edit_delete_userlocation" class="edit_delete_btn" onClick="location.href='/edit_delete_userlocation'"></button>
+      </div>  
   `;
   },
 
-/**
- * 사용자가 저장한 위치 정보를 수정 삭제가 가능한 HTML 코드를 반환하는 로직
- * @param {*} user_id 접속한 사용자의 세션 userid 
- * @param {*} nickList 해당되는 사용자의 위치 별명 리스트
- * @param {*} adressList 해당되는 사용자의 주소 리스트
- * @returns HTML 코드
- */
-exports.edit_delete_userlocation = (user_id, nickList ,adressList) => {
-  let userID = user_id;
-  let len = nickList.length;
-  let nick_adress_form = ``;
-  for (let i = 0; i < len; i++) {
-    nick_adress_form += `<form name="edit" action="/update_userlocation" method="post">
-                          <input type="submit" value="수정" onclick="check()">
-                          <input type="hidden" name="userlocation_row" value="${i}"></form>`;
-    nick_adress_form += `<div>${nickList[i]}</div><div> ${adressList[i]}</div>`;
-    nick_adress_form += `<form name="delete" action="/delete_userlocation_process" method="post">
-                          <input type="submit" value="삭제" onclick="check()">
-                          <input type="hidden" name="userlocation_row" value="${i}">
-                          </form><br>`;
-  }
-  return `
-    <div>
-        <p><span>${userID}</span><span>님</span></p>
-        <div>${nick_adress_form}</div>
-    </div>`;
-},
+  /**
+   * 사용자가 저장한 위치 정보를 수정 삭제가 가능한 HTML 코드를 반환하는 로직
+   * @param {*} user_id 접속한 사용자의 세션 userid 
+   * @param {*} nickList 해당되는 사용자의 위치 별명 리스트
+   * @param {*} adressList 해당되는 사용자의 주소 리스트
+   * @returns HTML 코드
+   */
+   exports.edit_delete_userlocation = (user_id, nickList ,adressList) => {
+    let userID = user_id;
+    let len = nickList.length;
+    let nick_adress_form = ``;
+    for (let i = 0; i < len; i++) {
+      nick_adress_form += `<div class="locDataBox">
+                            <form name="edit" action="/update_userlocation" method="post">
+                            <input type="submit" class="editLocBtn" value="수정" onclick="check()">
+                            <input type="hidden" name="userlocation_row" value="${i}"></form>`;
+      nick_adress_form += `<div class="adressNick">${nickList[i]}</div>`;
+      nick_adress_form += `<form name="delete" action="/delete_userlocation_process" method="post">
+                            <input type="submit" class="delLocBtn" value="삭제" onclick="check()">
+                            <input type="hidden" name="userlocation_row" value="${i}">
+                            </form>
+                            </div>`;
+    }
+    return `
+    <link rel="stylesheet" type="text/css" href="./editUserLoc.css">
+      <div class="locDataDiv">
+      <p class="idTemplate"><span>ID</span><span style="flex-grow:1;text-align: end;">${userID}</span><span style="padding-left: 1rem;">님</span></p>
+          <div>${nick_adress_form}</div>
+      </div>`;
+  },
 
 
-/**
- * 알람 틀을 제공하는 메서드
- * @param {*} alarms 일람내용 (HTML 코드)
- * @returns HTML 코드
- */
-exports.alarm = (alarms) => {
-  return `
+  /**
+   * 알람 틀을 제공하는 메서드
+   * @param {*} alarms 일람내용 (HTML 코드)
+   * @returns HTML 코드
+   */
+   exports.alarm = (alarms) => {
+    return `
   <link rel="stylesheet" type="text/css" href="./alarm.css">
   <div class="alarm_container">
   ${alarms} 
@@ -303,10 +313,9 @@ exports.alarm = (alarms) => {
     <button class="subcontrol edit_alarm" name="edit_delete_alarm" onClick="location.href='/edit_delete_alarm'"></button>
     <input type="button" class="subcontrol create_alarm" name="redirect_create_alarm" onClick="location.href='/create_alarm'">
   `;
-},
+  },
 
-
-/**
+  /**
  * 알람 틀을 제공하는 메서드
  * @param {*} alarms 일람내용 (HTML 코드)
  * @returns HTML 코드
@@ -320,42 +329,57 @@ exports.alarm = (alarms) => {
   `;
 },
   
-/**
- * 주소를 입력받을 수 있는 틀을 제공하는 메서드
- * @returns HTML 코드
- */
-exports.create_userLoc = function () {
-  const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
+  /**
+   * 주소를 입력받을 수 있는 틀을 제공하는 메서드
+   * @returns HTML 코드
+   */
+   exports.create_userLoc = function () {
+    const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
 
-  const getAdressScript = `
+    const getAdressScript = `
     let xpos; 
     let ypos;
-    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-    mapOption = {
-        center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
-        level: 5 // 지도의 확대 레벨
-    };
 
-    //지도를 미리 생성
-    var map = new daum.maps.Map(mapContainer, mapOption);
-    //주소-좌표 변환 객체를 생성
+    // 우편번호 찾기 찾기 화면을 넣을 element
+    var element_wrap = document.getElementById('wrap');
+
     var geocoder = new daum.maps.services.Geocoder();
-    //마커를 미리 생성
-    var marker = new daum.maps.Marker({
-        position: new daum.maps.LatLng(37.537187, 127.005476),
-        map: map
-    });
 
-    function sample5_execDaumPostcode() {
+    function foldDaumPostcode() {
+        // iframe을 넣은 element를 안보이게 한다.
+        element_wrap.style.display = 'none';
+    }
+
+    function sample3_execDaumPostcode() {
+        // 현재 scroll 위치를 저장해놓는다.
+        var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
         new daum.Postcode({
             oncomplete: function(data) {
-                var addr = data.address; // 최종 주소 변수
+                console.log(geocoder);
+                // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
-                
-                // 주소 정보를 해당 필드에 넣는다.
-                document.getElementById("sample5_address").value = addr;
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById("sample3_address").value = addr;
                 document.getElementById("adresss").value = addr;
-                // 주소로 상세 정보를 검색
+
+                // iframe을 넣은 element를 안보이게 한다.
+                // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)
+                element_wrap.style.display = 'none';
+
+                // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
+                document.body.scrollTop = currentScroll;
                 geocoder.addressSearch(data.address, function(results, status) {
                     // 정상적으로 검색이 완료됐으면
                     if (status === daum.maps.services.Status.OK) {
@@ -369,77 +393,99 @@ exports.create_userLoc = function () {
                         ypos = result.road_address.y;
                         
                         document.getElementById("xpos").value = xpos;
-                        document.getElementById("ypos").value = ypos;
-                        // 해당 주소에 대한 좌표를 받아서
-                        var coords = new daum.maps.LatLng(result.y, result.x);
-                        // 지도를 보여준다.
-                        mapContainer.style.display = "block";
-                        map.relayout();
-                        // 지도 중심을 변경한다.
-                        map.setCenter(coords);
-                        // 마커를 결과값으로 받은 위치로 옮긴다.
-                        marker.setPosition(coords)
+                        document.getElementById("ypos").value = ypos;                        
                     }
                 });
-                
-            }
-        }).open();
-      } 
-  `;
-  return `
-  <input type="text" id="sample5_address" placeholder="주소">
-      <input type="button" onclick="sample5_execDaumPostcode()" value="주소 검색"><br>
-      <div id="map" style="width:300px;height:300px;margin-top:10px;display:none"></div>
-  
-      <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-      <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
-      <script>${getAdressScript}</script>
-  <form action="create_userloc_process" method="post">
+            },
+            // 우편번호 찾기 화면 크기가 조정되었을때 실행할 코드를 작성하는 부분. iframe을 넣은 element의 높이값을 조정한다.
+            onresize : function(size) {
+                element_wrap.style.height = size.height+'px';
+            },
+            width : '100%',
+            height : '100%'
+        }).embed(element_wrap);
+
+        // iframe을 넣은 element를 보이게 한다.
+        element_wrap.style.display = 'block';
+    }
+    sample3_execDaumPostcode()
+    `;
+    return `
+    <link rel="stylesheet" type="text/css" href="./userLoc.css">
+    <div class="userLoc">
     
-    <input type="hidden" id="adresss" name="adress" >
-    <input type="hidden" id="xpos" name="xpos" >
-    <input type="hidden" id="ypos" name="ypos" >
-    <p>지역 별명 : <input type="text" name="location_nickname" ></p> 
-    <p><input type="submit" value="확인"></p>
-  </form>`;
-},
+      <div id="wrap" class="wrap" style="display:none;border:1px solid;width:24rem; height:28rem; position:relative">
+      </div>
+      
+            <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+            <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
+            <script>${getAdressScript}</script>
+            <input class="textBox" type="text" id="sample3_address" placeholder="주소">
+        <form action="create_userloc_process" method="post">
+          
+          <input type="hidden" id="adresss" name="adress" >
+          <input type="hidden" id="xpos" name="xpos" >
+          <input type="hidden" id="ypos" name="ypos" >
+          <input class="textBox" type="text" name="location_nickname" placeholder="지역 별명">
+          <input class="formSubmit" type="submit" value="확인">
+        </form>
 
-/**
- * 주소를 입력받을 수 있는 틀을 제공하는 메서드 (수정용)
- * @returns HTML 코드
- */
-  exports.edit_userLoc = function (selectedRow) {
-  const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
+        
+    </div>
+    `;
+  },
 
-  const getAdressScript = `
+  /**
+   * 주소를 입력받을 수 있는 틀을 제공하는 메서드 (수정용)
+   * @returns HTML 코드
+   */
+   exports.edit_userLoc = function (selectedRow) {
+    const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
+
+    const getAdressScript = `
     let xpos; 
     let ypos;
-    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-    mapOption = {
-        center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
-        level: 5 // 지도의 확대 레벨
-    };
 
-    //지도를 미리 생성
-    var map = new daum.maps.Map(mapContainer, mapOption);
-    //주소-좌표 변환 객체를 생성
+    // 우편번호 찾기 찾기 화면을 넣을 element
+    var element_wrap = document.getElementById('wrap');
+
     var geocoder = new daum.maps.services.Geocoder();
-    //마커를 미리 생성
-    var marker = new daum.maps.Marker({
-        position: new daum.maps.LatLng(37.537187, 127.005476),
-        map: map
-    });
 
-    function sample5_execDaumPostcode() {
+    function foldDaumPostcode() {
+        // iframe을 넣은 element를 안보이게 한다.
+        element_wrap.style.display = 'none';
+    }
+
+    function sample3_execDaumPostcode() {
+        // 현재 scroll 위치를 저장해놓는다.
+        var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
         new daum.Postcode({
             oncomplete: function(data) {
-                var addr = data.address; // 최종 주소 변수
+                console.log(geocoder);
+                // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
-                
-                // 주소 정보를 해당 필드에 넣는다.
-                document.getElementById("sample5_address").value = addr;
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById("sample3_address").value = addr;
                 document.getElementById("adresss").value = addr;
-                // 주소로 상세 정보를 검색
+
+                // iframe을 넣은 element를 안보이게 한다.
+                // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)
+                element_wrap.style.display = 'none';
+
+                // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
+                document.body.scrollTop = currentScroll;
                 geocoder.addressSearch(data.address, function(results, status) {
                     // 정상적으로 검색이 완료됐으면
                     if (status === daum.maps.services.Status.OK) {
@@ -453,55 +499,169 @@ exports.create_userLoc = function () {
                         ypos = result.road_address.y;
                         
                         document.getElementById("xpos").value = xpos;
-                        document.getElementById("ypos").value = ypos;
-                        // 해당 주소에 대한 좌표를 받아서
-                        var coords = new daum.maps.LatLng(result.y, result.x);
-                        // 지도를 보여준다.
-                        mapContainer.style.display = "block";
-                        map.relayout();
-                        // 지도 중심을 변경한다.
-                        map.setCenter(coords);
-                        // 마커를 결과값으로 받은 위치로 옮긴다.
-                        marker.setPosition(coords)
+                        document.getElementById("ypos").value = ypos;                        
                     }
                 });
-                
-            }
-        }).open();
-      } 
-  `;
-  return `
-  <input type="text" id="sample5_address" placeholder="주소">
-      <input type="button" onclick="sample5_execDaumPostcode()" value="주소 검색"><br>
-      <div id="map" style="width:300px;height:300px;margin-top:10px;display:none"></div>
-  
-      <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-      <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
-      <script>${getAdressScript}</script>
-  <form action="/update_userlocation_process" method="post">
-    <input type="hidden" name="origin" value = ${selectedRow}>
-    <input type="hidden" id="adresss" name="adress" >
-    <input type="hidden" id="xpos" name="xpos" >
-    <input type="hidden" id="ypos" name="ypos" >
-    <p>지역 별명 : <input type="text" name="location_nickname" ></p> 
-    <p><input type="submit" value="확인"></p>
-  </form>`;
-},
+            },
+            // 우편번호 찾기 화면 크기가 조정되었을때 실행할 코드를 작성하는 부분. iframe을 넣은 element의 높이값을 조정한다.
+            onresize : function(size) {
+                element_wrap.style.height = size.height+'px';
+            },
+            width : '100%',
+            height : '100%'
+        }).embed(element_wrap);
 
-exports.liveForm = function (estimated_time, departure_time, expect_time) {
-  return `<form method="post">
-  <div>
-    <p>예상 소요 시간:${estimated_time}</p>
-    <div>
-      <p>출발시간:${departure_time}</p>
-      <p>도착시간:${expect_time}</p>
+        // iframe을 넣은 element를 보이게 한다.
+        element_wrap.style.display = 'block';
+    }
+    sample3_execDaumPostcode()
+    `;
+    return `
+    <link rel="stylesheet" type="text/css" href="./userLoc.css">
+    <div class="userLoc">
+    
+      <div id="wrap" class="wrap" style="display:none;border:1px solid;width:24rem; height:28rem; position:relative">
+      </div>
+      
+            <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+            <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
+            <script>${getAdressScript}</script>
+            <input class="textBox" type="text" id="sample3_address" placeholder="주소">
+        <form action="create_userloc_process" method="post">
+        <input type="hidden" name="origin" value = ${selectedRow}>
+          <input type="hidden" id="adresss" name="adress" >
+          <input type="hidden" id="xpos" name="xpos" >
+          <input type="hidden" id="ypos" name="ypos" >
+          <input class="textBox" type="text" name="location_nickname" placeholder="지역 별명">
+          <input class="formSubmit" type="submit" value="확인">
+        </form>
+
+        
     </div>
-  </div>
-</form>`;
-},
+    `;
+  },
 
-exports.liveBeforeProcess = function (request, response) {
-  const title = "live_before_process";
-  const getLD = getLiveData.getLiveData(request, response, title);
-  return getLD;
+  exports.liveForm = function (estimated_time, departure_time, expect_time) {
+    return `
+    <div class="dataTag">
+      <p>예상 소요 시간:${estimated_time}</p>
+      <div class="timeTag">
+        <p class="timeTagP" style="margin-right: 0.2rem;">출발시간:${departure_time}</p>
+        <p class="timeTagP" style="margin-left: 0.2rem;">도착시간:${expect_time}</p>
+      </div>
+    </div>
+    `;
+  },
+
+  exports.liveBeforeProcess = function (request, response) {
+    const title = "live_before_process";
+    const getLD = getLiveData.getLiveData(request, response, title);
+    return getLD;
+  }, 
+  exports.loadingLive = async function (request, response) {
+    const itsAPIKEY = 'd81d3254072d4f96ac9338294785d036';
+    let cctvUrlList = [];
+    let cctvDataList = [];     //정체구간 근방 cctv src url데이터
+    const cookies = cookie.parse(request.headers.cookie);
+    if (request.headers.cookie !== undefined){
+      const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
+      if(jamSectionList == null) {
+        return ;
+      }
+      for (const jamSection of jamSectionList) {
+          let cenY = jamSection.lat;
+          let cenX = jamSection.lng;
+          let cctvUrl = getCctvData.getCctvUrl(itsAPIKEY, cenX, cenY);    
+          let cctvSrc = await getCctvData.getCctvSrc(cctvUrl);
+          if (cctvSrc.length > 1) {
+              for (const ob in cctvSrc) {
+                cctvDataList.push(cctvSrc[ob]);
+              }            
+          } else if (cctvSrc.length == 1) {
+            cctvDataList.push(cctvSrc);
+          } else {
+              console.log("empty src list");
+          }
+      }
+    } else {
+      console.log("empty cookie");
+    }
+    request.session.cctvDataList = cctvDataList;
+  }, 
+  exports.cctvTabForm = function (request) {
+    let cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
+    if (cctvDataList == undefined) {  //정체 구간 없을 시 테스트용
+      cctvDataList = [];
+      let a = {
+          name : "[수도권제1순환선] 성남",
+          src : "http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbGWtUOHSErYTddpGAU31Gtog==",
+          coordx : 127.12361,
+          coordy : 37.42889
+      };
+      let b = {
+          name : "[수도권제1순환선] 송파",
+          src : "http://cctvsec.ktict.co.kr/4/HAUIKUqV9pGO2its+ETwaTPtNnbE19Tj+PF7JJB5C4FEFDP9P3Tb4JBSW3qc7WHV2oXSICWKQoA+BITA4W35UA==",
+          coordx : 127.12944,
+          coordy : 37.475
+      };
+      let c = {
+          name : "[수도권제1순환선] 하남분기점",
+          src : "http://cctvsec.ktict.co.kr/8/m3hu1EnLHpqRRbY5OsUvXdiGh+EBUU0Lfzr32k33ORhxo4m9vzT1Dyhv8JatjJd1tDNLY3hoIAa6Nh0NTKpABQ==",
+          coordx : 127.19361,
+          coordy : 37.5325
+      };
+      let d = {
+          name : "[수도권제1순환선] 남양주",
+          src : "http://cctvsec.ktict.co.kr/12/3qY9KkqtXlmcqSUUMA0LNwObni0xgPcG4gq5sLbNb2FpdiwnvQ0AcomSs81OU72669Jf36WPAudVNOljxJlDS/1oZG9cO5iNwhDbu9KqCzY=",
+          coordx : 127.1536111,
+          coordy : 37.60222222
+      };
+      cctvDataList.push(a);
+      cctvDataList.push(b);
+      cctvDataList.push(c);
+      cctvDataList.push(d);
+  }
+    const cookies = cookie.parse(request.headers.cookie);
+    let cctvArrIndex = cookies.cctvArrIndex;  //유저가 선택한 cctv데이터 배열 endIndex
+    cctvArrIndex = parseInt(cctvArrIndex);
+    const src = cctvDataList[cctvArrIndex].src;
+    return`
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <title>CCTV</title>
+    </head>
+    <body>
+          <link rel="stylesheet" type="text/css" href="./cctvTab.css">
+          <video id="video" class="cctvStreaming" width="auto" height="auto" controls autoplay></video>
+          <input type="button" class="closeTab" value="돌아가기" onclick="winClose()">
+          <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+          <script>
+          const video = document.getElementById('video');
+          const videoSrc = '${src}';
+      
+          if (Hls.isSupported()) {
+              const hls = new Hls();
+      
+              hls.loadSource(videoSrc);
+              hls.attachMedia(video);                    
+          } else if (video,canPlayType('application/vnd.apple.mpegurl')) {
+              video.src = videoSrc;
+              video.addEventListener('loadedmetadata', () => {
+                  video.play();
+              });
+          }
+          const winClose = () => {
+            window.open('','_self').close();
+          }
+        </script>
+    </body>
+    </html>
+    `;
 }
+ 
+
+
+

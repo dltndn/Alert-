@@ -1,0 +1,96 @@
+html {
+    -webkit-locale: "ko";
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.dataTag {
+    margin-top: 103px;
+    display: flex;
+    flex-direction: column;
+
+    display: inline-flex;
+    vertical-align: middle;
+    
+  width: 39rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  align-items:center;
+    
+    border-left-width: 18px;
+    margin-bottom: 0;
+    text-align: center;
+    padding-left: 0.5rem;
+
+}
+
+.dataTag p {
+    border: 0.5em solid rgb(245 245 245);
+    background-color: rgb(245 245 245);
+  border-radius: 1rem;
+  width: -webkit-fill-available;
+  height: 100%;
+  margin-left: 1rem;
+    margin-right: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    padding: 1rem;
+}
+
+.timeTag p {
+    margin-top: 0;
+}
+
+.timeTag {
+    display: flex;
+    width: 100%;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.map_wrap {
+    width: 37rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.map_div {
+    border-radius: 1.5em;
+}
+
+#background.hide {
+    display: none;
+}
+
+.cctvStreaming {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.cctvIconImg {
+    width: 7rem;
+    height: 7rem;
+}
+
+.cctvBox {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 39rem;
+}
+
+.cctvImgTag {
+    border: 0.5em solid rgb(245 245 245);
+    background-color: rgb(245 245 245);
+    border-radius: 1rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    padding: 1rem;
+}

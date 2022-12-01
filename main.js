@@ -11,10 +11,12 @@ const getData = require("./getData")
 const create = require("./create");
 const livePage = require("./livePage.js");
 const backEnd = require("./backendlogics")
-const app = express()
+const app = express();
+
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static('/Users/gimjuyeon/Documents/Alert!/style'));
+app.use(express.static('style'));
 app.use(session({
     key: "is_logined",
     secret: "mysecret",
@@ -190,7 +192,7 @@ app.get('/create_userloc', (request, response) => {
   fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
     if (request.session.is_logined === true) {
       const title = edit.filterURL(pathname);
-      const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+      const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
       const body = template.create_userLoc();
       const HTML = template.HTML(title, header, body);
       response.send(HTML);
@@ -231,7 +233,7 @@ app.post('/update_userlocation', (request, response) => {
   fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
     if (request.session.is_logined === true) {
       const title = edit.filterURL(pathname);
-      const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+      const header = template.header(request, request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
       const body = template.edit_userLoc(request.body.userlocation_row);
       const HTML = template.HTML(title, header, body);
       response.send(HTML);
@@ -260,23 +262,26 @@ app.post('/delete_userlocation_process', (request, response) => {
     response.redirect("/");
   }
 })
-app.get('/live_before_process', (request, response) => {
+app.get('/live', async (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   const title = edit.filterURL(pathname);
-  const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-  const HTML = livePage.livePage(request, response, title, header);
+  const header = template.header(request, request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+  const HTML = await livePage.livePage(request, response, title, header);
   response.send(HTML);
 })
-app.get('/live', (request, response) => {
-  if (request.session.is_logined === true) {
-    let pathname = url.parse(request.url, true).pathname;
-    console.log("passed live_before_process");
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-    const HTML = template.liveBeforeProcess(request,response);
-    response.send(HTML);
-  } else {
-    response.redirect("/");    
-  }
+app.get('/loading_live', async (request, response) => {
+  console.log("passed loading_live");
+  await template.loadingLive(request,response);
+  response.redirect("/live");
+})
+app.get('/live_before_process', (request, response) => {
+  console.log("passed live_before_process");
+  const HTML = template.liveBeforeProcess(request,response);
+  response.end(HTML);
+})
+app.get('/cctvTab', (request, response) => {
+  const HTML = template.cctvTabForm(request);
+  response.send(HTML);
 })
 app.use((request, response, next) => {
   response.status(404).send("404 Not Found")

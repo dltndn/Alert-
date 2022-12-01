@@ -1,86 +1,62 @@
 
 const getTemplate = require("./template.js");
-const xlsx = require("xlsx");
 const cookie = require('cookie');
 const access = require('./DB/access');
-
-
-// cctv 엑셀 파일 json 데이터로 추출
-const cctvFile = xlsx.readFile("./OpenDataCCTV.xlsx");
-const sheetName = cctvFile.SheetNames[0];
-const firstSheet = cctvFile.Sheets[sheetName];
-const cctvData = xlsx.utils.sheet_to_json(firstSheet);
-const cctvDataClone = []; //x, y좌표 타입이 num으로 변경된 딕셔너리
-let obj;
-for (let i = 0; i < cctvData.length; i++) {
-  // cctv 엑셀 파일 json 데이터 x, y좌표 타입 num으로 변경
-  let x = cctvData[i].XCOORD;
-  let y = cctvData[i].YCOORD;
-  x = parseFloat(x);
-  y = parseFloat(y);
-  obj = {
-    CCTVID: cctvData[i].CCTVID,
-    XCOORD: x,
-    YCOORD: y,
-  };
-  cctvDataClone.push(obj);
-}
-
-
-const getCctvList = function (centerX, centerY) {  //return type -> arr
-  //중심 좌표를 기준으로 반경 500m 범위 내 cctv 목록 계산
-  const k = 0.0050445;
-  const minX = centerX - k;
-  const maxX = centerX + k;
-  const minY = centerY - k;
-  const maxY = centerY + k;
-  let targetCctvArr = [];
-  for (let i=0; i<cctvDataClone.length; i++) {
-    let x = cctvDataClone[i].XCOORD;
-    let y = cctvDataClone[i].YCOORD;
-    if (x > minX && x < maxX) {
-        if (y > minY && y < maxY) {
-            targetCctvArr.push(cctvDataClone[i]);
-        }
-    }
-  }
-   
-  return targetCctvArr;
-};
+const getCctvData = require('./getCctvData');
 
 module.exports = {
-  livePage: function (request,response, title, header) {
+  livePage: async function (request,response, title, header) {
+    const itsAPIKEY = 'd81d3254072d4f96ac9338294785d036';
     let arriveData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
     let departrueData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
 
-    let departrueXPos = departrueData.xpos;
-    let departrueYPos = departrueData.ypos;
-    let arriveXPos = arriveData.xpos;
-    let arriveYPos = arriveData.ypos;
+    // let departrueXPos = departrueData.xpos;
+    // let departrueYPos = departrueData.ypos;
+    // let arriveXPos = arriveData.xpos;
+    // let arriveYPos = arriveData.ypos;
+    const departrueXPos  = 126.787101543581;
+    const departrueYPos = 37.4528612784565; //test: 집
+    const arriveXPos = 126.728080590524;
+    const arriveYPos = 37.5432900176718;  //test: ㄱ계산역
 
-    let cctvList = [];     //정체구간 근방 cctv 데이터
     const cookies = cookie.parse(request.headers.cookie);
-    if (request.headers.cookie !== undefined){
-        const jamSectionList = JSON.parse(cookies.cctvList);
-        for (let i=0; i<jamSectionList.length; i++) {
-            const lat = jamSectionList[i].lat;
-            const lng = jamSectionList[i].lng;
-            const arr = getCctvList(lng, lat);           
-            if (arr.length > 1) {
-                cctvList.concat(arr);               
-            }else if (arr.length == 1) {
-                cctvList.push(arr);               
-            }else {
-                
-            }
-        }
-    }
-    for(let i=0; i<cctvList.length; i++) { //정체구간 근방 cctv 데이터 출력 방식
-        console.log(cctvList[i][0].CCTVID);
-    }
 
+    //get cctv data from session
+    let cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
+
+    if (cctvDataList == undefined) {  //정체 구간 없을 시 테스트용
+        cctvDataList = [];
+        let a = {
+            name : "[수도권제1순환선] 성남",
+            src : "http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbGWtUOHSErYTddpGAU31Gtog==",
+            coordx : 127.12361,
+            coordy : 37.42889
+        };
+        let b = {
+            name : "[수도권제1순환선] 송파",
+            src : "http://cctvsec.ktict.co.kr/4/HAUIKUqV9pGO2its+ETwaTPtNnbE19Tj+PF7JJB5C4FEFDP9P3Tb4JBSW3qc7WHV2oXSICWKQoA+BITA4W35UA==",
+            coordx : 127.12944,
+            coordy : 37.475
+        };
+        let c = {
+            name : "[수도권제1순환선] 하남분기점",
+            src : "http://cctvsec.ktict.co.kr/8/m3hu1EnLHpqRRbY5OsUvXdiGh+EBUU0Lfzr32k33ORhxo4m9vzT1Dyhv8JatjJd1tDNLY3hoIAa6Nh0NTKpABQ==",
+            coordx : 127.19361,
+            coordy : 37.5325
+        };
+        let d = {
+            name : "[수도권제1순환선] 남양주",
+            src : "http://cctvsec.ktict.co.kr/12/3qY9KkqtXlmcqSUUMA0LNwObni0xgPcG4gq5sLbNb2FpdiwnvQ0AcomSs81OU72669Jf36WPAudVNOljxJlDS/1oZG9cO5iNwhDbu9KqCzY=",
+            coordx : 127.1536111,
+            coordy : 37.60222222
+        };
+        cctvDataList.push(a);
+        cctvDataList.push(b);
+        cctvDataList.push(c);
+        cctvDataList.push(d);
+    }
     let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
     tTime = Math.round(tTime);
@@ -94,7 +70,8 @@ module.exports = {
     min = Math.round(min); //최종 분
 
     
-    let departureTime = request.departureTime;
+    //let departureTime = request.departureTime;
+    let departureTime = "8:00";
     let departureHour;
     let departureMin ;
     for (let col = 0; col < departureTime.length ;col++) {
@@ -118,13 +95,6 @@ module.exports = {
         }
     }
     let expectTime = departureHour + ":" + departureMin
-    
-
-
-    
-
-
-
     if (tTime < 1) {
         hour = 0;
         estimated_time = min + "분"; //소요시간 string
@@ -132,39 +102,33 @@ module.exports = {
         hour = Math.round(tTime);  //최종 시
         estimated_time = hour + "시간 " + min + "분"; //소요시간 string
     }
-    const openAPIkey =
-      "EOjOA8lO2JOXmhT2dR7nyMXybjrrOxMihUgHegeYa2AtkL2lPr2mDUdx27Qa3Msw"; //openData
-
-    const cctvId = "E350030";
-    const kind = "CC";
-    const cctvCh = "20";
-    const id = "null";
-
-    const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}&kind=${kind}&cctvch=${cctvCh}&id=${id}`;
+    
     const tMapAPIKEY = "l7xx16b2283d260c4bbabae01b727e1a8b75";
     const startX = departrueXPos; //출발지 x좌표
     const startY = departrueYPos; //출발지 y좌표
     const endX = arriveXPos; //도착지 x좌표
     const endY = arriveYPos; //도착지 y좌표
+
     return `<!DOCTYPE html>
             <html>
                 <head>
                     <title>${title}</title>
-                    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+                    <meta http-equiv="X-UA-Compatible" content="text/html; charset=utf-8">
+                    <meta name="viewport" content="width=device-width">
                     <script	src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
                     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${tMapAPIKEY}"></script>
                 </head>
                 <body onload="initTmap();">
+                <link rel="stylesheet" type="text/css" href="./live.css">
                     ${header}
-                    ${getTemplate.liveForm(estimated_time,departureTime,expectTime )}
-                   
+                    ${getTemplate.liveForm(estimated_time,departureTime,expectTime)}
                     <div id="map_wrap" class="map_wrap">
-                        <div id="map_div"></div>
+                        <div id="map_div" class="map_div"></div>
                     </div>
-                    <div class="map_act_btn_wrap clear_box"></div>
-                    <br />
-                    <embed src=${cctvUrl} width="320px" height="280px">
-                    <script type="text/javascript">
+                    <div class="cctvBox">
+                    ${getCctvData.newTabLauncher(request)}
+                    </div>
+                    <script type="text/javascript"> 
                     var map;
                     var markerInfo;
                     //출발지,도착지 마커
@@ -177,17 +141,17 @@ module.exports = {
                     var resultdrawArr = [];
                     var resultMarkerArr = [];
                 
-                    function initTmap() {
+                    function initTmap() {        
 
                         // 1. 지도 띄우기
                         map = new Tmapv2.Map("map_div", {
                             center : new Tmapv2.LatLng(${startY},
                                 ${startX}),
-                            width : "100%",
+                            width : "38rem",
                             height : "400px",
                             zoom : 11,
                             zoomControl : true,
-                            scrollwheel : true
+                            scrollwheel : false
                         });
                 
                         // 2. 시작, 도착 심볼찍기
@@ -300,8 +264,11 @@ module.exports = {
                                                                         };
                                                                         // 마커 추가
                                                                         addMarkers(routeInfoObj);
+                                                                    
                                                                     }
                                                                 }//for문 [E]
+                                                                let infoObj;
+                                                                ${getCctvData.addCctvMarkers(cctvDataList)}
                                                                         
                                                         },
                                                         error : function(request, status, error) {
@@ -327,7 +294,7 @@ module.exports = {
                 
                         if (infoObj.pointType == "P") { //포인트점일때는 아이콘 크기를 줄입니다.
                             size = new Tmapv2.Size(8, 8);
-                        }
+                        } 
                 
                         marker_p = new Tmapv2.Marker({
                             position : new Tmapv2.LatLng(infoObj.lat, infoObj.lng),
@@ -512,6 +479,7 @@ module.exports = {
                         resultMarkerArr = [];
                         resultdrawArr = [];
                     }
+                    
                 </script>
                 </body>
             </html>
