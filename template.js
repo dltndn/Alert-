@@ -7,9 +7,20 @@ const getLiveData = require("./getLiveData.js");
  * @param {*} statusbar 상태바
  * @returns 
  */
-exports.header = (request, statusbar = "알람이 없습니다.", loginOrLogout="login", text="로그인") => {
-  if (statusbar === "undefined undefined undefined") {
-    statusbar = "알람이 없습니다."
+exports.header = (request, departrueAdress ,departTime ,arriveAdress , loginOrLogout="login", text="로그인") => {
+  let statusbar =``;
+  if (departrueAdress === undefined) {
+    statusbar = `<div class="message">알람이 없습니다.</div>`
+  } else if (departrueAdress === "로그인 이후 이용 가능 합니다.") {
+    statusbar = `<div class="message">로그인 이후 이용 가능 합니다.</div>`
+  }
+  else {
+    statusbar = `
+    
+      <div class="depart">${departrueAdress}</div>
+      <div class="time">${departTime}</div>
+      <div class="arrive">${arriveAdress}</div>
+    `
   }
   let event;
   let script = `  
@@ -24,10 +35,26 @@ exports.header = (request, statusbar = "알람이 없습니다.", loginOrLogout=
     }
   </script>`;
 
+  
+  let statusbarform = `
+  <div class="statusbar_content">
+    <div class="depart_icon"></div>
+    ${statusbar}
+    <div class="arrive_icon"></div>
+  </div>
+  
+  `
+
+
   if (request.session.is_logined === undefined) {
     event = 'showPopup()';
+    statusbarform = statusbar;
   }else{
     event = `location.href='/logout_process'`;
+  }
+
+  if (statusbar === `<div class="message">알람이 없습니다.</div>`) {
+    statusbarform = `<div class="message">알람이 없습니다.</div>`;
   }
   return `
           ${script}
@@ -35,24 +62,16 @@ exports.header = (request, statusbar = "알람이 없습니다.", loginOrLogout=
           <div class="header_background">
             <div class="headerTop">
               <div class="statusbar">
-                <div class="statusbar_background"></div>
-
-
-                <div class="statusbar_content">
-                  <div class="depart_icon"></div>
-                  ${statusbar}
-                  <div class="arrive_icon"></div>
+                <div class="statusbar_background">
+                  ${statusbarform}
                 </div>
-
-              </div>
-              
-
               <button class="login_button" onclick="${event}" >${text}</button>
+              </div>
             </div>
             <ul>
-              <li><a href="/profile">프로필 페에지</a></li>
-              <li><a href="/alarm">알람 페에지</a></li>
-              <li><a href="/live">실시간 페에지</a></li>
+              <li><a href="/profile">프로필</a></li>
+              <li><a href="/alarm">알람</a></li>
+              <li><a href="/live">실시간</a></li>
             </ul>
           </div>
           `;
@@ -97,8 +116,16 @@ return `
   <h2>실시간 확인</h2>
   <p>알람을 등록할 수 있습니다.</p>
 </div>
-<div class="stacks">
+<div class="stackpart">
   <h1>stacks</h1>
+</div>
+<div class="stacktop">
+  <div class="stack1"><div></div></div>
+  <div class="stack2"></div>
+</div>
+<div class="stackbottom">
+  <div class="stack3"></div>
+  <div class="stack4"></div>
 </div>
 <div class="developer">
   <div>개발자 1 정보 </div>

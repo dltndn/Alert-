@@ -28,16 +28,16 @@ app.use('*',(request, response, next) => {
     request.arriveAdress = nearTimeObject.arrive_adress
     request.departrueAdress = nearTimeObject.departrue_adress;
     request.departureTime = nearTimeObject.departure_time;
-    console.log(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress);  
+    console.log(request.departrueAdress , request.departTime, request.arriveAdress);  
   }
   next();
 })
 
 
 app.get('/', (request, response) => {
-  let header = template.header(request,"로그인 이후 이용 가능 합니다.");
+  let header = template.header(request,`로그인 이후 이용 가능 합니다.`);
   if (request.session.is_logined === true){
-    header = template.header(request, request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    header = template.header(request, request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
   }
   const title = "메인페이지";
   let body = template.body();
@@ -88,7 +88,7 @@ app.get("/profile", (request, response) => {
     // front end part
     let user_id = request.session.userid;
     const title = edit.filterURL(pathname);
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
     let body = template.funcname(user_id,nicknameList,adressList);
     
     const HTML = template.HTML(title, header, body);
@@ -103,7 +103,7 @@ app.get('/alarm', (request, response) => {
     //backEndLogic
     let alarmData = backEnd.getAlarmData(request,response);
     // frontEndPart
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
     const body = template.alarm(alarmData);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
@@ -121,7 +121,7 @@ app.get('/create_alarm', (request, response) => {
 
     // frontEndPart
     const title = edit.filterURL(pathname);
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   //} else {
@@ -139,7 +139,7 @@ app.get('/edit_delete_alarm', (request, response) => {
     //backEndLogic
     let alarmData = backEnd.editAlarmData(request,response);
     // frontEndPart
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
     const body = template.editAlarm(alarmData);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
@@ -156,7 +156,7 @@ app.post('/update_alarm', (request, response) => {
 
     // frontEndPart
     const title = edit.filterURL(pathname);
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
@@ -190,7 +190,7 @@ app.get('/create_userloc', (request, response) => {
   fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
     if (request.session.is_logined === true) {
       const title = edit.filterURL(pathname);
-      const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+      const header = template.header(request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
       const body = template.create_userLoc();
       const HTML = template.HTML(title, header, body);
       response.send(HTML);
@@ -219,7 +219,7 @@ app.get("/edit_delete_userlocation", (request, response) => {
     // front end part
     let user_id = request.session.userid;
     const title = edit.filterURL(pathname);
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
     const body = template.edit_delete_userlocation(user_id,nicknameList,adressList);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
@@ -231,7 +231,7 @@ app.post('/update_userlocation', (request, response) => {
   fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
     if (request.session.is_logined === true) {
       const title = edit.filterURL(pathname);
-      const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+      const header = template.header(request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
       const body = template.edit_userLoc(request.body.userlocation_row);
       const HTML = template.HTML(title, header, body);
       response.send(HTML);
@@ -263,7 +263,7 @@ app.post('/delete_userlocation_process', (request, response) => {
 app.get('/live_before_process', (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   const title = edit.filterURL(pathname);
-  const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+  const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
   const HTML = livePage.livePage(request, response, title, header);
   response.send(HTML);
 })
@@ -271,7 +271,7 @@ app.get('/live', (request, response) => {
   if (request.session.is_logined === true) {
     let pathname = url.parse(request.url, true).pathname;
     console.log("passed live_before_process");
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
     const HTML = template.liveBeforeProcess(request,response);
     response.send(HTML);
   } else {
