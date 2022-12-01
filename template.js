@@ -259,8 +259,8 @@ exports.funcname = (user_id, nick ,adress) => {
             <p class="title"><span style="padding-left: 1rem;">별칭</span><span style="padding-left: 5rem;">주소</span></p>
             ${nick_adress_form}
         </div>
-        <input class="createBtn" type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'">
-        <button name="edit_delete_userlocation" onClick="location.href='/edit_delete_userlocation'">수정,삭제</button>
+        <input class="createBtn" type="button" onClick="location.href='/create_userloc'">
+        <button name="edit_delete_userlocation" class="edit_delete_btn" onClick="location.href='/edit_delete_userlocation'"></button>
       </div>  
   `;
   },
@@ -277,18 +277,21 @@ exports.funcname = (user_id, nick ,adress) => {
     let len = nickList.length;
     let nick_adress_form = ``;
     for (let i = 0; i < len; i++) {
-      nick_adress_form += `<form name="edit" action="/update_userlocation" method="post">
-                            <input type="submit" value="수정" onclick="check()">
+      nick_adress_form += `<div class="locDataBox">
+                            <form name="edit" action="/update_userlocation" method="post">
+                            <input type="submit" class="editLocBtn" value="수정" onclick="check()">
                             <input type="hidden" name="userlocation_row" value="${i}"></form>`;
-      nick_adress_form += `<div>${nickList[i]}</div><div> ${adressList[i]}</div>`;
+      nick_adress_form += `<div class="adressNick">${nickList[i]}</div>`;
       nick_adress_form += `<form name="delete" action="/delete_userlocation_process" method="post">
-                            <input type="submit" value="삭제" onclick="check()">
+                            <input type="submit" class="delLocBtn" value="삭제" onclick="check()">
                             <input type="hidden" name="userlocation_row" value="${i}">
-                            </form><br>`;
+                            </form>
+                            </div>`;
     }
     return `
-      <div>
-          <p><span>${userID}</span><span>님</span></p>
+    <link rel="stylesheet" type="text/css" href="./editUserLoc.css">
+      <div class="locDataDiv">
+      <p class="idTemplate"><span>ID</span><span style="flex-grow:1;text-align: end;">${userID}</span><span style="padding-left: 1rem;">님</span></p>
           <div>${nick_adress_form}</div>
       </div>`;
   },
@@ -301,11 +304,30 @@ exports.funcname = (user_id, nick ,adress) => {
    */
    exports.alarm = (alarms) => {
     return `
-    ${alarms} 
-    <p><input type="button" name="redirect_create_alarm" onClick="location.href='/create_alarm'" value="알람 생성 버튼"></p><br>
-    
-    <button name="edit_delete_alarm" onClick="location.href='/edit_delete_alarm'">수정,삭제</button>`;
+  <link rel="stylesheet" type="text/css" href="./alarm.css">
+  <div class="alarm_container">
+  ${alarms} 
+  </div>
+  <input type="checkbox" class="control"/>
+  
+    <button class="subcontrol edit_alarm" name="edit_delete_alarm" onClick="location.href='/edit_delete_alarm'"></button>
+    <input type="button" class="subcontrol create_alarm" name="redirect_create_alarm" onClick="location.href='/create_alarm'">
+  `;
   },
+
+  /**
+ * 알람 틀을 제공하는 메서드
+ * @param {*} alarms 일람내용 (HTML 코드)
+ * @returns HTML 코드
+ */
+ exports.editAlarm = (alarms) => {
+  return `
+  <link rel="stylesheet" type="text/css" href="./editalarm.css">
+  <div class="alarm_container">
+  ${alarms} 
+  </div>
+  `;
+},
   
   /**
    * 주소를 입력받을 수 있는 틀을 제공하는 메서드
@@ -392,7 +414,7 @@ exports.funcname = (user_id, nick ,adress) => {
     <link rel="stylesheet" type="text/css" href="./userLoc.css">
     <div class="userLoc">
     
-      <div id="wrap" style="display:none;border:1px solid;width:388px;height:388px;margin:5px 0;position:relative">
+      <div id="wrap" class="wrap" style="display:none;border:1px solid;width:24rem; height:28rem; position:relative">
       </div>
       
             <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -498,7 +520,7 @@ exports.funcname = (user_id, nick ,adress) => {
     <link rel="stylesheet" type="text/css" href="./userLoc.css">
     <div class="userLoc">
     
-      <div id="wrap" style="display:none;border:1px solid;width:388px;height:388px;margin:5px 0;position:relative">
+      <div id="wrap" class="wrap" style="display:none;border:1px solid;width:24rem; height:28rem; position:relative">
       </div>
       
             <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>

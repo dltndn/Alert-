@@ -1,5 +1,5 @@
 .userLoc {
-    padding-top: 2em;
+  padding-top: 2em;
 }
 
 
@@ -41,3 +41,7 @@ color: var(--button-color);
     width:-webkit-fill-available;
 }
 
+.wrap {
+  margin:auto;
+  height:28rem;
+}

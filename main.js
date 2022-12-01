@@ -233,7 +233,7 @@ app.post('/update_userlocation', (request, response) => {
   fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
     if (request.session.is_logined === true) {
       const title = edit.filterURL(pathname);
-      const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+      const header = template.header(request, request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
       const body = template.edit_userLoc(request.body.userlocation_row);
       const HTML = template.HTML(title, header, body);
       response.send(HTML);
