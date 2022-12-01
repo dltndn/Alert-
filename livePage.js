@@ -26,7 +26,8 @@ module.exports = {
 
     //get cctv data from session
     let cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
-    if (cctvDataList == undefined) {
+
+    if (cctvDataList == undefined) {  //정체 구간 없을 시 테스트용
         cctvDataList = [];
         let a = {
             name : "[수도권제1순환선] 성남",
@@ -34,9 +35,29 @@ module.exports = {
             coordx : 127.12361,
             coordy : 37.42889
         };
+        let b = {
+            name : "[수도권제1순환선] 송파",
+            src : "http://cctvsec.ktict.co.kr/4/HAUIKUqV9pGO2its+ETwaTPtNnbE19Tj+PF7JJB5C4FEFDP9P3Tb4JBSW3qc7WHV2oXSICWKQoA+BITA4W35UA==",
+            coordx : 127.12944,
+            coordy : 37.475
+        };
+        let c = {
+            name : "[수도권제1순환선] 하남분기점",
+            src : "http://cctvsec.ktict.co.kr/8/m3hu1EnLHpqRRbY5OsUvXdiGh+EBUU0Lfzr32k33ORhxo4m9vzT1Dyhv8JatjJd1tDNLY3hoIAa6Nh0NTKpABQ==",
+            coordx : 127.19361,
+            coordy : 37.5325
+        };
+        let d = {
+            name : "[수도권제1순환선] 남양주",
+            src : "http://cctvsec.ktict.co.kr/12/3qY9KkqtXlmcqSUUMA0LNwObni0xgPcG4gq5sLbNb2FpdiwnvQ0AcomSs81OU72669Jf36WPAudVNOljxJlDS/1oZG9cO5iNwhDbu9KqCzY=",
+            coordx : 127.1536111,
+            coordy : 37.60222222
+        };
         cctvDataList.push(a);
+        cctvDataList.push(b);
+        cctvDataList.push(c);
+        cctvDataList.push(d);
     }
-    //const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
     let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
     tTime = Math.round(tTime);
@@ -103,9 +124,11 @@ module.exports = {
                     ${header}
                     ${getTemplate.liveForm(estimated_time,departureTime,expectTime)}
                     <div id="map_wrap" class="map_wrap">
-                        <div id="map_div"></div>
+                        <div id="map_div" class="map_div"></div>
                     </div>
+                    <div class="cctvBox">
                     ${getCctvData.newTabLauncher(request)}
+                    </div>
                     <script type="text/javascript"> 
                     var map;
                     var markerInfo;
@@ -125,11 +148,11 @@ module.exports = {
                         map = new Tmapv2.Map("map_div", {
                             center : new Tmapv2.LatLng(${startY},
                                 ${startX}),
-                            width : "100%",
+                            width : "38rem",
                             height : "400px",
                             zoom : 11,
                             zoomControl : true,
-                            scrollwheel : true
+                            scrollwheel : false
                         });
                 
                         // 2. 시작, 도착 심볼찍기

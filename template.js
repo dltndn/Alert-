@@ -555,7 +555,38 @@ exports.funcname = (user_id, nick ,adress) => {
     request.session.cctvDataList = cctvDataList;
   }, 
   exports.cctvTabForm = function (request) {
-    const cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
+    let cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
+    if (cctvDataList == undefined) {  //정체 구간 없을 시 테스트용
+      cctvDataList = [];
+      let a = {
+          name : "[수도권제1순환선] 성남",
+          src : "http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbGWtUOHSErYTddpGAU31Gtog==",
+          coordx : 127.12361,
+          coordy : 37.42889
+      };
+      let b = {
+          name : "[수도권제1순환선] 송파",
+          src : "http://cctvsec.ktict.co.kr/4/HAUIKUqV9pGO2its+ETwaTPtNnbE19Tj+PF7JJB5C4FEFDP9P3Tb4JBSW3qc7WHV2oXSICWKQoA+BITA4W35UA==",
+          coordx : 127.12944,
+          coordy : 37.475
+      };
+      let c = {
+          name : "[수도권제1순환선] 하남분기점",
+          src : "http://cctvsec.ktict.co.kr/8/m3hu1EnLHpqRRbY5OsUvXdiGh+EBUU0Lfzr32k33ORhxo4m9vzT1Dyhv8JatjJd1tDNLY3hoIAa6Nh0NTKpABQ==",
+          coordx : 127.19361,
+          coordy : 37.5325
+      };
+      let d = {
+          name : "[수도권제1순환선] 남양주",
+          src : "http://cctvsec.ktict.co.kr/12/3qY9KkqtXlmcqSUUMA0LNwObni0xgPcG4gq5sLbNb2FpdiwnvQ0AcomSs81OU72669Jf36WPAudVNOljxJlDS/1oZG9cO5iNwhDbu9KqCzY=",
+          coordx : 127.1536111,
+          coordy : 37.60222222
+      };
+      cctvDataList.push(a);
+      cctvDataList.push(b);
+      cctvDataList.push(c);
+      cctvDataList.push(d);
+  }
     const cookies = cookie.parse(request.headers.cookie);
     let cctvArrIndex = cookies.cctvArrIndex;  //유저가 선택한 cctv데이터 배열 endIndex
     cctvArrIndex = parseInt(cctvArrIndex);

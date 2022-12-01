@@ -16,7 +16,7 @@ body {
     display: inline-flex;
     vertical-align: middle;
     
-  width: 33rem;
+  width: 39rem;
   font-size: 1.5rem;
   font-weight: 700;
   align-items:center;
@@ -53,9 +53,13 @@ body {
 }
 
 .map_wrap {
-    width: 513px;
+    width: 37rem;
     margin-left: 1rem;
     margin-right: 1rem;
+}
+
+.map_div {
+    border-radius: 1.5em;
 }
 
 #background.hide {
@@ -68,6 +72,25 @@ body {
 }
 
 .cctvIconImg {
-    width: 5rem;
-    height: 5rem;
+    width: 7rem;
+    height: 7rem;
+}
+
+.cctvBox {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 39rem;
+}
+
+.cctvImgTag {
+    border: 0.5em solid rgb(245 245 245);
+    background-color: rgb(245 245 245);
+    border-radius: 1rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    padding: 1rem;
 }
