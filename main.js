@@ -37,17 +37,15 @@ app.use('*',(request, response, next) => {
 
 
 app.get('/', (request, response) => {
-  fs.readFile("./style/images/map.svg", (err, img)=>{
-    if (err) {
-      console.log(err)
-    }
-    const title = "메인페이지";
-    const header = template.header(request, "로그인 이후 이용 가능 합니다.");
-    const body = template.body();
-    const HTML = template.HTML(title, header, body);
-    response.send(HTML);
-  })
-  
+  let header = template.header(request,"로그인 이후 이용 가능 합니다.");
+  if (request.session.is_logined === true){
+    header = template.header(request, request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+  }
+  const title = "메인페이지";
+  let body = template.body();
+  body += backEnd.sendNotification(request, response);
+  const HTML = template.HTML(title, header, body);
+  response.send(HTML);
 })
 app.post('/login_process', (request, response) => {
   let formData = getData.getFormData(request, response);
@@ -268,7 +266,7 @@ app.post('/delete_userlocation_process', (request, response) => {
 app.get('/live', async (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   const title = edit.filterURL(pathname);
-  const header = template.header(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+  const header = template.header(request, request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
   const HTML = await livePage.livePage(request, response, title, header);
   response.send(HTML);
 })
