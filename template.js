@@ -43,7 +43,7 @@ exports.header = (request, statusbar = "알람이 없습니다.", loginOrLogout=
             <ul>
             <li><a href="/profile">프로필 페에지</a></li>
             <li><a href="/alarm">알람 페에지</a></li>
-            <li><a href="/live">실시간 페에지</a></li>
+            <li><a href="/live_before_process">실시간 페에지</a></li>
           </ul>
           </div>
           `;

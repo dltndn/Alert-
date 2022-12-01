@@ -42,7 +42,7 @@ app.get('/', (request, response) => {
       console.log(err)
     }
     const title = "메인페이지";
-    const header = template.header("로그인 이후 이용 가능 합니다.");
+    const header = template.header(request, "로그인 이후 이용 가능 합니다.");
     const body = template.body();
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
