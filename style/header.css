@@ -100,3 +100,10 @@ li>a {
   color: black;
 }
 
+.depart_icon{
+  background-image: url("./images/depart_icon.png");
+}
+
+.arrive_icon {
+  background-image: url("./images/depart_icon.png");
+}

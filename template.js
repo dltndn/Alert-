@@ -37,7 +37,19 @@ exports.header = (request, statusbar = "알람이 없습니다.", loginOrLogout=
           <link rel="stylesheet" type="text/css" href="./header.css">
           <div class="header_background">
             <div class="headerTop">
-              <div class="statusbar">${statusbar}</div>
+              <div class="statusbar">
+                <div class="statusbar_background"></div>
+
+
+                <div class="statusbar_content">
+                  <div class="depart_icon"></div>
+                  ${statusbar}
+                  <div class="arrive_icon"></div>
+                </div>
+
+              </div>
+              
+
               <button class="login_button" onclick="${event}" >${text}</button>
             </div>
             <ul>
