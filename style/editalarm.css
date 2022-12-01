@@ -1,0 +1,129 @@
+.alarm_container {
+    margin-bottom: 6rem;
+}
+
+.alarms {
+    display: flex;
+    background-color: #F1F1F1;
+    border-radius: 1.5em;
+    padding: 0.5em;
+    margin: .5em;
+    width: auto;
+    height: fit-content;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.alarms * {
+    display: flex;
+    vertical-align: middle;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+    margin: 0px;
+}
+
+.alarm_container {
+    display: inline-flexbox;
+}
+
+.alarm_time {
+    display: block;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: .5rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    align-items: center;
+}
+
+.alarm_time * {
+    width: auto;
+    height: auto;
+}
+
+.alarm_days {
+    display: flex;
+}
+
+
+.alarm_day {
+    font-size: 0.8em;
+    background-color: #0d6efd;
+    border-radius: 50%;
+    padding: 0.2em;
+    width: 1em;
+    height: 1em;
+    color: white;
+    margin-left: .1rem;
+}
+
+
+
+.departure_time {
+    
+}
+.inner_container {
+    display: block;
+}
+
+.inner_container_top {
+    font-weight: bold;
+    display: flex;
+    font-size: 1.2em;
+}
+
+.departrue_adress {
+    margin-left: 0.1rem;
+    margin-right: 0.1rem;
+}
+
+.arrive_adress {
+    margin-left: 0.1rem;
+    margin-right: 0.1rem;
+}
+.main_container {
+    margin: auto;
+}
+
+
+
+
+.edit {
+    -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+    color: white;
+    background-color: #0d6efd;
+   
+    font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  
+  padding: 2rem 2rem;
+  border: none;
+  border-radius: 1rem;
+
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.delete {
+    -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+    background-color: #dc3545;
+    color: white;
+
+    font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  
+  padding: 2rem 2rem;
+  border: none;
+  border-radius: 1rem;
+   
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}

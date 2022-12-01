@@ -1,36 +1,44 @@
 <script>
     
 
-    if (!(Notification.permission == 'granted')) {
-      Notification.requestPermission().then(function(permission) {
-        function askNotificationPermission() {
-            // 권한을 실제로 요구하는 함수
-            function handlePermission(permission) {
-                // 사용자의 응답에 관계 없이 크롬이 정보를 저장할 수 있도록 함
-                if(!('permission' in Notification)) {
-                    Notification.permission = permission;
-                }
-                if ((Notification.permission == 'granted')) {
-                  var title = 'test'
-                  var text = '아! ' + title + ' 작업 기한이 만료됐습니다.';
-                  setInterval(() => console.log('10sec'), 1000); 
-                  window.setInterval(console.log('10sec'), 1000*10);          }
+    notifyMe = () => {
+          if (!("Notification" in window)) {
+            alert("This browser does not support desktop notification");
+          }
+          else if (Notification.permission === "granted") {
+            let title = "Alert!";
+            let body = "출발할 시간입니다.";
+            let icon = './images/main-img-1.png';
+            let sound = './sound/note.mp3';
+            
+            var notification = new Notification(title, {'body': body , 'icon' : icon});
+            var alertSount = new Audio(sound).play();
+            notification.onclick = (event) => {
+                event.preventDefault(); 
+                window.open('http://localhost:3000/live', '_blank');
             }
+          } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(function (permission) {
+              if (permission === "granted") {
+                var notification = new Notification("really");
+              }
+            });
+          }
         }
-  
-        if(!('permission' in Notification)) {
-            Notification.permission = permission;
-        }
-    });
-    
-    }
-    else {
-      var title = 'test'
-      var text = '아! "' + title + '" 작업 기한이 만료됐습니다.';
-      window.setInterval(console.log('10sec'), 1000*10);
-    }
-    
      
+
+
+
+
+        
+
+
+
+
+
+
+
+
   </script>
 
 

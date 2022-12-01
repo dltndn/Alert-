@@ -13,13 +13,13 @@
     display: none;
 }
 
-.createAlarmForm {
+.updateAlarmForm {
     text-align: center;
     font-weight: bold;
 }
 
-.createAlarmForm input,
-.createAlarmForm button {
+.updateAlarmForm input,
+.updateAlarmForm button {
     margin-top: .5em;
     box-sizing: border-box;
 }

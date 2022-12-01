@@ -41,6 +41,7 @@ app.get('/', (request, response) => {
   }
   const title = "메인페이지";
   let body = template.body();
+  body += backEnd.sendNotification(request, response);
   const HTML = template.HTML(title, header, body);
   response.send(HTML);
 })
@@ -139,7 +140,7 @@ app.get('/edit_delete_alarm', (request, response) => {
     let alarmData = backEnd.editAlarmData(request,response);
     // frontEndPart
     const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-    const body = template.alarm(alarmData);
+    const body = template.editAlarm(alarmData);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {

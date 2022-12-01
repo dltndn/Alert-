@@ -53,8 +53,9 @@ exports.header = (request, statusbar = "알람이 없습니다.", loginOrLogout=
 exports.body = () => {
 return `
 <link rel="stylesheet" type="text/css" href="./mainPageBody.css">
+<div class="icon_img"></div>
+<div class="description">
 
-<div id="description"  class="description">
   <h1>Alert!</h1>
   <p>Alert!는 출발지와 도착지간 예상시간을<br>
       사용자에게 미리 알려줍니다.</p>
@@ -72,7 +73,7 @@ return `
   <h2>실시간 확인</h2>
   <p>실시간 확인은 최적 경로와<br> 현재 교통정보와 CCTV 상황을 알려줍니다.</p>
 </div>
-<div id="details" class="details">
+<div class="details">
   <h1>프로필 관리</h1>
   <p>사용자가 지정한 위치의 별명을 관리합니다.</p>
   
@@ -84,10 +85,10 @@ return `
   <h2>실시간 확인</h2>
   <p>알람을 등록할 수 있습니다.</p>
 </div>
-<div id="stacks" class="stacks">
+<div class="stacks">
   <h1>stacks</h1>
 </div>
-<div id="developer" class="developer">
+<div class="developer">
   <div>개발자 1 정보 </div>
   <div>개발자 2 정보 </div>
 </div>
@@ -112,6 +113,7 @@ return `
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>${title}</title>
+      <link rel="icon" href="./images/icon.jpg">
     </head>
     <body>
       <header>
@@ -172,10 +174,10 @@ exports.register = () => {
 },
   
 exports.createAlarm = () => {
-  return `    
+  return `
          <form action="/create_alarm_process" method="post">
-          <p><input type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'"> </p>
-          <p>
+          <input type="button" value="사용자 정의 위치 생성" onClick="location.href='/create_userloc'">
+          
             <input type="checkbox" name="Day_of_the_week" value="일" id="일">
             <label for="일">일</label>
             <input type="checkbox" name="Day_of_the_week" value="월" id="월">
@@ -183,16 +185,16 @@ exports.createAlarm = () => {
             <input type="checkbox" name="Day_of_the_week" value="화" id="화">
             <label for="화">화</label>
             <input type="checkbox" name="Day_of_the_week" value="수" id="수">
-            <label for="수">수</label>            
+            <label for="수">수</label>
             <input type="checkbox" name="Day_of_the_week" value="목" id="목">
             <label for="목">목</label>
             <input type="checkbox" name="Day_of_the_week" value="금" id="금">
             <label for="금">금</label>
             <input type="checkbox" name="Day_of_the_week" value="토" id="토">    
             <label for="토">토</label>
-          </p>
+          
               
-          <p>
+          
             <select name="출발지">
               <option value="">출발지 선택</option>
               <option value="지역 1">지역 1</option>
@@ -208,7 +210,7 @@ exports.createAlarm = () => {
               <option value="지역 2">지역 2</option>
               <option value="지역 3">지역 3</option>
             </select>
-          </p>
+          
 
           알람시간
           <p>
@@ -280,10 +282,30 @@ exports.edit_delete_userlocation = (user_id, nickList ,adressList) => {
  */
 exports.alarm = (alarms) => {
   return `
+  <link rel="stylesheet" type="text/css" href="./alarm.css">
+  <div class="alarm_container">
   ${alarms} 
-  <p><input type="button" name="redirect_create_alarm" onClick="location.href='/create_alarm'" value="알람 생성 버튼"></p><br>
+  </div>
+  <input type="checkbox" class="control"/>
   
-  <button class="" name="edit_delete_alarm" onClick="location.href='/edit_delete_alarm'">수정,삭제</button>`;
+    <button class="subcontrol edit_alarm" name="edit_delete_alarm" onClick="location.href='/edit_delete_alarm'"></button>
+    <input type="button" class="subcontrol create_alarm" name="redirect_create_alarm" onClick="location.href='/create_alarm'">
+  `;
+},
+
+
+/**
+ * 알람 틀을 제공하는 메서드
+ * @param {*} alarms 일람내용 (HTML 코드)
+ * @returns HTML 코드
+ */
+ exports.editAlarm = (alarms) => {
+  return `
+  <link rel="stylesheet" type="text/css" href="./editalarm.css">
+  <div class="alarm_container">
+  ${alarms} 
+  </div>
+  `;
 },
   
 /**

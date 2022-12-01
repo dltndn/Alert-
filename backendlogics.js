@@ -1,7 +1,6 @@
 const access = require("./DB/access");
 const validation = require("./validation");
 
-
 /**
  * 사용자의 알람 내역을 렌더링하는 로직
  * @param {*} request 
@@ -13,17 +12,61 @@ const validation = require("./validation");
 
   let data ="";
   
-  for (let row = 0; row < alarmData.length; row++) {
+  parseTime = (time) => {
+    for (let col = 0; col < time.length ;col++) {
+      if (time.substring(col,col+1) === ":") {
+        let hour = parseInt(time.substring(0,col)); 
+        let min = parseInt(time.substring(col+1,parseInt(time.length + 1)))
+        return {hour, min}
+      }
+    }
+  }
+
+  let departTime = {
+    hour : 0,
+    min : 0
+  }
+
+  let alarmTime = {
+    hour : 0,
+    min : 0
+  }
+
+  changeKo = (hour) => {
+    if(hour >= 12) {
+      departTime.hour = "오후 " + (hour -12);
+    } else {
+      departTime.hour = "오전 " + hour;
+    }
+  }
+  
+  change = (hour) => {
+    if(hour >= 12) {
+      alarmTime.hour = `<div class = "alarmhour">오후</div>` + (hour -12);
+    } else {
+      alarmTime.hour = `<div class = "alarmhour">오전</div>` + hour;
+    }
+  }
+  
+  for (let row = 0;row < alarmData.length; row++){
+    changeKo (parseTime(alarmData[row].departure_time).hour);
+    change(parseTime(alarmData[row].alarm_time).hour)
+    let alarmdays = "";
+    for (let col = 0; col < alarmData[row].alarm_day.length ;col++) {
+      alarmdays += `<div class = "alarm_day">` + alarmData[row].alarm_day.substring(col, col+1) + `</div>`
+    }
     let on_off = ""
     if (alarmData[row].on_off == 1) on_off = 'checked';
-    data += `<div>`
-    data += alarmData[row].alarm_day + " "
-    data += alarmData[row].departure_time + " "
-    data += alarmData[row].alarm_time + " "
-    data += alarmData[row].departrue_adress + " "
-    data += alarmData[row].arrive_adress + " "
-    data += `<input type="checkbox" name="alarm_id" value="${alarmData[row].alarm_id}" class="alarmOnOff${alarmData[row].alarm_id}" ${on_off}>`
-    data += `</div><br>`
+    data += `<div class = "alarms">`
+    data += `<div class = "alarm_time">` + alarmTime.hour + ":" + parseTime(alarmData[row].alarm_time).min + `</div>`
+    data += `<div class = "inner_container">`
+    data += `<div class = "inner_container_top">`
+    data += `<div class = "departrue_adress">` + alarmData[row].departrue_adress + `</div>`
+    data += `<div class = "arrive_adress">` + alarmData[row].arrive_adress + `</div></div>`
+    data += `<div class = "departure_time">` + departTime.hour + "시 " + parseTime(alarmData[row].departure_time).min + "분" + `</div>`
+    data += `<div class = "alarm_days">` + alarmdays + `</div></div>`
+    data += `<input type="checkbox" name="alarm_id" value="${alarmData[row].alarm_id}" class="alarm_checkbox alarmOnOff${alarmData[row].alarm_id}" ${on_off}>`
+    data += `</div>`  
     data += `<form action="turnOnOffAlarm" method="post">
               <input type="hidden" name="alarm_id" value="${alarmData[row].alarm_id}">
               <input type="hidden" name="onOff" value="${on_off}">
@@ -31,7 +74,6 @@ const validation = require("./validation");
             </form>`
     data += `<script>
               const checkBox${alarmData[row].alarm_id} = document.querySelector('.alarmOnOff${alarmData[row].alarm_id}');
-
               checkBox${alarmData[row].alarm_id}.addEventListener('click', () => {
                 if (checkBox${alarmData[row].alarm_id}.checked) {
                   document.querySelector('.button${alarmData[row].alarm_id}').click();
@@ -40,6 +82,7 @@ const validation = require("./validation");
                 }
               });
             </script>`
+            
   }
   return data;
 };
@@ -282,20 +325,67 @@ exports.editAlarmData = (request, response) => {
   const alarmData = this.parseAlarmTable(request, response)
   let data ="";
   
+  parseTime = (time) => {
+    for (let col = 0; col < time.length ;col++) {
+      if (time.substring(col,col+1) === ":") {
+        let hour = parseInt(time.substring(0,col)); 
+        let min = parseInt(time.substring(col+1,parseInt(time.length + 1)))
+        return {hour, min}
+      }
+    }
+  }
+
+  let departTime = {
+    hour : 0,
+    min : 0
+  }
+
+  let alarmTime = {
+    hour : 0,
+    min : 0
+  }
+
+  changeKo = (hour) => {
+    if(hour >= 12) {
+      departTime.hour = "오후 " + (hour -12);
+    } else {
+      departTime.hour = "오전 " + hour;
+    }
+  }
+  
+  change = (hour) => {
+    if(hour >= 12) {
+      alarmTime.hour = `<div class = "alarmhour">오후</div>` + (hour -12);
+    } else {
+      alarmTime.hour = `<div class = "alarmhour">오전</div>` + hour;
+    }
+  }
+  
   for (let row = 0; row < alarmData.length; row++) {
-    data += `<div><form name="edit" action="/update_alarm" method="post">
-             <input type="submit" value="수정" onclick="check()">
+    changeKo (parseTime(alarmData[row].departure_time).hour);
+    change(parseTime(alarmData[row].alarm_time).hour)
+    let alarmdays = "";
+    for (let col = 0; col < alarmData[row].alarm_day.length ;col++) {
+      alarmdays += `<div class = "alarm_day">` + alarmData[row].alarm_day.substring(col, col+1) + `</div>`
+    }
+    data += `<div class = "alarms">
+             <form name="edit" action="/update_alarm" method="post">
+             <input type="submit" class="edit" value="수정" onclick="check()">
              <input type="hidden" name="alarm_id" value="${alarmData[row].alarm_id}">
              </form>`;
-    data += alarmData[row].alarm_day + " "
-    data += alarmData[row].departure_time + " "
-    data += alarmData[row].alarm_time + " "
-    data += alarmData[row].departrue_adress + " "
-    data += alarmData[row].arrive_adress + " "
+    data += `<div class = "main_container">`
+    data += `<div class = "alarm_time">` + alarmTime.hour + ":" + parseTime(alarmData[row].alarm_time).min + `</div>`
+    data += `<div class = "inner_container">`
+    data += `<div class = "inner_container_top">`
+    data += `<div class = "departrue_adress">` + alarmData[row].departrue_adress + `</div>`
+    data += `<div class = "arrive_adress">` + alarmData[row].arrive_adress + `</div></div>`
+    data += `<div class = "departure_time">` + departTime.hour + "시 " + parseTime(alarmData[row].departure_time).min + "분" + `</div>`
+    data += `<div class = "alarm_days">` + alarmdays + `</div></div></div>`
     data += `<form name="delete" action="/delete_alarm_process" method="post">
-             <input type="submit" value="삭제" onclick="check()">
+             <input type="submit" class="delete" value="삭제" onclick="check()">
              <input type="hidden" name="alarm_id" value="${alarmData[row].alarm_id}">
-             </form></div><br>`;
+             </form>
+             </div>`;
   }
   return data;
 };
@@ -403,57 +493,81 @@ exports.turnOnOffAlarm = (request, response, formData) => {
 exports.sendNotification = (request, response) => {
   let nearTime = this.getNearTime(request,response);
   
-  const date = new Date();
-  let alertedTimeObject = {
-    "day" : date.getDay(),
-    "hour" : date.getHours(),
-    "min" : date.getMinutes()
-  }
+  if (nearTime === undefined) {
+    //?
     return `
-    <script>
-    
-    const date = new Date();
-    let alertedTimeObject = {
-      "day" : date.getDay(),
-      "hour" : date.getHours(),
-      "min" : date.getMinutes()
-    }
-    
-    localStorage.setItem("alerted_time", JSON.stringify(alertedTimeObject))
-
-    
-    for(let col = 0; col < "${nearTime.day_of_week}".length; col++) {
-      console.log("test");
-      if (parseInt("${nearTime.day_of_week}".substring(col, col+1)) === date.getDay()){
-        
-        console.log("${nearTime.alarm_time}");
-        console.log(date.getHours()+":"+date.getMinutes());
-        if ("${nearTime.alarm_time}" === date.getHours()+":"+date.getMinutes()) {
-          console.log('test');
-        }
-
-        
+      <script>
+        //localStorage.removeItem("alerted");
 
         setInterval(() => {
-          location.reload();
-        }, 1000 * (60 - date.getSeconds()));   
-        
-      }
-    }
+              notifyMe();
+        }, 5000);
+        notifyMe = () => {
+          if (!("Notification" in window)) {
+            alert("This browser does not support desktop notification");
+          }
+          else if (Notification.permission === "granted") {
+            let title = "Alert!";
+            let body = "출발할 시간입니다.";
+            let icon = './images/icon.jpg';
+            let sound = './sound/note.mp3';
+            
+            
 
 
-    alertNow = () => {
-      window.setTimeout(function(){notifyMe();}, 0);
-      function notifyMe() {
+            var notification = new Notification(title, {'body': body , 'icon' : icon});
+            var promise = new Audio(sound).play();
+            
+            if (promise !== undefined) {
+              promise.then(_ => {
+              }).catch(error => {
+                console.log(error);
+              });
+            }
+            notification.onclick = (event) => {
+                event.preventDefault(); 
+                window.open('http://localhost:3000/live', '_blank');
+            }
+          } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(function (permission) {
+              if (permission === "granted") {
+                var notification = new Notification("really");
+              }
+            });
+          }
+        }
+      </script>`;
+  }
+  else {
+    return `
+    <script>
+      setInterval(() => {
+        if (new Date().getHours() +":"+ new Date().getMinutes() === "${nearTime.alarm_time}") {
+          if ((localStorage.getItem("alerted") === null)){
+            localStorage.setItem("alerted", true);
+            notifyMe();
+          }
+        }
+        else {
+          localStorage.removeItem("alerted");
+        }
+      }, 1000);
+
+      notifyMe = () => {
         if (!("Notification" in window)) {
           alert("This browser does not support desktop notification");
         }
         else if (Notification.permission === "granted") {
-          title = "Alert!";
-          body = "출발할 시간입니다.";
-          var notification = new Notification(title, {'body': body});
+          let title = "Alert!";
+          let body = "출발할 시간입니다.";
+          let icon = './images/main-img-1.png';
+          //let sound = './sound/note.mp3';
+          
+          var notification = new Notification(title, {'body': body , 'icon' : icon});
+          //var promise = new Audio(sound).play();
+          
           notification.onclick = (event) => {
-              event.preventDefault(); // prevent the browser from focusing the Notification's tab
+              event.preventDefault(); 
               window.open('http://localhost:3000/live', '_blank');
           }
         } else if (Notification.permission !== "denied") {
@@ -464,16 +578,6 @@ exports.sendNotification = (request, response) => {
           });
         }
       }
-    }
-    
-      
-    
-
-      
-    
-
-
-
-
-    </script>`;    
+  </script>`; 
+  }
 };
