@@ -198,6 +198,10 @@ const validation = require("./validation");
   let dayOfWeek = "";
   let dayList = formData.Day_of_the_week
 
+  if (dayList === undefined) {
+    this.alertRedirect(request, response, "요일이 선택되지 않았습니다." , "/alarm")
+  }
+
   for (let i = 0; i < dayList.length;i++) {
     if (i === 0 )
       dayOfWeek += dayList[i]
@@ -401,6 +405,10 @@ exports.editAlarm = (request, response, formData) => {
   let dayOfWeek = "";
   let dayList = formData.Day_of_the_week
 
+  if (dayList === undefined) {
+    this.alertRedirect(request, response, "요일이 선택되지 않았습니다." , "/alarm")
+  }
+  
   for (let i = 0; i < dayList.length;i++) {
     if (i === 0 )
       dayOfWeek += dayList[i]
