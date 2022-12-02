@@ -17,6 +17,54 @@ exports.header = (request, departrueAdress ,departTime ,arriveAdress , loginOrLo
   } else if (departrueAdress === "로그인 이후 이용 가능 합니다.") {
     statusbar = `<div class="message">로그인 이후 이용 가능 합니다.</div>`
   } else {
+
+    let hour = 0;
+    let min = 0;
+
+    for (let col = 0; col < departTime.length ;col++) {
+      if (departTime.substring(col,col+1) === ":") {
+        hour = parseInt(departTime.substring(0,col)); 
+        min = parseInt(departTime.substring(col+1,parseInt(departTime.length + 1)))
+        break;
+      }
+    }
+
+    // if ()
+
+    let departhour = 
+
+
+
+
+
+
+
+
+
+
+
+
+    // if (parseInt(departTime) > 12) {
+
+    // } else {
+
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     statusbar = `
       <div class="depart">${departrueAdress}</div>
       <div class="time">${departTime}</div>
