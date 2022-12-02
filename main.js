@@ -11,12 +11,10 @@ const getData = require("./getData")
 const create = require("./create");
 const livePage = require("./livePage.js");
 const backEnd = require("./backendlogics")
-const app = express();
-
-
+const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static('style'));
+app.use(express.static('/Users/gimjuyeon/Documents/Alert!/style'));
 app.use(session({
     key: "is_logined",
     secret: "mysecret",
@@ -37,9 +35,9 @@ app.use('*',(request, response, next) => {
 
 
 app.get('/', (request, response) => {
-  let header = template.header(request,"로그인 이후 이용 가능 합니다.");
+  let header = template.header(request,`로그인 이후 이용 가능 합니다.`);
   if (request.session.is_logined === true){
-    header = template.header(request, request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    header = template.header(request, request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
   }
   const title = "메인페이지";
   let body = template.body();
@@ -64,7 +62,8 @@ app.get("/logout_process", (request, response) => {
 app.get("/signUp", (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   
-    const body = template.register();
+    let body = template.register();
+    body += backEnd.sendNotification(request, response);
     const title = edit.filterURL(pathname);
     const header = template.header(request,"로그인 이후 이용 가능 합니다.");
     const HTML = template.HTML(title, header, body);
@@ -78,7 +77,6 @@ app.post('/signUp_process', (request, response) => {
 app.get("/profile", (request, response) => {
   if (request.session.is_logined === true) {
     // backEndLogic
-    let pathname = url.parse(request.url, true).pathname;
     const userLocationTable = access.query(request, response,`SELECT * FROM Alert.user_location where user_id = "${request.session.userid}";`);
     let nicknameList = [];
     let adressList = [];
@@ -89,60 +87,62 @@ app.get("/profile", (request, response) => {
     
     // front end part
     let user_id = request.session.userid;
-    const title = edit.filterURL(pathname);
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const title = '프로필';
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
     let body = template.funcname(user_id,nicknameList,adressList);
-    
+    body += backEnd.sendNotification(request, response);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else
     response.redirect("/");
 });
 app.get('/alarm', (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
-  const title = edit.filterURL(pathname);
-  if (request.session.is_logined === true) {
+  const title = '알람';
+  // if (request.session.is_logined === true) {
     //backEndLogic
     let alarmData = backEnd.getAlarmData(request,response);
     // frontEndPart
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-    const body = template.alarm(alarmData);
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
+    let body = template.alarm(alarmData);
+    body += backEnd.sendNotification(request, response);
+    const HTML = template.HTML(title, header, body);
+    response.send(HTML);
+  // } else {
+    response.redirect("/");
+  // }
+})
+app.get('/create_alarm', (request, response) => {
+  if (request.session.is_logined === true) {
+    // backEndLogic
+    const userLocationData = access.query(request, response,`SELECT * FROM Alert.user_location where user_id = "${request.session.userid}";`);
+    let body = create.alarm(userLocationData);
+    body += backEnd.sendNotification(request, response);
+    // frontEndPart
+    const title = '알람 생성';
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
     response.redirect("/");
   }
 })
-app.get('/create_alarm', (request, response) => {
-  //if (request.session.is_logined === true) {
-    let pathname = url.parse(request.url, true).pathname;
-
-    // backEndLogic
-    const userLocationData = access.query(request, response,`SELECT * FROM Alert.user_location where user_id = "${request.session.userid}";`);
-    let body = create.alarm(userLocationData);
-
-    // frontEndPart
-    const title = edit.filterURL(pathname);
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-    const HTML = template.HTML(title, header, body);
-    response.send(HTML);
-  //} else {
-    response.redirect("/");
-  //}
-})
 app.post('/create_alarm_process', (request, response) => {
-  const alarmFomData = getData.getFormData(request,response)
-  backEnd.createAlarm(request, response, alarmFomData);
+  if (request.session.is_logined === true) {
+    const alarmFomData = getData.getFormData(request,response)
+    backEnd.createAlarm(request, response, alarmFomData);
+  } else {
+    response.redirect("/");
+  }
 })
 app.get('/edit_delete_alarm', (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
-  const title = edit.filterURL(pathname);
+  const title = '알람 수정 삭제';
   if (request.session.is_logined === true) {
     //backEndLogic
     let alarmData = backEnd.editAlarmData(request,response);
     // frontEndPart
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-    const body = template.editAlarm(alarmData);
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
+    let body = template.editAlarm(alarmData);
+    body += backEnd.sendNotification(request, response);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
@@ -155,10 +155,10 @@ app.post('/update_alarm', (request, response) => {
     // backEndLogic
     const userLocationData = access.query(request, response,`SELECT * FROM Alert.user_location where user_id = "${request.session.userid}";`);
     let body = create.editAlarm(userLocationData , request.body.alarm_id);
-
+    body += backEnd.sendNotification(request, response);
     // frontEndPart
-    const title = edit.filterURL(pathname);
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
+    const title = '알람 수정';
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
   } else {
@@ -184,32 +184,38 @@ app.post('/delete_alarm_process', (request, response) => {
   }
 })
 app.post("/turnOnOffAlarm", (request, response) => {
-  let formData = getData.getFormData(request, response);
-  backEnd.turnOnOffAlarm(request, response, formData);
+  if (request.session.is_logined === true) {
+    let formData = getData.getFormData(request, response);
+    backEnd.turnOnOffAlarm(request, response, formData);
+  } else {
+    response.redirect("/");
+  }
 })
 app.get('/create_userloc', (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
-  fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
     if (request.session.is_logined === true) {
-      const title = edit.filterURL(pathname);
-      const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-      const body = template.create_userLoc();
+      const title = '위치 생성';
+      const header = template.header(request, request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
+      let body = template.create_userLoc();
+      body += backEnd.sendNotification(request, response);
       const HTML = template.HTML(title, header, body);
       response.send(HTML);
     } else {
       response.redirect("/");
     }
-  });
+  
 })
 app.post('/create_userloc_process', (request, response) => {
-  const locationData = getData.getFormData(request,response)
-  backEnd.createLocation(request, response, locationData);
-  response.redirect('/create_userloc');
+  if (request.session.is_logined === true) {
+    const locationData = getData.getFormData(request,response)
+    backEnd.createLocation(request, response, locationData);
+    response.redirect('/create_userloc');
+  } else {
+    response.redirect("/");
+  }
 })
 app.get("/edit_delete_userlocation", (request, response) => {
   if (request.session.is_logined === true) {
     // backEndLogic
-    let pathname = url.parse(request.url, true).pathname;
     const userLocationTable = access.query(request, response,`SELECT * FROM Alert.user_location where user_id = "${request.session.userid}";`);
     let nicknameList = [];
     let adressList = [];
@@ -220,27 +226,28 @@ app.get("/edit_delete_userlocation", (request, response) => {
     
     // front end part
     let user_id = request.session.userid;
-    const title = edit.filterURL(pathname);
-    const header = template.header(request ,request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-    const body = template.edit_delete_userlocation(user_id,nicknameList,adressList);
+    const title = '위치 수정 삭제';
+    const header = template.header(request ,request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
+    let body = template.edit_delete_userlocation(user_id,nicknameList,adressList);
+    body += backEnd.sendNotification(request, response);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
-  } else
+  } else {
     response.redirect("/");
+  }
 });
 app.post('/update_userlocation', (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
-  fs.readFile(`data/${pathname}`, "utf8", (err, body) => {
     if (request.session.is_logined === true) {
-      const title = edit.filterURL(pathname);
-      const header = template.header(request, request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-      const body = template.edit_userLoc(request.body.userlocation_row);
+      const title = '위치 수정';
+      const header = template.header(request, request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
+      let body = template.edit_userLoc(request.body.userlocation_row);
+      body += backEnd.sendNotification(request, response);
       const HTML = template.HTML(title, header, body);
       response.send(HTML);
     } else {
       response.redirect("/");
     }
-  });
+  
 })
 app.post('/update_userlocation_process', (request, response) => {
   if (request.session.is_logined === true) {
@@ -263,30 +270,51 @@ app.post('/delete_userlocation_process', (request, response) => {
   }
 })
 app.get('/live', async (request, response) => {
-  let pathname = url.parse(request.url, true).pathname;
-  const title = edit.filterURL(pathname);
-  const header = template.header(request, request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress , "logout_process", "로그아웃");
-  const HTML = await livePage.livePage(request, response, title, header);
-  response.send(HTML);
+  if (request.session.is_logined === true) {
+    const title = '실시간';
+    const header = template.header(request, request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
+    const HTML = await livePage.livePage(request, response, title, header);
+    response.send(HTML);
+  }else {
+    response.redirect("/");
+  }
 })
 app.get('/loading_live', async (request, response) => {
-  console.log("passed loading_live");
-  await template.loadingLive(request,response);
-  response.redirect("/live");
+  if (request.session.is_logined === true) {
+    console.log("passed loading_live");
+    await template.loadingLive(request,response);
+    response.redirect("/live");
+  } else {
+    response.redirect("/");
+  }
 })
 app.get('/live_before_process', (request, response) => {
-  console.log("passed live_before_process");
-  const HTML = template.liveBeforeProcess(request,response);
-  response.end(HTML);
+  if (request.session.is_logined === true) {
+    console.log("passed live_before_process");
+    const HTML = template.liveBeforeProcess(request,response);
+    response.end(HTML);
+  }else {
+    response.redirect("/");
+  }
 })
 app.get('/cctvTab', (request, response) => {
-  const HTML = template.cctvTabForm(request);
-  response.send(HTML);
+  if (request.session.is_logined === true) {
+    const HTML = template.cctvTabForm(request);
+    response.send(HTML);
+  }else {
+    response.redirect("/");
+  }
 })
 app.use((request, response, next) => {
   response.status(404).send("404 Not Found")
 })
 app.listen(3000);
+
+
+
+
+
+
 
 
 
