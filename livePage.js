@@ -113,14 +113,17 @@ module.exports = {
             <html>
                 <head>
                     <title>${title}</title>
-                    <meta http-equiv="X-UA-Compatible" content="text/html; charset=utf-8">
-                    <meta name="viewport" content="width=device-width">
+                    <meta charset="UTF-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <script	src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
                     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${tMapAPIKEY}"></script>
                 </head>
                 <body onload="initTmap();">
                 <link rel="stylesheet" type="text/css" href="./live.css">
+                <link rel="stylesheet" type="text/css" href="./main.css">
                     ${header}
+                    <main style="display: flex; flex-direction: column;">
                     ${getTemplate.liveForm(estimated_time,departureTime,expectTime)}
                     <div id="map_wrap" class="map_wrap">
                         <div id="map_div" class="map_div"></div>
@@ -128,6 +131,7 @@ module.exports = {
                     <div class="cctvBox">
                     ${getCctvData.newTabLauncher(request)}
                     </div>
+                    </main>
                     <script type="text/javascript"> 
                     var map;
                     var markerInfo;
@@ -147,7 +151,7 @@ module.exports = {
                         map = new Tmapv2.Map("map_div", {
                             center : new Tmapv2.LatLng(${startY},
                                 ${startX}),
-                            width : "38rem",
+                            width : "100%",
                             height : "400px",
                             zoom : 11,
                             zoomControl : true,

@@ -134,7 +134,7 @@ exports.newTabLauncher = (request) => {
         const goCctvTab = (i) => {
             document.cookie = "cctvArrIndex=" + (i).toString();
             const new_window_width = 300;
-            const new_window_height = 250;
+            const new_window_height = 270;
             const positionX = ( window.screen.width / 2 ) - ( new_window_width / 2 );
             const positionY = ( window.screen.height / 2 ) - ( new_window_height / 2 );
             window.open(

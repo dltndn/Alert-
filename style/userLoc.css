@@ -24,8 +24,8 @@ color: var(--button-color);
     transition: 0.5s;
 
   width: 97%;
-  height: 40px;
-  margin-left: 7px;
+  height: 2.8rem;
+    margin-left: 0.4rem;
 }
 
 .textBox {

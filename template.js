@@ -546,8 +546,8 @@ exports.funcname = (user_id, nick ,adress) => {
     <div class="dataTag">
       <p>예상 소요 시간:${estimated_time}</p>
       <div class="timeTag">
-        <p class="timeTagP" style="margin-right: 0.2rem;">출발시간:${departure_time}</p>
-        <p class="timeTagP" style="margin-left: 0.2rem;">도착시간:${expect_time}</p>
+        <p class="timeTagP" style="margin-right: 0.2rem;">출발 ${departure_time}</p>
+        <p class="timeTagP" style="margin-left: 0.2rem;">${expect_time} 도착</p>
       </div>
     </div>
     `;
