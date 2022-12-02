@@ -6,7 +6,7 @@ const syncDB = require("./DBhostdata");
  * @param {*} response 
  * @returns 객체 (사용자 테이블, 인스턴스의 개수, 아이디 리스트)
  */
-exports.userData = function (request, response) {
+exports.userData = (request, response) => {
   let idList = [];//`SELECT * FROM Alert.user_data;`
   const userDataTable = syncDB.query(`SELECT * FROM Alert.user_data;`);
   const tableRows = syncDB.query(`SELECT COUNT(user_id) as count FROM user_data;`)[0].count;
@@ -24,7 +24,7 @@ exports.userData = function (request, response) {
  * @param {*} query : 쿼리 
  * @returns 쿼리 실행 결과 (SELECT)
  */
-exports.query = function (request, response, query) {
+exports.query = (request, response, query) => {
   return syncDB.query(query);
 };
 
@@ -34,7 +34,7 @@ exports.query = function (request, response, query) {
  * @param {*} response 
  * @param {*} query : 쿼리 
  */
-exports.insertQuery = function (request, response, query) {
+exports.insertQuery = (request, response, query) => {
   syncDB.query(query);
 };
 
@@ -48,10 +48,10 @@ exports.insertQuery = function (request, response, query) {
  * @param {*} departrue_adress 
  * @param {*} arrive_adress 
  */
-exports.insertAlarmData = function (request, response, dayOfWeek, departureTime, alarmTime, departrueAdress, arriveAdress) {
+exports.insertAlarmData = (request, response, dayOfWeek, departureTime, alarmTime, departrueAdress, arriveAdress) => {
   this.insertQuery(request, response, 
-    `INSERT INTO Alert.alarm (user_id, day_of_week, departure_time, alarm_time, departrue_adress, arrive_adress) 
-     VALUES ('${request.session.userid}', '${dayOfWeek}', '${departureTime}', '${alarmTime}', '${departrueAdress}', '${arriveAdress}');`)
+    `INSERT INTO Alert.alarm (user_id, day_of_week, departure_time, alarm_time, departrue_adress, arrive_adress, on_off) 
+     VALUES ('${request.session.userid}', '${dayOfWeek}', '${departureTime}', '${alarmTime}', '${departrueAdress}', '${arriveAdress}', 1);`)
   
   const alarmID = this.query(request, response, 
     `select Max(alarm_id) as alarm_id from Alert.alarm where user_id = '${request.session.userid}';`)[0].alarm_id
@@ -61,3 +61,43 @@ exports.insertAlarmData = function (request, response, dayOfWeek, departureTime,
      VALUES ('${request.session.userid}', '${alarmID}');`)
 };
 
+/**
+ * alarm_data 테이블에 행을 수정하는 로직
+ * @param {*} alarmId 사용자의 id
+ * @param {*} request 
+ * @param {*} response 
+ * @param {*} dayOfWeek 요일
+ * @param {*} departureTime 출발시간
+ * @param {*} alarmTime 알람시간
+ * @param {*} departrueAdress 출발지 주소
+ * @param {*} arriveAdress 도착지 주소
+ */
+exports.updateAlarmData = (alarmId, request, response, dayOfWeek, departureTime, alarmTime, departrueAdress, arriveAdress) => {
+  this.insertQuery(request, response,
+    `UPDATE Alert.alarm SET day_of_week = '${dayOfWeek}', 
+      departure_time = '${departureTime}', 
+      alarm_time = '${alarmTime}', 
+      departrue_adress = '${departrueAdress}', 
+      arrive_adress = '${arriveAdress}'
+     WHERE (alarm_id = '${alarmId}');`
+  );
+};
+
+
+// /// 아직 진행 안함
+// /**
+//  * user_location 테이블에 행을 수정하는 로직
+//  * @param {*} nickname 주소의 별명
+//  * @param {*} adress 주소 
+//  */
+// exports.updateUserLocationData = (request, response , selectedRow) => {
+//   this.insertQuery(request, response,
+//     `UPDATE Alert.user_location SET 
+//       day_of_week = '${dayOfWeek}', 
+//       departure_time = '${departureTime}', 
+//       alarm_time = '${alarmTime}', 
+//       departrue_adress = '${departrueAdress}', 
+//       arrive_adress = '${arriveAdress}'
+//      WHERE (alarm_id = '${alarmId}');`
+//   );
+// };

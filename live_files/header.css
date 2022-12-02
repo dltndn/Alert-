@@ -1,0 +1,100 @@
+:root {
+  --button-color: #ffffff;
+  --button-bg-color: #0d6efd;
+  --button-hover-bg-color: #025ce2;
+}
+
+body {
+  margin: 0px;
+}
+
+.header_background {
+  position: fixed;
+  width: 100%;
+  height: auto;
+  background-color: rgb(211, 211, 211, 0.7);
+  backdrop-filter: blur(3px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.26);
+}
+
+.headerTop {
+  box-sizing: border-box;
+  display: flex;
+}
+
+.statusbar {
+  margin:0.5em;
+  border: 0.5em solid white;
+  background-color: white;
+  border-radius: 1rem;
+  
+  justify-content:center;
+  align-items:center;
+
+  display: inline-flex;
+  flex: 1;
+}
+
+.login_button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  --button-color: #ffffff;
+  --button-bg-color: #0d6efd;
+  --button-hover-bg-color: #025ce2;
+  background: var(--button-bg-color);
+  color: var(--button-color);
+  
+  margin:0.5em;
+
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  
+  flex: none;
+  display: inline-flex;
+  width: auto;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  
+  cursor: pointer;
+  
+  transition: 0.5s;
+}
+
+button:active,
+button:hover,
+button:focus {
+  background: var(--button-hover-bg-color);
+  outline: 0;
+}
+
+ul {
+  display: flex;
+  padding-inline-start: 0px;
+  text-align: center;
+}
+li {
+    display: inline-block;
+    flex: 1;
+
+    justify-content:center;
+    align-items:center;
+}
+li>a {
+  
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  font-size: 1rem;
+  font-weight: 400;
+  text-decoration: none;
+  
+  width: auto;
+  color: black;
+}
+

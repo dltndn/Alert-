@@ -1,0 +1,34 @@
+body {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    height: auto;
+}
+
+.cctvStreaming {
+    border-radius: 1.5em;
+    height: 9rem;
+}
+
+.closeTab {
+    --button-color: #ffffff;
+    --button-bg-color: #0d6efd;
+    --button-hover-bg-color: #025ce2;
+    background: var(--button-bg-color);
+    color: var(--button-color);
+    
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 1.2rem;
+    margin: auto;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+    cursor: pointer;
+    transition: 0.5s;
+    
+      width: 97%;
+      height: 40px;
+      margin-top: 17px;
+}

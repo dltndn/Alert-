@@ -1,0 +1,96 @@
+#background {
+    display : flex;
+    position: fixed;
+    top: 0px;
+    backdrop-filter: blur(3px);   
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items : center;
+}
+
+#background.hide {
+    display: none;
+}
+
+.container {
+    width: 90%;
+    height: 70%;
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.26);
+    border-radius: 1em;
+
+    animation-duration: 1s;
+    animation-name: slidedown;
+
+    text-align: center;
+    font-weight: bold;
+}
+
+@keyframes slidedown {
+    from {
+        margin-bottom: 100%;
+    }
+    to {
+        margin-bottom: 0%; 
+    }
+}
+
+.title {
+    color: #0d6efd;
+    font-size: 2em;
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+
+.registerForm {
+    text-align: center;
+    font-weight: bold;
+    width: fit-content;
+    height: fit-content;
+}
+
+.doubleCheck {
+    --button-color: #ffffff;
+    --button-bg-color: #0d6efd;
+    --button-hover-bg-color: #025ce2;
+    background: var(--button-bg-color);
+    color: var(--button-color);    
+    padding: 1em;
+    border: 0px;
+    border-radius: 1.5em;
+
+}
+
+.registerForm input,
+.registerForm button {
+    margin-top: .5em;
+    box-sizing: border-box;
+}
+
+.textbox {
+    padding: 1rem;
+    border: 0px;
+}
+
+.button {
+    padding: 1rem;
+}
+
+#submit {
+    --button-color: #ffffff;
+    --button-bg-color: #0d6efd;
+    --button-hover-bg-color: #025ce2;
+    background: var(--button-bg-color);
+    color: var(--button-color);    
+    margin-top: 3em;
+}
+
+#cancel {
+    --button-color:gray;
+    --button-bg-color: rgb(245, 245, 245);
+    --button-hover-bg-color: lightgray;
+    background: var(--button-bg-color);
+    color: var(--button-color);    
+    color: #0d6efd;
+}

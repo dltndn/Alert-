@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>CCTV</title>
+</head>
+<body>
+        <input type="button" class="closeTab" value="돌아가기" onclick="winClose()">
+        <script>
+
+                /* 퀵메뉴 창닫기 기능 */ 
+                
+                function winClose()
+                
+                 {
+                
+                   window.open('','_self').close();
+                
+                }
+                
+                </script>
+        <!-- <video id="video" class="cctvStreaming" width="300" height="500" controls autoplay></video>
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+        <script>
+        const video = document.getElementById('video');
+        const videoSrc = '${src}';
+    
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+    
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);                    
+        } else if (video,canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', () => {
+                video.play();
+            });
+        }
+    </script> -->
+    <!-- <div>
+        <img src="https://cdn-icons-png.flaticon.com/512/4601/4601587.png">
+        adfsdsafga
+    </div> -->
+</body>
+</html>
