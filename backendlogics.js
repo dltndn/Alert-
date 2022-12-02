@@ -497,45 +497,7 @@ exports.sendNotification = (request, response) => {
     //?
     return `
       <script>
-        //localStorage.removeItem("alerted");
-
-        setInterval(() => {
-              notifyMe();
-        }, 5000);
-        notifyMe = () => {
-          if (!("Notification" in window)) {
-            alert("This browser does not support desktop notification");
-          }
-          else if (Notification.permission === "granted") {
-            let title = "Alert!";
-            let body = "출발할 시간입니다.";
-            let icon = './images/icon.jpg';
-            let sound = './sound/note.mp3';
-            
-            
-
-
-            var notification = new Notification(title, {'body': body , 'icon' : icon});
-            var promise = new Audio(sound).play();
-            
-            if (promise !== undefined) {
-              promise.then(_ => {
-              }).catch(error => {
-                console.log(error);
-              });
-            }
-            notification.onclick = (event) => {
-                event.preventDefault(); 
-                window.open('http://localhost:3000/live', '_blank');
-            }
-          } else if (Notification.permission !== "denied") {
-            Notification.requestPermission().then(function (permission) {
-              if (permission === "granted") {
-                var notification = new Notification("really");
-              }
-            });
-          }
-        }
+        localStorage.removeItem("alerted");
       </script>`;
   }
   else {
@@ -561,11 +523,17 @@ exports.sendNotification = (request, response) => {
           let title = "Alert!";
           let body = "출발할 시간입니다.";
           let icon = './images/main-img-1.png';
-          //let sound = './sound/note.mp3';
+          let sound = './sound/note.mp3';
           
           var notification = new Notification(title, {'body': body , 'icon' : icon});
-          //var promise = new Audio(sound).play();
+          var promise = new Audio(sound).play();
           
+          if (promise !== undefined) {
+            promise.then(_ => {
+            }).catch(error => {
+              console.log(error);
+            });
+          }
           notification.onclick = (event) => {
               event.preventDefault(); 
               window.open('http://localhost:3000/live', '_blank');

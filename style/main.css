@@ -1,8 +1,10 @@
 main {
-    padding-top: 5.5em;
+    
+    padding-top: 8em;
 }
 
 body {
     display: flex;
     flex-direction: column;
+    font-family: "Noto Sans KR", sans-serif;
 }

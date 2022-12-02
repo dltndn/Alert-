@@ -16,10 +16,8 @@ exports.header = (request, departrueAdress ,departTime ,arriveAdress , loginOrLo
     statusbar = `<div class="message">알람이 없습니다.</div>`
   } else if (departrueAdress === "로그인 이후 이용 가능 합니다.") {
     statusbar = `<div class="message">로그인 이후 이용 가능 합니다.</div>`
-  }
-  else {
+  } else {
     statusbar = `
-    
       <div class="depart">${departrueAdress}</div>
       <div class="time">${departTime}</div>
       <div class="arrive">${arriveAdress}</div>
@@ -107,6 +105,12 @@ return `
   <h2>실시간 확인</h2>
   <p>실시간 확인은 최적 경로와<br> 현재 교통정보와 CCTV 상황을 알려줍니다.</p>
 </div>
+<div class="details_header">
+  <div>
+    <h1>주의사항</h1>
+    <p>Alert!는 알람을 전송하기 위해서 권한이 필요합니다!</p>
+  </div>
+</div>
 <div class="details">
   <h1>프로필 관리</h1>
   <p>사용자가 지정한 위치의 별명을 관리합니다.</p>
@@ -119,21 +123,78 @@ return `
   <h2>실시간 확인</h2>
   <p>알람을 등록할 수 있습니다.</p>
 </div>
-<div class="stackpart">
-  <h1>stacks</h1>
-</div>
-<div class="stacktop">
-  <div class="stack1"><div></div></div>
-  <div class="stack2"></div>
-</div>
-<div class="stackbottom">
-  <div class="stack3"></div>
-  <div class="stack4"></div>
+
+<div class="stackbackground">
+  <div class="stackpart">
+    <h1>기술 스택</h1>
+  </div>
+  <div class="stacktop">
+    <div class="stack1">
+      <div class="image"></div>
+      <div class="name">Node js</div>
+    </div>
+    <div class="stack2">
+      <div class="image"></div>
+      <div class="name">MySQL</div>
+    </div>
+  </div>
+
+  <div class="stackbottom">
+    <div class="stack3">
+      <div class="image"></div>
+      <div class="name">HTML5, CSS3, JS</div>
+    </div>
+    <div class="stack4">
+      <div class="image"></div>
+      <div class="name">PM2</div>
+    </div>
+  </div>
 </div>
 <div class="developer">
-  <div>개발자 1 정보 </div>
-  <div>개발자 2 정보 </div>
+  <div class="one">
+    <div class="profile_image"></div>
+    <div class="contact">
+      <div class="github">
+        <div class="github_image" onclick='onegithub()'></div>    
+      </div>
+      <div class="blog">
+        <div class="blog_image" onclick='oneblog()'></div>
+      </div>  
+    </div>
+  </div>
+  <div class="two">
+    <div class="profile_image"></div>
+    <div class="contact">
+      <div class="github">
+        <div class="github_image" id="twogithub"></div>    
+      </div>
+    </div>
+  </div>
 </div>
+<div class="footer">
+  <div class="large_logo"></div>
+  <div class="footer-details">
+    <div class="description"> 
+    본 사이트는 부천대학교 컴퓨터소프트웨어과 융합프로젝트로 만들어진 사이트입니다.<br><br>
+    Designed and Codied with Dan and Lee </div>
+    <div class="copyright">© 2022 | Alert! | All Rights Reserved.</div>
+  </div>
+</div>
+
+
+<script>
+  onegithub = () =>{
+    window.open("https://github.com/Daniel-k-dev"); 
+  }
+
+  oneblog = () =>{
+    window.open("https://velog.io/@juyeon10120"); 
+  }
+
+  twogithub = () =>{
+    window.open("https://github.com/dltndn"); 
+  }
+</script>
 
         `;
 },
@@ -156,7 +217,11 @@ return `
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>${title}</title>
       <link rel="icon" href="./images/icon.jpg">
-    </head>
+      <script>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+      </script>
+      </head>
+    
     <body>
       <header>
         ${header}
@@ -335,10 +400,15 @@ exports.funcname = (user_id, nick ,adress) => {
   <div class="alarm_container">
   ${alarms} 
   </div>
-  <input type="checkbox" class="control"/>
+  <div class="controls">
+
+    <div class="alarm_buttons">
+      <div class="create_alarm" onClick="location.href='/create_alarm'"></div>
+      <div class="edit_alarm" onClick="location.href='/edit_delete_alarm'"></div>
+    </div>
+    <div class="subcontrol"><input type="checkbox" class="control"/></div>
+  </div>
   
-    <button class="subcontrol edit_alarm" name="edit_delete_alarm" onClick="location.href='/edit_delete_alarm'"></button>
-    <input type="button" class="subcontrol create_alarm" name="redirect_create_alarm" onClick="location.href='/create_alarm'">
   `;
   },
 
@@ -688,7 +758,7 @@ exports.funcname = (user_id, nick ,adress) => {
     </html>
     `;
 }
- 
+
 
 
 
