@@ -94,6 +94,7 @@ exports.cctvVideoScript = (src) => {
 exports.newTabLauncher = (request) => {
     let cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
     let divTag ="";
+    console.log(cctvDataList);
     if (cctvDataList == undefined) {  //정체 구간 없을 시 테스트용
         cctvDataList = [];
         let a = {
@@ -125,6 +126,7 @@ exports.newTabLauncher = (request) => {
         cctvDataList.push(c);
         cctvDataList.push(d);
     }
+    console.log(cctvDataList);
     for (let i=0; i<cctvDataList.length; i++) {
         divTag += addSrcImg(i, cctvDataList[i].name);
     }

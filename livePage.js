@@ -165,7 +165,7 @@ module.exports = {
                                 {
                                     position : new Tmapv2.LatLng(${startY},
                                         ${startX}),
-                                    icon : "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_s.png",
+                                    icon : "./images/depart_icon.png",
                                     iconSize : new Tmapv2.Size(24, 38),
                                     map : map
                                 });
@@ -175,7 +175,7 @@ module.exports = {
                                 {
                                     position : new Tmapv2.LatLng(${endY},
                                         ${endX}),
-                                    icon : "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_e.png",
+                                    icon : "./images/arrive_icon.png",
                                     iconSize : new Tmapv2.Size(24, 38),
                                     map : map
                                 });
@@ -243,10 +243,10 @@ module.exports = {
                                                                         var pType = "";
                 
                                                                         if (properties.pointType == "S") { //출발지 마커
-                                                                            markerImg = "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_s.png";
+                                                                            markerImg = "./images/depart_icon.png";
                                                                             pType = "S";
                                                                         } else if (properties.pointType == "E") { //도착지 마커
-                                                                            markerImg = "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_e.png";
+                                                                            markerImg = "./images/arrive_icon.png";
                                                                             pType = "E";
                                                                         } else { //각 포인트 마커
                                                                             markerImg = "http://topopen.tmap.co.kr/imgs/point.png";
@@ -295,7 +295,7 @@ module.exports = {
                 
                     //마커 생성하기
                     function addMarkers(infoObj) {
-                        var size = new Tmapv2.Size(24, 38);//아이콘 크기 설정합니다.
+                        var size = new Tmapv2.Size(38, 38);//아이콘 크기 설정합니다.
                 
                         if (infoObj.pointType == "P") { //포인트점일때는 아이콘 크기를 줄입니다.
                             size = new Tmapv2.Size(8, 8);
