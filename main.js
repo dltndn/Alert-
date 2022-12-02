@@ -14,7 +14,7 @@ const backEnd = require("./backendlogics")
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static('/Users/gimjuyeon/Documents/Alert!/style'));
+app.use(express.static('./style'));
 app.use(session({
     key: "is_logined",
     secret: "mysecret",

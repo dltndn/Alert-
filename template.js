@@ -29,41 +29,13 @@ exports.header = (request, departrueAdress ,departTime ,arriveAdress , loginOrLo
       }
     }
 
-    // if ()
-
-    let departhour = 
-
-
-
-
-
-
-
-
-
-
-
-
-    // if (parseInt(departTime) > 12) {
-
-    // } else {
-
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    if (hour > 12) {
+      hour -= 12 
+      departTime ="오후 "+hour+":"+min;
+    }
+    else {
+      departTime ="오전 "+hour+":"+min;
+    }
 
     statusbar = `
       <div class="depart">${departrueAdress}</div>
@@ -90,9 +62,7 @@ exports.header = (request, departrueAdress ,departTime ,arriveAdress , loginOrLo
     <div class="depart_icon"></div>
     ${statusbar}
     <div class="arrive_icon"></div>
-  </div>
-  
-  `
+  </div>`
 
 
   if (request.session.is_logined === undefined) {
