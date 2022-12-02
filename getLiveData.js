@@ -10,7 +10,8 @@ module.exports = {
     // const startX  = 126.787101543581;
     // const startY = 37.4528612784565; //test: 집
     // const endX = 126.728080590524;
-    // const endY = 37.5432900176718;  //test: ㄱ계산역
+    // const endY = 37.5432900176718;  //test: ㄱ계산역 테스트용
+    //test
     let departrueXPos = departrueData.xpos;
     let departrueYPos = departrueData.ypos;
     let arriveXPos = arriveData.xpos;
