@@ -16,47 +16,12 @@ module.exports = {
     let departrueYPos = departrueData.ypos;
     let arriveXPos = arriveData.xpos;
     let arriveYPos = arriveData.ypos;
-    // const departrueXPos  = 126.787101543581;
-    // const departrueYPos = 37.4528612784565; //test: 집
-    // const arriveXPos = 126.728080590524;
-    // const arriveYPos = 37.5432900176718;  //test: ㄱ계산역
 
     const cookies = cookie.parse(request.headers.cookie);
 
     //get cctv data from session
-    let cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
+    const cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
 
-    if (cctvDataList == undefined) {  //정체 구간 없을 시 테스트용
-        cctvDataList = [];
-        let a = {
-            name : "[수도권제1순환선] 성남",
-            src : "http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbGWtUOHSErYTddpGAU31Gtog==",
-            coordx : 127.12361,
-            coordy : 37.42889
-        };
-        let b = {
-            name : "[수도권제1순환선] 송파",
-            src : "http://cctvsec.ktict.co.kr/4/HAUIKUqV9pGO2its+ETwaTPtNnbE19Tj+PF7JJB5C4FEFDP9P3Tb4JBSW3qc7WHV2oXSICWKQoA+BITA4W35UA==",
-            coordx : 127.12944,
-            coordy : 37.475
-        };
-        let c = {
-            name : "[수도권제1순환선] 하남분기점",
-            src : "http://cctvsec.ktict.co.kr/8/m3hu1EnLHpqRRbY5OsUvXdiGh+EBUU0Lfzr32k33ORhxo4m9vzT1Dyhv8JatjJd1tDNLY3hoIAa6Nh0NTKpABQ==",
-            coordx : 127.19361,
-            coordy : 37.5325
-        };
-        let d = {
-            name : "[수도권제1순환선] 남양주",
-            src : "http://cctvsec.ktict.co.kr/12/3qY9KkqtXlmcqSUUMA0LNwObni0xgPcG4gq5sLbNb2FpdiwnvQ0AcomSs81OU72669Jf36WPAudVNOljxJlDS/1oZG9cO5iNwhDbu9KqCzY=",
-            coordx : 127.1536111,
-            coordy : 37.60222222
-        };
-        cctvDataList.push(a);
-        cctvDataList.push(b);
-        cctvDataList.push(c);
-        cctvDataList.push(d);
-    }
     let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
     tTime = Math.round(tTime);
@@ -129,9 +94,7 @@ module.exports = {
                     <div id="map_wrap" class="map_wrap">
                         <div id="map_div" class="map_div"></div>
                     </div>
-                    <div class="cctvBox">
                     ${getCctvData.newTabLauncher(request)}
-                    </div>
                     </main>
                     <script type="text/javascript"> 
                     var map;
@@ -272,8 +235,9 @@ module.exports = {
                                                                     
                                                                     }
                                                                 }//for문 [E]
-                                                                let infoObj;
-                                                                ${getCctvData.addCctvMarkers(cctvDataList)}
+                                                                
+                                                
+                                                                addMarkerAni(Tmapv2.MarkerOptions.ANIMATE_FLICKER);
                                                                         
                                                         },
                                                         error : function(request, status, error) {
@@ -287,12 +251,6 @@ module.exports = {
                                             //JSON TYPE EDIT [E]
                                         
                     }
-                
-                    function addComma(num) {
-                        var regexp = /\B(?=(\d{3})+(?!\d))/g;
-                        return num.toString().replace(regexp, ',');
-                    }
-                
                     //마커 생성하기
                     function addMarkers(infoObj) {
                         var size = new Tmapv2.Size(38, 38);//아이콘 크기 설정합니다.
@@ -310,7 +268,48 @@ module.exports = {
                 
                         resultMarkerArr.push(marker_p);
                     }
-                
+                    var markers = [];
+                    
+                    // 마커들의 좌표를 저장할 배열
+                    let coords = [];
+                    ${getCctvData.addCctvMarkerAni(cctvDataList)}
+
+                    // 마커를 추가하는 함수
+                    function addMarkerAni(aniType) {
+                        var coordIdx = 0;
+                        const size = new Tmapv2.Size(38, 38);
+                        removeMarkers(); // 지도에 새로 등록하기 위해 모든 마커를 지우는 함수입니다.
+                        
+                        var func = function() {
+                            //Marker 객체 생성.
+                            var marker = new Tmapv2.Marker({
+                                position: coords[coordIdx++], //Marker의 중심좌표 설정.
+                                draggable: false, //Marker의 드래그 가능 여부.
+                                animation: aniType, //Marker 애니메이션.
+                                animationLength: 600, //애니메이션 길이.
+                                map: map, //Marker가 표시될 Map 설정.
+                                icon: "https://cdn-icons-png.flaticon.com/512/4601/4601587.png",
+                                iconSize: size
+                            });
+                            
+                            markers.push(marker);
+
+                            if (coordIdx < 5) {
+                                // 일정 시간 간격으로 마커를 생성하는 함수를 실행합니다
+                                setTimeout(func, 300);
+                            }
+                        }
+                        // 일정 시간 간격으로 마커를 생성하는 함수를 실행합니다
+                        setTimeout(func, 300);
+                    }
+                    // 모든 마커를 제거하는 함수
+                    function removeMarkers() {
+                        for (var i = 0; i < markers.length; i++) {
+                            markers[i].setMap(null);
+                        }
+                        markers = [];
+                    }
+                                
                     //라인그리기
                     function drawLine(arrPoint, traffic) {
                         var polyline_;
