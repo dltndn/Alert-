@@ -2,15 +2,23 @@ const access = require('./DB/access');
 module.exports = {
   getLiveData : function (request, response, title) {    
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";
-    // let arriveData = access.query(request, response, 
-    //     `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
-    // let departrueData = access.query(request, response, 
-    //     `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
+    let arriveData = access.query(request, response, 
+        `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
+    let departrueData = access.query(request, response, 
+        `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
    
-    const startX  = 126.787101543581;
-    const startY = 37.4528612784565; //test: 집
-    const endX = 126.728080590524;
-    const endY = 37.5432900176718;  //test: ㄱ계산역
+    // const startX  = 126.787101543581;
+    // const startY = 37.4528612784565; //test: 집
+    // const endX = 126.728080590524;
+    // const endY = 37.5432900176718;  //test: ㄱ계산역
+    let departrueXPos = departrueData.xpos;
+    let departrueYPos = departrueData.ypos;
+    let arriveXPos = arriveData.xpos;
+    let arriveYPos = arriveData.ypos;
+    const startX = departrueXPos; //출발지 x좌표
+    const startY = departrueYPos; //출발지 y좌표
+    const endX = arriveXPos; //도착지 x좌표
+    const endY = arriveYPos; //도착지 y좌표
     
     return `<!DOCTYPE html>
             <html>

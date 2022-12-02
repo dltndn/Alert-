@@ -12,14 +12,14 @@ module.exports = {
     let departrueData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
 
-    // let departrueXPos = departrueData.xpos;
-    // let departrueYPos = departrueData.ypos;
-    // let arriveXPos = arriveData.xpos;
-    // let arriveYPos = arriveData.ypos;
-    const departrueXPos  = 126.787101543581;
-    const departrueYPos = 37.4528612784565; //test: 집
-    const arriveXPos = 126.728080590524;
-    const arriveYPos = 37.5432900176718;  //test: ㄱ계산역
+    let departrueXPos = departrueData.xpos;
+    let departrueYPos = departrueData.ypos;
+    let arriveXPos = arriveData.xpos;
+    let arriveYPos = arriveData.ypos;
+    // const departrueXPos  = 126.787101543581;
+    // const departrueYPos = 37.4528612784565; //test: 집
+    // const arriveXPos = 126.728080590524;
+    // const arriveYPos = 37.5432900176718;  //test: ㄱ계산역
 
     const cookies = cookie.parse(request.headers.cookie);
 
@@ -69,9 +69,16 @@ module.exports = {
     min = min * 60 / 100;
     min = Math.round(min); //최종 분
 
+    if (tTime < 1) {
+        hour = 0;
+        estimated_time = min + "분"; //소요시간 string
+    } else {
+        hour = Math.round(tTime);  //최종 시
+        estimated_time = hour + "시간 " + min + "분"; //소요시간 string
+    }
     
-    //let departureTime = request.departureTime;
-    let departureTime = "8:00";
+    let departureTime = request.departureTime;
+    // let departureTime = "8:00";
     let departureHour;
     let departureMin ;
     for (let col = 0; col < departureTime.length ;col++) {
@@ -94,14 +101,8 @@ module.exports = {
             departureHour%=24
         }
     }
-    let expectTime = departureHour + ":" + departureMin
-    if (tTime < 1) {
-        hour = 0;
-        estimated_time = min + "분"; //소요시간 string
-    } else {
-        hour = Math.round(tTime);  //최종 시
-        estimated_time = hour + "시간 " + min + "분"; //소요시간 string
-    }
+    let expectTime = departureHour + ":" + departureMin;
+    
     
     const tMapAPIKEY = "l7xx16b2283d260c4bbabae01b727e1a8b75";
     const startX = departrueXPos; //출발지 x좌표
