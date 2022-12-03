@@ -28,7 +28,6 @@ app.use('*',(request, response, next) => {
     request.arriveAdress = nearTimeObject.arrive_adress
     request.departrueAdress = nearTimeObject.departrue_adress;
     request.departureTime = nearTimeObject.departure_time;
-    console.log(request.departrueAdress + " " + request.departTime+ " " + request.arriveAdress);  
   }
   next();
 })
@@ -281,7 +280,6 @@ app.get('/live', async (request, response) => {
 })
 app.get('/loading_live', async (request, response) => {
   if (request.session.is_logined === true) {
-    console.log("passed loading_live");
     await template.loadingLive(request,response);
     response.redirect("/live");
   } else {
@@ -290,7 +288,6 @@ app.get('/loading_live', async (request, response) => {
 })
 app.get('/live_before_process', (request, response) => {
   if (request.session.is_logined === true) {
-    console.log("passed live_before_process");
     const HTML = template.liveBeforeProcess(request,response);
     response.end(HTML);
   }else {

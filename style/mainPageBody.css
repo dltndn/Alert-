@@ -61,25 +61,55 @@
 }
 
 .details {
+    display:flex;
+    flex-direction: column;
     background-color: black;
     margin: 0px;
     color: white;
     width: 100%;
-    height: 100em;
     z-index: 2;
 }
 
-.details *{
+.picture_area {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    width: 100%;
+    height: 100%;
+}
+
+.picture {
+    background-color: red;
+}
+
+.picture_area > * {
+    background-size:contain;
+    background-repeat: no-repeat;
+    height: 30em;
+    width: 60%;
+    margin-left: auto;
+    margin-right: 1em;
+}
+
+.picture1 {
+
+}
+
+.picture2 {
+    background-image: url('./images/alarm.png');
+}
+
+.picture3 {
+    background-image: url('./images/livepage.png');
+}
+
+.details > *{
     margin: 0px;
 }
 
 .details h1, .details h2, .details p{
     padding-top: 1rem;
     margin-left: 1rem;
-}
-
-.details p{
-    margin-bottom: 25em;
 }
 
 .stackpart {
@@ -249,9 +279,9 @@
     background-image: url('./images/developer1.png');
 }
 
-.two > .profile_image {
+/* .two > .profile_image {
 
-}
+} */
 
 
 

@@ -22,7 +22,6 @@ exports.create_userLoc = function () {
         var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
         new daum.Postcode({
             oncomplete: function(data) {
-                console.log(geocoder);
                 // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
                 // 각 주소의 노출 규칙에 따라 주소를 조합한다.
@@ -51,8 +50,6 @@ exports.create_userLoc = function () {
                     if (status === daum.maps.services.Status.OK) {
 
                         var result = results[0]; //첫번째 결과의 값을 활용
-                        console.log(result.road_address.x);
-                        console.log(result.road_address.y);
                         
                         // xy 좌표값
                         xpos = result.road_address.x;

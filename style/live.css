@@ -20,10 +20,10 @@ body {
   font-weight: 700;
   align-items:center;
     
-    margin-bottom: 0;
+    margin-bottom: 0px;
     text-align: center;
-    padding-top: 1rem;
-    padding-bottom: 0.7rem;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 .dataTag p {
@@ -34,7 +34,7 @@ body {
   height: 100%;
   margin-left: 1rem;
     margin-right: 1rem;
-    margin-top: 1rem;
+    margin-top: .5rem;
     margin-bottom: 0.5rem;
     padding: 1rem;
 }

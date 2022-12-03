@@ -115,7 +115,7 @@ module.exports = {
                                                                         }
                 
                                                                         const arrr = drawLine(sectionInfos, trafficArr);
-                                                                        console.log(arrr);
+                                                                        
                                                                         if (arrr.length != 0) {
                                                                             cctvArr = cctvArr.concat(arrr);                                                                            
                                                                         }                                                                                                                                                
