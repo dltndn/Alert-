@@ -370,14 +370,14 @@ exports.funcname = (user_id, nick ,adress) => {
     let len = nick.length;
     let nick_adress_form = ``;
     for (let i = 0; i < len; i++) {
-      nick_adress_form += `<div class="dataBox"><span class="nickName">${nick[i]}</span><span style="font-weight: 350;">|</span><span class="address">${adress[i]}</span></div>`;
+      nick_adress_form += `<div class="dataBox"><div class="nickName">${nick[i]}</div><div class="address">${adress[i]}</div></div>`;
     }
     return `
     <link rel="stylesheet" type="text/css" href="./profile.css">
-      <p class="idTemplate"><span>ID</span><span style="flex-grow:1;text-align: end;">${userID}</span><span style="padding-left: 1rem;">님</span></p>
+      <div class="idTemplate"><div>ID</div><div style="flex-grow:1;text-align: end;">${userID}</div><div style="padding-left: 1rem;">님</div></div>
       <div class="profile">
         <div class="table">
-            <p class="title"><span style="padding-left: 1rem;">별칭</span><span style="padding-left: 5rem;">주소</span></p>
+            <div class="title"><div>별칭</div><div>주소</div></div>
             ${nick_adress_form}
         </div>
         
