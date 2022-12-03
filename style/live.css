@@ -91,3 +91,18 @@ body {
     padding-bottom: 0.3rem;
     padding-top: 0.3rem;
 }
+
+.noCctv {
+    display: inline-flex;
+    vertical-align: middle;
+    height: 100%;
+    font-size: 0.98rem;
+    font-weight: 600;
+    align-items: center;
+    
+    margin: 0.5em;
+    border: 0.5em solid rgb(245 245 245);
+    background-color: rgb(245 245 245);
+    border-radius: 1rem;
+    padding: 0.5rem;
+}

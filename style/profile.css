@@ -1,6 +1,7 @@
 .profile {
     display: flex;
     flex-direction: column;
+    margin-top: 1rem;
 }
 
 .table {
@@ -9,19 +10,13 @@
 }
 
 .dataBox {
-    display: inline-flex;
-    vertical-align: middle;
-    margin:0.5em;
-    border: 0.5em solid rgb(245 245 245);
-    background-color: rgb(245 245 245);
-  border-radius: 1rem;
-  
+  display: grid;
+  grid-template-columns: 1fr 2fr;;
   font-size: 1.3rem;
   font-weight: 600;
   align-items:center;
-    width:-webkit-fill-available;
-    height:60px;
-    border-left-width: 18px;
+    
+    height:5rem;
     margin-bottom: 0;
 }
 
@@ -31,24 +26,49 @@
   padding-left: 2rem;
   padding-right: 2rem;
   display: flex;
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
 }
 
 .title {
     font-size: 1.3rem;
   font-weight: 600;
-  margin-left: 25px;
+  margin-left: 1.5rem;
     margin-top: 0;
     margin-bottom: 0;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    text-align: center;
+}
+
+.title div {
+    width: 100%;
+    text-align: center;
 }
 
 .nickName {
-    padding-right: 1rem;
+    vertical-align: middle;
+    border: 0.3em solid rgb(245 245 245);
+    background-color: rgb(245 245 245);
+  border-radius: 1rem;
+    height: 30%;
+    margin-left: 0.5rem;
+    text-align: center;
+    padding: 1rem;
 }
 
 .address {
-    padding-left: 1rem;
+    vertical-align: middle;
+    border: 0.3em solid rgb(245 245 245);
+    background-color: rgb(245 245 245);
+  border-radius: 1rem;
     font-size: 1rem;
     font-weight: 400;
+    height: 30%;
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+    text-align: center;
+    padding: 1.06rem;
 }
 
 .createBtn {
@@ -87,3 +107,80 @@
     cursor: pointer;
     z-index:3;
 }
+
+.control {
+    position: fixed;
+    appearance: none;
+    padding: 1.5rem;
+    background-color:royalblue;
+    border-radius: 50%;
+    margin: 0px;
+    bottom: 0px;
+    right: 0px;
+    background-image: url('./images/plus.png');
+    background-size: cover;
+    margin-right: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .userLoc_buttons > * {
+    display: none;
+    position: fixed;
+    padding: 1.5rem;
+    border-radius: 50%;
+    bottom: 0px;
+    right: 0px;
+    margin-right: 1.5rem;
+  }
+  
+  .create_loc {
+    background-image: url('./images/plus.png');
+      background-size: contain;
+      background-color: green;
+      margin-bottom: 8.5rem; 
+  }
+  
+  .edit_loc {
+    background-image: url('./images/delete.png');
+    background-size: contain;
+    background-color: #F4B400;
+    margin-bottom: 5rem; 
+  }
+  
+  @keyframes rotate {
+    0% {
+      transform: rotate(0);
+    }
+    100% {
+      transform: rotate(225deg);
+      background-color: #DB4437;
+    }
+  }
+  
+  @keyframes reverserotate {
+    0% {
+      transform: rotate(225deg);
+    }
+    100% {
+      transform: rotate(0deg);
+      background-color: royalblue;
+    }
+  }
+  
+  .control::before {
+    background-color: royalblue;
+    transition: left 250ms linear;
+  }
+  
+  .control:checked::before {
+    animation-name: reverserotate;
+    animation-duration: 1000ms;
+    background-color: royalblue;
+  }
+  
+  .control:checked {
+    animation-name: rotate;
+    animation-duration: 1000ms;
+    background-color:#DB4437;
+    transform: rotate(45deg);
+  }

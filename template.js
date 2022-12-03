@@ -90,7 +90,7 @@ exports.header = (request, departrueAdress ,departTime ,arriveAdress , loginOrLo
             <ul>
               <li><a href="/profile">프로필</a></li>
               <li><a href="/alarm">알람</a></li>
-              <li><a href="/live">실시간</a></li>
+              <li><a href="/live_before_process">실시간</a></li>
             </ul>
           </div>
           `;
@@ -371,19 +371,38 @@ exports.funcname = (user_id, nick ,adress) => {
     let len = nick.length;
     let nick_adress_form = ``;
     for (let i = 0; i < len; i++) {
-      nick_adress_form += `<div class="dataBox"><span class="nickName">${nick[i]}</span><span style="font-weight: 350;">|</span><span class="address">${adress[i]}</span></div>`;
+      nick_adress_form += `<div class="dataBox"><div class="nickName">${nick[i]}</div><div class="address">${adress[i]}</div></div>`;
     }
     return `
     <link rel="stylesheet" type="text/css" href="./profile.css">
-      <p class="idTemplate"><span>ID</span><span style="flex-grow:1;text-align: end;">${userID}</span><span style="padding-left: 1rem;">님</span></p>
+      <div class="idTemplate"><div>ID</div><div style="flex-grow:1;text-align: end;">${userID}</div><div style="padding-left: 1rem;">님</div></div>
       <div class="profile">
         <div class="table">
-            <p class="title"><span style="padding-left: 1rem;">별칭</span><span style="padding-left: 5rem;">주소</span></p>
+            <div class="title"><div>별칭</div><div>주소</div></div>
             ${nick_adress_form}
         </div>
-        <input class="createBtn" type="button" onClick="location.href='/create_userloc'">
-        <button name="edit_delete_userlocation" class="edit_delete_btn" onClick="location.href='/edit_delete_userlocation'"></button>
+        
       </div>  
+
+      <div class="userLoc_buttons">
+      <div class="create_loc" onClick="location.href='/create_userloc'"></div>
+      <div class="edit_loc" onClick="location.href='/edit_delete_userlocation'"></div>
+      </div>
+      <input type="checkbox" class="control" onchange="check(this)"/>
+      <script>
+      function check (checkboxElem) {
+        const create_loc = document.getElementsByClassName('create_loc')[0]
+        const edit_loc = document.getElementsByClassName('edit_loc')[0]
+        if (checkboxElem.checked) {
+          create_loc.style.display = "block"
+          edit_loc.style.display = "block"
+        } else {
+          create_loc.style.display = "none"
+          edit_loc.style.display = "none"
+        }
+      }
+      </script>
+      
   `;
   
   },
@@ -695,13 +714,43 @@ function check (checkboxElem) {
   }, 
   exports.loadingLive = async function (request, response) {
     const itsAPIKEY = 'd81d3254072d4f96ac9338294785d036';
-    let cctvUrlList = [];
     let cctvDataList = [];     //정체구간 근방 cctv src url데이터
     const cookies = cookie.parse(request.headers.cookie);
     if (request.headers.cookie !== undefined){
       const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
       if(jamSectionList == null) {
-        return ;
+        // if (cctvDataList.length == 0) {  //정체 구간 없을 시 테스트용
+        //   let a = {
+        //     name : "[수도권제1순환선] 성남",
+        //     src : "http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbGWtUOHSErYTddpGAU31Gtog==",
+        //     coordx : 127.12361,
+        //     coordy : 37.42889
+        //   };
+        //   let b = {
+        //       name : "[수도권제1순환선] 송파",
+        //       src : "http://cctvsec.ktict.co.kr/4/HAUIKUqV9pGO2its+ETwaTPtNnbE19Tj+PF7JJB5C4FEFDP9P3Tb4JBSW3qc7WHV2oXSICWKQoA+BITA4W35UA==",
+        //       coordx : 127.12944,
+        //       coordy : 37.475
+        //   };
+        //   let c = {
+        //       name : "[수도권제1순환선] 하남분기점",
+        //       src : "http://cctvsec.ktict.co.kr/8/m3hu1EnLHpqRRbY5OsUvXdiGh+EBUU0Lfzr32k33ORhxo4m9vzT1Dyhv8JatjJd1tDNLY3hoIAa6Nh0NTKpABQ==",
+        //       coordx : 127.19361,
+        //       coordy : 37.5325
+        //   };
+        //   let d = {
+        //       name : "[수도권제1순환선] 남양주",
+        //       src : "http://cctvsec.ktict.co.kr/12/3qY9KkqtXlmcqSUUMA0LNwObni0xgPcG4gq5sLbNb2FpdiwnvQ0AcomSs81OU72669Jf36WPAudVNOljxJlDS/1oZG9cO5iNwhDbu9KqCzY=",
+        //       coordx : 127.1536111,
+        //       coordy : 37.60222222
+        //   };
+        //   cctvDataList.push(a);
+        //   cctvDataList.push(b);
+        //   cctvDataList.push(c);
+        //   cctvDataList.push(d);
+        // }
+        // request.session.cctvDataList = cctvDataList;
+        return;
       }
       for (const jamSection of jamSectionList) {
           let cenY = jamSection.lat;
@@ -724,37 +773,6 @@ function check (checkboxElem) {
   }, 
   exports.cctvTabForm = function (request) {
     let cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
-    if (cctvDataList == undefined) {  //정체 구간 없을 시 테스트용
-      cctvDataList = [];
-      let a = {
-          name : "[수도권제1순환선] 성남",
-          src : "http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbGWtUOHSErYTddpGAU31Gtog==",
-          coordx : 127.12361,
-          coordy : 37.42889
-      };
-      let b = {
-          name : "[수도권제1순환선] 송파",
-          src : "http://cctvsec.ktict.co.kr/4/HAUIKUqV9pGO2its+ETwaTPtNnbE19Tj+PF7JJB5C4FEFDP9P3Tb4JBSW3qc7WHV2oXSICWKQoA+BITA4W35UA==",
-          coordx : 127.12944,
-          coordy : 37.475
-      };
-      let c = {
-          name : "[수도권제1순환선] 하남분기점",
-          src : "http://cctvsec.ktict.co.kr/8/m3hu1EnLHpqRRbY5OsUvXdiGh+EBUU0Lfzr32k33ORhxo4m9vzT1Dyhv8JatjJd1tDNLY3hoIAa6Nh0NTKpABQ==",
-          coordx : 127.19361,
-          coordy : 37.5325
-      };
-      let d = {
-          name : "[수도권제1순환선] 남양주",
-          src : "http://cctvsec.ktict.co.kr/12/3qY9KkqtXlmcqSUUMA0LNwObni0xgPcG4gq5sLbNb2FpdiwnvQ0AcomSs81OU72669Jf36WPAudVNOljxJlDS/1oZG9cO5iNwhDbu9KqCzY=",
-          coordx : 127.1536111,
-          coordy : 37.60222222
-      };
-      cctvDataList.push(a);
-      cctvDataList.push(b);
-      cctvDataList.push(c);
-      cctvDataList.push(d);
-  }
     const cookies = cookie.parse(request.headers.cookie);
     let cctvArrIndex = cookies.cctvArrIndex;  //유저가 선택한 cctv데이터 배열 endIndex
     cctvArrIndex = parseInt(cctvArrIndex);
