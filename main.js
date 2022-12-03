@@ -261,9 +261,8 @@ app.post('/delete_userlocation_process', (request, response) => {
     const deleteIndex = request.body.userlocation_row;
     const selectedRow = userLocationTable[deleteIndex];
 
-    access.insertQuery(request, response , 
-      `DELETE FROM Alert.user_location WHERE (user_id = '${selectedRow.user_id}' AND nickname = '${selectedRow.nickname}' AND adress = '${selectedRow.adress}');`)
-    response.redirect("/profile")
+    backEnd.deleteLocation (request,response,selectedRow, deleteIndex);
+    
   } else {
     response.redirect("/");
   }

@@ -681,7 +681,7 @@ function check (checkboxElem) {
             <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${APIkey}&libraries=services"></script>
             <script>${getAdressScript}</script>
             <input class="textBox" type="text" id="sample3_address" placeholder="주소">
-        <form action="create_userloc_process" method="post">
+        <form action="update_userlocation_process" method="post">
         <input type="hidden" name="origin" value = ${selectedRow}>
           <input type="hidden" id="adresss" name="adress" >
           <input type="hidden" id="xpos" name="xpos" >
