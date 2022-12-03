@@ -172,7 +172,6 @@ const validation = require("./validation");
   else if (alarmList.length === 0) {
     // 사이클 한번 돌아야함
     for (let day = 0; day < 9;day++) {
-      console.log(browserDate)
       browserDate++;
       if (browserDate === 7) browserDate = 0; 
       recall(browserDate);

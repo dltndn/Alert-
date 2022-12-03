@@ -29,41 +29,13 @@ exports.header = (request, departrueAdress ,departTime ,arriveAdress , loginOrLo
       }
     }
 
-    // if ()
-
-    let departhour = 
-
-
-
-
-
-
-
-
-
-
-
-
-    // if (parseInt(departTime) > 12) {
-
-    // } else {
-
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    if (hour > 12) {
+      hour -= 12 
+      departTime ="오후 "+hour+":"+min;
+    }
+    else {
+      departTime ="오전 "+hour+":"+min;
+    }
 
     statusbar = `
       <div class="depart">${departrueAdress}</div>
@@ -90,9 +62,7 @@ exports.header = (request, departrueAdress ,departTime ,arriveAdress , loginOrLo
     <div class="depart_icon"></div>
     ${statusbar}
     <div class="arrive_icon"></div>
-  </div>
-  
-  `
+  </div>`
 
 
   if (request.session.is_logined === undefined) {
@@ -160,16 +130,27 @@ return `
   </div>
 </div>
 <div class="details">
+  <div>
   <h1>프로필 관리</h1>
   <p>사용자가 지정한 위치의 별명을 관리합니다.</p>
-  
-  
+  </div>
+  <div class="picture_area">
+    <div class="picture1"></div>
+  </div>
+  <div>
   <h2>알람 등록</h2>
-  <p>출발지와 도착지의 예상시간을 바로 알려줍니다.</p>
-
-
-  <h2>실시간 확인</h2>
   <p>알람을 등록할 수 있습니다.</p>
+  </div>
+  <div class="picture_area">
+    <div class="picture2"></div>
+  </div>
+  <div>
+  <h2>실시간 확인</h2>
+  <p>출발지와 도착지의 예상시간을 바로 알려줍니다.</p>
+  </div>
+  <div class="picture_area">
+    <div class="picture3"></div>
+  </div>
 </div>
 
 <div class="stackbackground">
@@ -399,10 +380,30 @@ exports.funcname = (user_id, nick ,adress) => {
             <p class="title"><span style="padding-left: 1rem;">별칭</span><span style="padding-left: 5rem;">주소</span></p>
             ${nick_adress_form}
         </div>
-        <input class="createBtn" type="button" onClick="location.href='/create_userloc'">
-        <button name="edit_delete_userlocation" class="edit_delete_btn" onClick="location.href='/edit_delete_userlocation'"></button>
+        
       </div>  
+
+      <div class="userLoc_buttons">
+      <div class="create_loc" onClick="location.href='/create_userloc'"></div>
+      <div class="edit_loc" onClick="location.href='/edit_delete_userlocation'"></div>
+      </div>
+      <input type="checkbox" class="control" onchange="check(this)"/>
+      <script>
+      function check (checkboxElem) {
+        const create_loc = document.getElementsByClassName('create_loc')[0]
+        const edit_loc = document.getElementsByClassName('edit_loc')[0]
+        if (checkboxElem.checked) {
+          create_loc.style.display = "block"
+          edit_loc.style.display = "block"
+        } else {
+          create_loc.style.display = "none"
+          edit_loc.style.display = "none"
+        }
+      }
+      </script>
+      
   `;
+  
   },
 
   /**
@@ -448,14 +449,27 @@ exports.funcname = (user_id, nick ,adress) => {
   <div class="alarm_container">
   ${alarms} 
   </div>
-  <div class="controls">
 
-    <div class="alarm_buttons">
-      <div class="create_alarm" onClick="location.href='/create_alarm'"></div>
-      <div class="edit_alarm" onClick="location.href='/edit_delete_alarm'"></div>
-    </div>
-    <div class="subcontrol"><input type="checkbox" class="control"/></div>
+
+  <div class="alarm_buttons">
+    <div class="create_alarm" onClick="location.href='/create_alarm'"></div>
+    <div class="edit_alarm" onClick="location.href='/edit_delete_alarm'"></div>
   </div>
+  <input type="checkbox" class="control" onchange="check(this)"/>
+<script>
+function check (checkboxElem) {
+  const create_alarm = document.getElementsByClassName('create_alarm')[0]
+  const edit_alarm = document.getElementsByClassName('edit_alarm')[0]
+  if (checkboxElem.checked) {
+    create_alarm.style.display = "block"
+    edit_alarm.style.display = "block"
+  } else {
+    create_alarm.style.display = "none"
+    edit_alarm.style.display = "none"
+  }
+}
+</script>
+
   
   `;
   },
@@ -500,7 +514,6 @@ exports.funcname = (user_id, nick ,adress) => {
         var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
         new daum.Postcode({
             oncomplete: function(data) {
-                console.log(geocoder);
                 // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
                 // 각 주소의 노출 규칙에 따라 주소를 조합한다.
@@ -530,8 +543,6 @@ exports.funcname = (user_id, nick ,adress) => {
                     if (status === daum.maps.services.Status.OK) {
 
                         var result = results[0]; //첫번째 결과의 값을 활용
-                        console.log(result.road_address.x);
-                        console.log(result.road_address.y);
                         
                         // xy 좌표값
                         xpos = result.road_address.x;
@@ -606,7 +617,6 @@ exports.funcname = (user_id, nick ,adress) => {
         var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
         new daum.Postcode({
             oncomplete: function(data) {
-                console.log(geocoder);
                 // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
                 // 각 주소의 노출 규칙에 따라 주소를 조합한다.
@@ -636,8 +646,6 @@ exports.funcname = (user_id, nick ,adress) => {
                     if (status === daum.maps.services.Status.OK) {
 
                         var result = results[0]; //첫번째 결과의 값을 활용
-                        console.log(result.road_address.x);
-                        console.log(result.road_address.y);
                         
                         // xy 좌표값
                         xpos = result.road_address.x;
@@ -755,11 +763,10 @@ exports.funcname = (user_id, nick ,adress) => {
           } else if (cctvSrc.length == 1) {
             cctvDataList.push(cctvSrc);
           } else {
-              console.log("empty src list");
+
           }
       }
     } else {
-      console.log("empty cookie");
     }
     request.session.cctvDataList = cctvDataList;
   }, 

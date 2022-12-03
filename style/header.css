@@ -80,6 +80,7 @@ ul {
   display: flex;
   padding-inline-start: 0px;
   text-align: center;
+  margin-top: .5em;
 }
 li {
     display: inline-block;
@@ -90,14 +91,14 @@ li {
 }
 li>a {
   
-  padding-left: 0.5em;
-  padding-right: 0.5em;
+  padding-left: 1em;
+  padding-right:1em;
   font-size: 1rem;
   font-weight: 400;
   text-decoration: none;
   
   width: auto;
-  color: black;
+  color: rgb(64, 64, 64);
 }
 
 .statusbar_content {

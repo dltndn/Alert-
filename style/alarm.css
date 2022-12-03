@@ -119,87 +119,108 @@
     transition: left 250ms linear;
 }
 
-/* .controlbox {
-    display: none;
-    align-items:flex-start;
-    justify-content:end;
-} */
-/* .controlbox > * {
-    margin-bottom: 2em;
-    margin-right: 2em;
-} */
-/* 
-.controlbox > .subcontrol {
-
-    flex-direction: column;
-    border-radius: 50%;
+.control {
+    position: fixed;
+    appearance: none;
     padding: 1.5rem;
-    box-shadow: 0px 5px 15px gray;
-    z-index:3;
-    border: none;
-    cursor: pointer;
-} */
-
-.controls {
-    display: flex;
-    position:fixed;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: end;
+    background-color:royalblue;
+    border-radius: 50%;
+    margin: 0px;
     bottom: 0px;
-    width: 100vw;
-    height: 100vw;    
-}
-
-.controls > *{
-    margin-right: 1em;
-    margin-bottom: 1em;
+    right: 0px;
+    background-image: url('./images/plus.png');
+    background-size: cover;
+    margin-right: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .alarm_buttons > * {
-    margin-top: 1em;
-    
+    display: none;
+    position: fixed;
     padding: 1.5rem;
-    border: none;
     border-radius: 50%;
-    box-shadow: 0px 5px 15px gray;
-    background: #ffc107;
+    bottom: 0px;
+    right: 0px;
+    margin-right: 1.5rem;
 }
 
-.alarm_buttons {
-    display: flex;
-    flex-direction: column;
+.create_alarm{
+    background-image: url('./images/plus.png');
+    background-size: contain;
+    background-color: green;
+    margin-bottom: 8.5rem; 
 }
 
-.create_alarm {
-    background: #28a745;
+.edit_alarm{
+    background-image: url('./images/delete.png');
+    background-size: contain;
+    background-color: #F4B400;
+    margin-bottom: 5rem; 
 }
 
-.control {
-    appearance: none;
-
-    margin: 0px;
-    padding: 1.5rem;
-    border: none;
-    border-radius: 50%;
-    background: black;
-    box-shadow: 0px 5px 15px gray;
-    cursor: pointer;
-
-    z-index:3;
+@keyframes rotate {
+    0% {
+      transform: rotate(0);
+    }
+    100% {
+      transform: rotate(225deg);
+      background-color: #DB4437;
+    }
 }
 
+@keyframes reverserotate {
+    0% {
+      transform: rotate(225deg);
+    }
+    100% {
+      transform: rotate(0deg);
+      background-color: royalblue;
+    }
+}
 
+/* .control:not(:checked) {
+  animation-name: reverserotate;
+  animation-duration: 0.7s;
+  transform: rotate(45deg);
+  
+} */
+
+/* 
+.control:checked {
+    animation-name: rotate;
+    animation-duration: 0.7s;
+    transform: rotate(45deg);
+    background-color: #DB4437;
+}  
+
+.control::before {
+    animation-name: reverserotate;
+    animation-duration: 0.7s;
+    transform: rotate(0deg);
+    background-color: royalblue;
+    /* transform: rotate(0deg);
+ 
+    transition: left 700ms linear; */
+
+
+
+
+
+.control::before {
+    background-color: royalblue;
+    transition: left 250ms linear;
+}
+
+.control:checked::before {
+    animation-name: reverserotate;
+    animation-duration: 1000ms;
+    background-color: royalblue;
+}
 
 .control:checked {
-    background-color: #dc3545;
-}
-
-.control:checked + .alarm_buttons {
-    display: flex;
-}
-
-.control::before + .alarm_buttons {
-    display: flex;
+    animation-name: rotate;
+    animation-duration: 1000ms;
+    background-color:#DB4437;
+    transform: rotate(45deg);
 }
 
