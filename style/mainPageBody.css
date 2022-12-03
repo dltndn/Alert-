@@ -92,7 +92,7 @@
 }
 
 .picture1 {
-
+    background-image: url('./images/profile.png');
 }
 
 .picture2 {
@@ -100,7 +100,7 @@
 }
 
 .picture3 {
-    background-image: url('./images/livepage.png');
+    background-image: url('./images/live.png');
 }
 
 .details > *{
@@ -279,9 +279,9 @@
     background-image: url('./images/developer1.png');
 }
 
-/* .two > .profile_image {
-
-} */
+.two > .profile_image {
+    background-image: url('./images/developer2.png');
+}
 
 
 
