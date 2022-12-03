@@ -119,6 +119,7 @@ const validation = require("./validation");
       for (let col = 0; col < alarmTable[row].day_of_week.length ;col++) {
         if (browserDate === parseInt(alarmTable[row].day_of_week.substring(col,col+1)) && alarmTable[row].on_off === 1) {
           alarmList.push(alarmTable[row])
+          console.log(alarmTable[row]);
           break;
         }
       }
@@ -158,12 +159,15 @@ const validation = require("./validation");
   // 초회
   recall(browserDate);
 
+  console.log(alarmList)
   for (let index = 0; index < alarmList.length;index++) {
+    console.log(validation.isOverTime(alarmList[index]))
     if (validation.isOverTime(alarmList[index])) {
       alarmList.splice(index,1);
       index--;
     }
   }
+  console.log(alarmList)
   if (!(alarmList.length === 0)) {
     // 최저시간찾기
     let minTimeObject = cleanMinTime(alarmTimeList, alarmTimeid);
@@ -506,53 +510,54 @@ exports.sendNotification = (request, response) => {
       <script>
         localStorage.removeItem("alerted");
       </script>`;
-  }
-  else {
+  } else {
     return `
-    <script>
-      setInterval(() => {
-        if (new Date().getHours() +":"+ new Date().getMinutes() === "${nearTime.alarm_time}") {
-          if ((localStorage.getItem("alerted") === null)){
-            localStorage.setItem("alerted", true);
-            notifyMe();
-          }
-        }
-        else {
-          localStorage.removeItem("alerted");
-        }
-      }, 1000);
+<script>
+setInterval(() => {
+  if (new Date().getHours() +":"+ new Date().getMinutes() === "${nearTime.alarm_time}") {
+    
+    if (localStorage.getItem("alerted") === null){
+      localStorage.setItem("alerted", true);
+      notifyMe();
+    }
+  }
+  else if (new Date().getHours() +":"+ new Date().getMinutes() !== "${nearTime.alarm_time}") {
+    
+    localStorage.removeItem("alerted");
+  }
+}, 1000);
 
-      notifyMe = () => {
-        if (!("Notification" in window)) {
-          alert("This browser does not support desktop notification");
-        }
-        else if (Notification.permission === "granted") {
-          let title = "Alert!";
-          let body = "출발할 시간입니다.";
-          let icon = './images/main-img-1.png';
-          let sound = './sound/note.mp3';
-          
-          var notification = new Notification(title, {'body': body , 'icon' : icon});
-          var promise = new Audio(sound).play();
-          
-          if (promise !== undefined) {
-            promise.then(_ => {
-            }).catch(error => {
-              console.log(error);
-            });
-          }
-          notification.onclick = (event) => {
-              event.preventDefault(); 
-              window.open('http://localhost:3000/live', '_blank');
-          }
-        } else if (Notification.permission !== "denied") {
-          Notification.requestPermission().then(function (permission) {
-            if (permission === "granted") {
-              var notification = new Notification("really");
-            }
-          });
-        }
+notifyMe = () => {
+  if (!("Notification" in window)) {
+    alert("이 브라우저는 알림이 지원되지 않습니다.");
+  }
+  else if (Notification.permission === "granted") {
+    let title = "Alert!";
+    let body = "출발할 시간입니다.";
+    let icon = './images/icon.jpg';
+    let sound = './sound/note.mp3';
+    
+    var notification = new Notification(title, {'body': body , 'icon' : icon});
+    var promise = new Audio(sound).play();
+    
+    if (promise !== undefined) {
+      promise.then(_ => {
+      }).catch(error => {
+        console.log(error);
+      });
+    }
+    notification.onclick = (event) => {
+        event.preventDefault(); 
+        window.open('http://localhost:3000/live', '_blank');
+    }
+  } else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then(function (permission) {
+      if (permission === "granted") {
+        var notification = new Notification("알람이 허용되었습니다.");
       }
-  </script>`; 
+    });
+  }
+}
+</script>`; 
   }
 };

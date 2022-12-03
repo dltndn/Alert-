@@ -201,10 +201,11 @@ return `
   </div>
 </div>
 <div class="footer">
+  <div class="footer_gradation"></div>
   <div class="large_logo"></div>
   <div class="footer-details">
     <div class="description"> 
-    본 사이트는 부천대학교 컴퓨터소프트웨어과 융합프로젝트로 만들어진 사이트입니다.<br><br>
+    본 사이트는 부천대학교 컴퓨터소프트웨어과 프로젝트로 만들어진 사이트입니다.<br><br>
     Designed and Codied with Dan and Lee </div>
     <div class="copyright">© 2022 | Alert! | All Rights Reserved.</div>
   </div>
