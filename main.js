@@ -10,7 +10,8 @@ const validation = require("./validation");
 const getData = require("./getData")
 const create = require("./create");
 const livePage = require("./livePage.js");
-const backEnd = require("./backendlogics")
+const backEnd = require("./backendlogics");
+const e = require("express");
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -61,13 +62,12 @@ app.get("/logout_process", (request, response) => {
 app.get("/signUp", (request, response) => {
   let pathname = url.parse(request.url, true).pathname;
   
-    let body = template.register();
-    body += backEnd.sendNotification(request, response);
-    const title = edit.filterURL(pathname);
-    const header = template.header(request,"로그인 이후 이용 가능 합니다.");
-    const HTML = template.HTML(title, header, body);
-    response.send(HTML);
-  
+  let body = template.register();
+  body += backEnd.sendNotification(request, response);
+  const title = edit.filterURL(pathname);
+  const header = template.header(request,"로그인 이후 이용 가능 합니다.");
+  const HTML = template.HTML(title, header, body);
+  response.send(HTML);
 });
 app.post('/signUp_process', (request, response) => {
   let object = getData.getFormData(request, response);
@@ -97,7 +97,7 @@ app.get("/profile", (request, response) => {
 });
 app.get('/alarm', (request, response) => {
   const title = '알람';
-  // if (request.session.is_logined === true) {
+  if (request.session.is_logined === true) {
     //backEndLogic
     let alarmData = backEnd.getAlarmData(request,response);
     // frontEndPart
@@ -106,9 +106,9 @@ app.get('/alarm', (request, response) => {
     body += backEnd.sendNotification(request, response);
     const HTML = template.HTML(title, header, body);
     response.send(HTML);
-  // } else {
+  } else {
     response.redirect("/");
-  // }
+  }
 })
 app.get('/create_alarm', (request, response) => {
   if (request.session.is_logined === true) {
@@ -269,35 +269,52 @@ app.post('/delete_userlocation_process', (request, response) => {
   }
 })
 app.get('/live', async (request, response) => {
-  if (request.session.is_logined === true) {
-    const title = '실시간';
-    const header = template.header(request, request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
-    const HTML = await livePage.livePage(request, response, title, header);
-    response.send(HTML);
+  if (request.session.is_logined === true ) {
+    if (request.departTime === undefined) {
+      backEnd.alertRedirect(request, response,'알람이 없습니다.', '/alarm');
+    } else {
+      const title = '실시간';
+      const header = template.header(request, request.departrueAdress , request.departTime, request.arriveAdress , "logout_process", "로그아웃");
+      const HTML = await livePage.livePage(request, response, title, header);
+      response.send(HTML);
+    }
   }else {
     response.redirect("/");
   }
 })
 app.get('/loading_live', async (request, response) => {
-  if (request.session.is_logined === true) {
-    await template.loadingLive(request,response);
-    response.redirect("/live");
+  if (request.session.is_logined === true ) {
+    if (request.departTime === undefined) {
+      backEnd.alertRedirect(request, response,'알람이 없습니다.', '/alarm');
+    } else {
+      await template.loadingLive(request,response);
+      response.redirect("/live");
+    }
   } else {
     response.redirect("/");
   }
 })
 app.get('/live_before_process', (request, response) => {
-  if (request.session.is_logined === true) {
-    const HTML = template.liveBeforeProcess(request,response);
-    response.end(HTML);
+  if (request.session.is_logined === true ) {
+    if (request.departTime === undefined) {
+      backEnd.alertRedirect(request, response,'알람이 없습니다.', '/alarm');
+    } else {
+      const HTML = template.liveBeforeProcess(request,response);
+      response.end(HTML);
+    }
   }else {
     response.redirect("/");
   }
 })
 app.get('/cctvTab', (request, response) => {
-  if (request.session.is_logined === true) {
-    const HTML = template.cctvTabForm(request);
-    response.send(HTML);
+  if (request.session.is_logined === true ) {
+    if (request.departTime === undefined) {
+      backEnd.alertRedirect(request, response,'알람이 없습니다.', '/alarm');
+    }
+    else {
+      const HTML = template.cctvTabForm(request);
+      response.send(HTML);
+    }
   }else {
     response.redirect("/");
   }

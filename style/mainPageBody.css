@@ -53,7 +53,7 @@
 }
 
 .details_header h1 {
-    color: rgb(64, 64, 64);
+    color: rgb(32, 32, 32);
 }
 
 .details_header p {
@@ -300,6 +300,13 @@
     background-size: contain;
 }
 
+.footer-details {
+    border-top: 1px solid lightgray;
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+
 .footer-details * {
     margin-top: 1em;
     width: 100%;
@@ -314,11 +321,19 @@
     flex: 1;
 }
 
+.footer_gradation {
+    width: 100%;
+    height: auto;
+
+    
+}
+
+
 .footer {
     display: flex;
-    height: 20em;
-    justify-content : center ;
-    align-items:flex-end;
+    height: fit-content;
+    flex-direction: column;
+    justify-content : end ;
 }
 
 .footer * {

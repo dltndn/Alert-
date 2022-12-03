@@ -132,6 +132,7 @@
     background-size: cover;
     margin-right: 1.5rem;
     margin-bottom: 1.5rem;
+    z-index: 5;
 }
 
 .alarm_buttons > * {
@@ -142,6 +143,7 @@
     bottom: 0px;
     right: 0px;
     margin-right: 1.5rem;
+    z-index: 5;
 }
 
 .create_alarm{

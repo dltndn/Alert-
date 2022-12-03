@@ -70,10 +70,16 @@ const backEnd = require("./backendlogics")
    exports.isOverTime = (alarmTime) => {
     let browserTime = new Date();
 
-    for (let col = 0; col < alarmTime.departure_time.length ;col++) {
-      if (alarmTime.departure_time.substring(col,col+1) === ":") {
-        let hour = parseInt(alarmTime.departure_time.substring(0,col)); 
-        let min = parseInt(alarmTime.departure_time.substring(col+1,parseInt(alarmTime.departure_time.length + 1)))
+    for (let col = 0; col < alarmTime.alarm_time.length ;col++) {
+      if (alarmTime.alarm_time.substring(col,col+1) === ":") {
+        let hour = parseInt(alarmTime.alarm_time.substring(0,col)); 
+        let min = parseInt(alarmTime.alarm_time.substring(col+1,parseInt(alarmTime.alarm_time.length + 1)))
+        console.log("alarm : " + (hour * 100 + min))
+        console.log(hour)
+        console.log(min);
+        console.log("browser : " + (browserTime.getHours() * 100 + browserTime.getMinutes()))
+        console.log(browserTime.getHours())
+        console.log(browserTime.getMinutes());
         if (hour * 100 + min >= browserTime.getHours() * 100 + browserTime.getMinutes()) {
           
           return false;
