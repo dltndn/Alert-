@@ -10,14 +10,14 @@
 }
 
 .dataBox {
-  display: grid;
-  grid-template-columns: 1fr 2fr;;
+  display: flex;
   font-size: 1.3rem;
   font-weight: 600;
   align-items:center;
-    
-    height:5rem;
-    margin-bottom: 0;
+  height:4rem;
+  margin: .5rem;
+  background-color: rgb(245 245 245);
+  border-radius: 1rem;
 }
 
 .idTemplate {
@@ -48,31 +48,27 @@
 
 .nickName {
     vertical-align: middle;
-    border: 0.3em solid rgb(245 245 245);
-    background-color: rgb(245 245 245);
-  border-radius: 1rem;
+    
     height: 30%;
-    margin-left: 0.5rem;
-    text-align: center;
-    padding: 1rem;
+    text-align: left;
+    margin-left: 1rem;
+    /* padding: 1rem;
     padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-right: 0.5rem; */
+    flex:1;
 }
 
 .address {
     vertical-align: middle;
-    border: 0.3em solid rgb(245 245 245);
-    background-color: rgb(245 245 245);
-  border-radius: 1rem;
     font-size: 1rem;
     font-weight: 400;
     height: 30%;
-    margin-right: 0.5rem;
-    margin-left: 0.5rem;
+    margin: auto;
     text-align: center;
-    padding: 1.06rem;
+    /* padding: 1.06rem;
     padding-top: 1.13rem;
-    padding-bottom: 0.99rem;
+    padding-bottom: 0.99rem; */
+    flex: auto;
 }
 
 .createBtn {

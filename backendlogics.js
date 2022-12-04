@@ -256,7 +256,7 @@ let nickname = formData.location_nickname;
 // 검증로직
 const result = validation.isExistUserAdressNickname(request,response,nickname)
 if (result) {
-  response.redirect('/create_userloc')
+  this.alertRedirect(request,response,'이미 같은 이름을 가진 주소가 있습니다.', '/create_userloc');
 }
 else {
   access.insertQuery(request,response, 
@@ -462,25 +462,44 @@ exports.editLocation = (request, response, formData) => {
   let ypos = formData.ypos;
   let nickname = formData.location_nickname;
   
+
+
   const user_locationTable = access.query(request, response, `select * from Alert.user_location WHERE user_id = '${request.session.userid}'`)
   let originalUserlocationNickname = user_locationTable[request.body.origin].nickname;
   
-  // 검증로직
-  const result = validation.isExistUserAdressNickname(request,response,nickname)
-  if (result) {
-    response.redirect('/create_userloc')
-  }
-  else {
-    access.insertQuery(request,response, 
-      `UPDATE Alert.user_location SET 
-      user_id = '${request.session.userid}', 
-      nickname = '${nickname}', 
-      adress = '${adress}', 
-      xpos = '${xpos}', 
-      ypos = '${ypos}'
-     WHERE (user_id = '${request.session.userid}' AND nickname = '${originalUserlocationNickname}');`);
-    response.redirect('/profile')
-  }
+  access.insertQuery(request,response, 
+    `UPDATE Alert.user_location SET 
+    user_id = '${request.session.userid}', 
+    nickname = '${nickname}', 
+    adress = '${adress}', 
+    xpos = '${xpos}', 
+    ypos = '${ypos}'
+    WHERE (user_id = '${request.session.userid}' AND nickname = '${originalUserlocationNickname}');`);
+    
+access.insertQuery(request,response, 
+  `UPDATE Alert.alarm SET arrive_adress = '${nickname}' 
+  WHERE (user_id = '${request.session.userid}' AND arrive_adress = '${originalUserlocationNickname}');`);
+
+access.insertQuery(request,response, 
+  `UPDATE Alert.alarm SET departrue_adress = '${nickname}' 
+  WHERE (user_id = '${request.session.userid}' AND departrue_adress = '${originalUserlocationNickname}');`);
+
+  response.redirect('/profile')  
+};
+
+/**
+ * Form 데이터를 받아와 사용자가 지정한 위치를 DB에 저장하는 로직
+ * @param {*} request 
+ * @param {*} response 
+ * @param {*} formData Form으로 받은 객체타입의 데이터
+ */
+ exports.deleteLocation = (request, response, selectedRow) => {
+  access.insertQuery(request, response , 
+    `DELETE FROM Alert.user_location WHERE (user_id = '${selectedRow.user_id}' AND nickname = '${selectedRow.nickname}' AND adress = '${selectedRow.adress}');`)
+  // 알람삭제
+  access.insertQuery(request, response , 
+    `DELETE FROM Alert.alarm WHERE user_id = "${request.session.userid}" and departrue_adress = "${selectedRow.nickname}" or arrive_adress = "${selectedRow.nickname}";`)
+  response.redirect("/profile")  
 };
 
 /**
