@@ -195,7 +195,7 @@ return `
     <div class="profile_image"></div>
     <div class="contact">
       <div class="github">
-        <div class="github_image" id="twogithub"></div>    
+        <div class="github_image" id="twogithub" onclick='twogithub()'></div>    
       </div>
     </div>
   </div>
