@@ -55,6 +55,8 @@
     margin-left: 0.5rem;
     text-align: center;
     padding: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 
 .address {
@@ -69,6 +71,8 @@
     margin-left: 0.5rem;
     text-align: center;
     padding: 1.06rem;
+    padding-top: 1.13rem;
+    padding-bottom: 0.99rem;
 }
 
 .createBtn {
