@@ -281,8 +281,8 @@ exports.login = () => {
               로그인
               </div>
               <form id="inputs" class="loginForm inputs"  action="/login_process" method="post">
-                  <input class="textbox" id="id" type="text" name="ID" placeholder="ID">
-                  <input class="textbox" id="password" type="password" name="PW" placeholder="PW">
+                  <input class="textbox" id="id" type="text" name="ID" placeholder="아이디를 입력해주세요">
+                  <input class="textbox" id="password" type="password" name="PW" placeholder="패스워드를 입력해주세요">
                   <div><a href="http://localhost:3000/signUp" value="회원가입">회원가입</a></div>
                   <input class="button" id="submit" type="submit" value="확인" onclick="closePopup()">
                   <input class="button" id="cancel" type="button" value="취소" onClick="location.href='/';">
@@ -299,8 +299,8 @@ exports.register = () => {
       
       <div class="title">회원가입</div>
       <form class="registerForm" name="signup" action="signUp_process" method="post">
-        <div><input type="ID" id="id" class="textbox" name="ID" minlength="8" placeholder="아이디를 입력하세요" required>
-        <button class="doubleCheck" name="verification" onclick="">중복확인</button></div>
+        <div><input type="ID" id="id" class="textbox" name="ID" minlength="8" placeholder="아이디를 입력해주세요" required>
+        </div>
         <input type="password" class="textbox" name="pwd" minlength="4" placeholder="패스워드를 입력해주세요" required>
         <input type="password" class="textbox" name="contrastPwd" minlength="4" placeholder="패스워드를 입력해주세요" required>
         <input type="submit"  id="submit" class="button" value="확인" onclick="">
