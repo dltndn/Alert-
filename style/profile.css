@@ -1,0 +1,180 @@
+.profile {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+}
+
+.table {
+    display: flex;
+    flex-direction: column;
+}
+
+.dataBox {
+  display: flex;
+  font-size: 1.3rem;
+  font-weight: 600;
+  align-items:center;
+  height:4rem;
+  margin: .5rem;
+  background-color: rgb(245 245 245);
+  border-radius: 1rem;
+}
+
+.idTemplate {
+    font-size: 2rem;
+  font-weight: 700;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  display: flex;
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.title {
+    font-size: 1.3rem;
+  font-weight: 600;
+  margin-left: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    text-align: center;
+}
+
+.title div {
+    width: 100%;
+    text-align: center;
+}
+
+.nickName {
+    vertical-align: middle;
+    
+    height: 30%;
+    text-align: left;
+    margin-left: 1rem;
+    flex:1;
+}
+
+.address {
+    vertical-align: middle;
+    font-size: 1rem;
+    font-weight: 400;
+    height: 30%;
+    margin: auto;
+    text-align: center;
+    flex: auto;
+}
+
+.createBtn {
+    display: flex;
+
+    position: fixed;
+    bottom: 10rem;
+    right: 2rem;
+
+    height: 2rem;
+    border: none;
+    border-radius: 50%;
+    background: #28a745;
+    color: white;
+    padding: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0px 5px 15px gray;
+    cursor: pointer;
+    z-index:3;
+}
+
+.edit_delete_btn {
+    display: flex;
+
+    position: fixed;
+    bottom: 6rem;
+    right: 2rem;
+    
+    border: none;
+    border-radius: 50%;
+    background: #ffc107;
+    color: white;
+    padding: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0px 5px 15px gray;
+    cursor: pointer;
+    z-index:3;
+}
+
+.control {
+    position: fixed;
+    appearance: none;
+    padding: 1.5rem;
+    background-color:royalblue;
+    border-radius: 50%;
+    margin: 0px;
+    bottom: 0px;
+    right: 0px;
+    background-image: url('./images/plus.png');
+    background-size: cover;
+    margin-right: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .userLoc_buttons > * {
+    display: none;
+    position: fixed;
+    padding: 1.5rem;
+    border-radius: 50%;
+    bottom: 0px;
+    right: 0px;
+    margin-right: 1.5rem;
+  }
+  
+  .create_loc {
+    background-image: url('./images/plus.png');
+      background-size: contain;
+      background-color: green;
+      margin-bottom: 8.5rem; 
+  }
+  
+  .edit_loc {
+    background-image: url('./images/delete.png');
+    background-size: contain;
+    background-color: #F4B400;
+    margin-bottom: 5rem; 
+  }
+  
+  @keyframes rotate {
+    0% {
+      transform: rotate(0);
+    }
+    100% {
+      transform: rotate(225deg);
+      background-color: #DB4437;
+    }
+  }
+  
+  @keyframes reverserotate {
+    0% {
+      transform: rotate(225deg);
+    }
+    100% {
+      transform: rotate(0deg);
+      background-color: royalblue;
+    }
+  }
+  
+  .control::before {
+    background-color: royalblue;
+    transition: left 250ms linear;
+  }
+  
+  .control:checked::before {
+    animation-name: reverserotate;
+    animation-duration: 1000ms;
+    background-color: royalblue;
+  }
+  
+  .control:checked {
+    animation-name: rotate;
+    animation-duration: 1000ms;
+    background-color:#DB4437;
+    transform: rotate(45deg);
+  }

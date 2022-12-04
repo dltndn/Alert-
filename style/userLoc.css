@@ -1,0 +1,48 @@
+.userLoc {
+  padding-top: 1em;
+}
+
+
+
+.formSubmit {
+  
+    --button-color: #ffffff;
+--button-bg-color: #0d6efd;
+--button-hover-bg-color: #025ce2;
+background: var(--button-bg-color);
+color: var(--button-color);
+
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 1.5em;
+    margin: auto;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+    cursor: pointer;
+    transition: 0.5s;
+
+  width: 97%;
+  height: 2.8rem;
+    margin-left: 0.4rem;
+}
+
+.textBox {
+    margin:0.5em;
+    border: 0.5em solid rgb(245 245 245);
+    background-color: rgb(245 245 245);
+  border-radius: 1rem;
+  
+  font-size: 1rem;
+  font-weight: 400;
+  justify-content:center;
+  align-items:center;
+    width:-webkit-fill-available;
+}
+
+.wrap {
+  margin:auto;
+  height:28rem;
+}
+

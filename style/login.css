@@ -1,0 +1,132 @@
+#background {
+    display : flex;
+    position: fixed;
+    top: 0px;
+    backdrop-filter: blur(3px);   
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items : center;
+    z-index: 5;
+}
+
+#background.hide {
+    display: none;
+}
+
+.container {
+    width: 90%;
+    height: 70%;
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.26);
+    border-radius: 1em;
+
+    animation-duration: 1s;
+    animation-name: slidedown;
+    z-index: 6;
+}
+
+@keyframes slidedown {
+    from {
+        margin-bottom: 100%;
+    }
+    to {
+        margin-bottom: 0%; 
+    }
+}
+
+.loginForm {
+    text-align: center;
+    font-weight: bold;
+}
+
+
+#login {
+    font-size: 2em;
+    color: #0d6efd;
+    margin-top: 3em;
+    text-align: center;
+}
+
+#inputs * {
+    all: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    border: 0px;
+    padding: 1em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    align-items: center;
+    box-sizing: border-box;
+    display: block;
+
+    
+}
+
+.textbox {
+    font-size: 1rem;
+    
+    
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    
+    width: 80%;
+    margin: auto;
+    
+
+    background-color: rgb(245, 245, 245);
+    border-radius: 1.5em;
+    
+}
+
+.textbox:focus {
+    background-color: rgb(223, 223, 223);
+    outline: 0px;
+}
+
+.button {
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  
+  border: none;
+  border-radius: 1.5em;
+  
+  width: 80%;
+  margin: auto;
+  
+  
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  
+  cursor: pointer;
+  
+  transition: 0.5s;
+}
+
+#inputs a {
+    color: #0d6efd;
+    text-decoration-line: none;
+    width: fit-content;
+    padding: 0px;
+    margin: auto;
+}
+
+
+#submit {
+    --button-color: #ffffff;
+    --button-bg-color: #0d6efd;
+    --button-hover-bg-color: #025ce2;
+    background: var(--button-bg-color);
+    color: var(--button-color);    
+}
+
+#cancel {
+    --button-color:gray;
+    --button-bg-color: rgb(245, 245, 245);
+    --button-hover-bg-color: lightgray;
+    background: var(--button-bg-color);
+    color: var(--button-color);    
+    color: #0d6efd;
+}

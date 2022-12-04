@@ -1,56 +1,12 @@
 
 const getTemplate = require("./template.js");
-const xlsx = require("xlsx");
 const cookie = require('cookie');
 const access = require('./DB/access');
-//test
-
-
-// cctv 엑셀 파일 json 데이터로 추출
-const cctvFile = xlsx.readFile("./OpenDataCCTV.xlsx");
-const sheetName = cctvFile.SheetNames[0];
-const firstSheet = cctvFile.Sheets[sheetName];
-const cctvData = xlsx.utils.sheet_to_json(firstSheet);
-const cctvDataClone = []; //x, y좌표 타입이 num으로 변경된 딕셔너리
-let obj;
-for (let i = 0; i < cctvData.length; i++) {
-  // cctv 엑셀 파일 json 데이터 x, y좌표 타입 num으로 변경
-  let x = cctvData[i].XCOORD;
-  let y = cctvData[i].YCOORD;
-  x = parseFloat(x);
-  y = parseFloat(y);
-  obj = {
-    CCTVID: cctvData[i].CCTVID,
-    XCOORD: x,
-    YCOORD: y,
-  };
-  cctvDataClone.push(obj);
-}
-
-
-const getCctvList = function (centerX, centerY) {  //return type -> arr
-  //중심 좌표를 기준으로 반경 500m 범위 내 cctv 목록 계산
-  const k = 0.0050445;
-  const minX = centerX - k;
-  const maxX = centerX + k;
-  const minY = centerY - k;
-  const maxY = centerY + k;
-  let targetCctvArr = [];
-  for (let i=0; i<cctvDataClone.length; i++) {
-    let x = cctvDataClone[i].XCOORD;
-    let y = cctvDataClone[i].YCOORD;
-    if (x > minX && x < maxX) {
-        if (y > minY && y < maxY) {
-            targetCctvArr.push(cctvDataClone[i]);
-        }
-    }
-  }
-   
-  return targetCctvArr;
-};
+const getCctvData = require('./getCctvData');
 
 module.exports = {
-  livePage: function (request,response, title, header) {
+  livePage: async function (request,response, title, header) {
+    const itsAPIKEY = 'd81d3254072d4f96ac9338294785d036';
     let arriveData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
     let departrueData = access.query(request, response, 
@@ -61,39 +17,23 @@ module.exports = {
     let arriveXPos = arriveData.xpos;
     let arriveYPos = arriveData.ypos;
 
-    let cctvList = [];     //정체구간 근방 cctv 데이터
     const cookies = cookie.parse(request.headers.cookie);
-    if (request.headers.cookie !== undefined){
-        const jamSectionList = JSON.parse(cookies.cctvList);
-        for (let i=0; i<jamSectionList.length; i++) {
-            const lat = jamSectionList[i].lat;
-            const lng = jamSectionList[i].lng;
-            const arr = getCctvList(lng, lat);           
-            if (arr.length > 1) {
-                cctvList.concat(arr);               
-            }else if (arr.length == 1) {
-                cctvList.push(arr);               
-            }else {
-                
-            }
-        }
-    }
-    for(let i=0; i<cctvList.length; i++) { //정체구간 근방 cctv 데이터 출력 방식
-        console.log(cctvList[i][0].CCTVID);
-    }
 
-    // 설명 필 =====================================================================================================================================================================
+    //get cctv data from session
+    const cctvDataList = request.session.cctvDataList; //{name, src, coordx, coordy}
+
     let tTimeData = JSON.parse(cookies.totalTime);
     let tTime = tTimeData / 60; 
     tTime = Math.round(tTime);
     tTime = tTime / 60;
-    let hour;
-    let min;
+    let hour = 0;
+    let min = 0;
     let estimated_time;
     min = tTime % 1;
     min = Math.round(min * 100);
     min = min * 60 / 100;
     min = Math.round(min); //최종 분
+
     if (tTime < 1) {
         hour = 0;
         estimated_time = min + "분"; //소요시간 string
@@ -101,39 +41,62 @@ module.exports = {
         hour = Math.round(tTime);  //최종 시
         estimated_time = hour + "시간 " + min + "분"; //소요시간 string
     }
-    const openAPIkey =
-      "EOjOA8lO2JOXmhT2dR7nyMXybjrrOxMihUgHegeYa2AtkL2lPr2mDUdx27Qa3Msw"; //openData
-
-    const cctvId = "E350030";
-    const kind = "CC";
-    const cctvCh = "20";
-    const id = "null";
-
-    const cctvUrl = `http://www.utic.go.kr/view/map/openDataCctvStream.jsp?key=${openAPIkey}&cctvid=${cctvId}&kind=${kind}&cctvch=${cctvCh}&id=${id}`;
+    
+    let departureTime = request.departureTime;
+    // let departureTime = "8:00";
+    let departureHour;
+    let departureMin ;
+    for (let col = 0; col < departureTime.length ;col++) {
+        if (departureTime.substring(col,col+1) === ":") {
+            departureHour = parseInt(departureTime.substring(0,col)); 
+            departureMin = parseInt(departureTime.substring(col+1,parseInt(departureTime.length + 1)))
+            departureMin += min;
+            departureHour += hour;
+            break;
+        }
+    }
+    if (departureMin >= 60){
+        departrueMin %= 60;
+        departureHour++;
+        if (departureHour >= 24) {
+            departureHour%=24
+        }
+    }else {
+        if (departureHour >= 24) {
+            departureHour%=24
+        }
+    }
+    let expectTime = departureHour + ":" + departureMin;
+    
+    
     const tMapAPIKEY = "l7xx16b2283d260c4bbabae01b727e1a8b75";
     const startX = departrueXPos; //출발지 x좌표
     const startY = departrueYPos; //출발지 y좌표
     const endX = arriveXPos; //도착지 x좌표
     const endY = arriveYPos; //도착지 y좌표
+
     return `<!DOCTYPE html>
             <html>
                 <head>
                     <title>${title}</title>
-                    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+                    <meta charset="UTF-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <script	src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
                     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=${tMapAPIKEY}"></script>
                 </head>
                 <body onload="initTmap();">
+                <link rel="stylesheet" type="text/css" href="./live.css">
+                <link rel="stylesheet" type="text/css" href="./main.css">
                     ${header}
-                    ${getTemplate.liveForm(estimated_time)}
-                   
+                    <main style="display: flex; flex-direction: column;">
+                    ${getTemplate.liveForm(estimated_time,departureTime,expectTime)}
                     <div id="map_wrap" class="map_wrap">
-                        <div id="map_div"></div>
+                        <div id="map_div" class="map_div"></div>
                     </div>
-                    <div class="map_act_btn_wrap clear_box"></div>
-                    <br />
-                    <embed src=${cctvUrl} width="320px" height="280px">
-                    <script type="text/javascript">
+                    ${getCctvData.newTabLauncher(request)}
+                    </main>
+                    <script type="text/javascript"> 
                     var map;
                     var markerInfo;
                     //출발지,도착지 마커
@@ -146,7 +109,7 @@ module.exports = {
                     var resultdrawArr = [];
                     var resultMarkerArr = [];
                 
-                    function initTmap() {
+                    function initTmap() {        
 
                         // 1. 지도 띄우기
                         map = new Tmapv2.Map("map_div", {
@@ -165,7 +128,7 @@ module.exports = {
                                 {
                                     position : new Tmapv2.LatLng(${startY},
                                         ${startX}),
-                                    icon : "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_s.png",
+                                    icon : "./images/depart_icon.png",
                                     iconSize : new Tmapv2.Size(24, 38),
                                     map : map
                                 });
@@ -175,7 +138,7 @@ module.exports = {
                                 {
                                     position : new Tmapv2.LatLng(${endY},
                                         ${endX}),
-                                    icon : "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_e.png",
+                                    icon : "./images/arrive_icon.png",
                                     iconSize : new Tmapv2.Size(24, 38),
                                     map : map
                                 });
@@ -243,10 +206,10 @@ module.exports = {
                                                                         var pType = "";
                 
                                                                         if (properties.pointType == "S") { //출발지 마커
-                                                                            markerImg = "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_s.png";
+                                                                            markerImg = "./images/depart_icon.png";
                                                                             pType = "S";
                                                                         } else if (properties.pointType == "E") { //도착지 마커
-                                                                            markerImg = "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_e.png";
+                                                                            markerImg = "./images/arrive_icon.png";
                                                                             pType = "E";
                                                                         } else { //각 포인트 마커
                                                                             markerImg = "http://topopen.tmap.co.kr/imgs/point.png";
@@ -269,8 +232,12 @@ module.exports = {
                                                                         };
                                                                         // 마커 추가
                                                                         addMarkers(routeInfoObj);
+                                                                    
                                                                     }
                                                                 }//for문 [E]
+                                                                
+                                                
+                                                                addMarkerAni(Tmapv2.MarkerOptions.ANIMATE_FLICKER);
                                                                         
                                                         },
                                                         error : function(request, status, error) {
@@ -284,19 +251,13 @@ module.exports = {
                                             //JSON TYPE EDIT [E]
                                         
                     }
-                
-                    function addComma(num) {
-                        var regexp = /\B(?=(\d{3})+(?!\d))/g;
-                        return num.toString().replace(regexp, ',');
-                    }
-                
                     //마커 생성하기
                     function addMarkers(infoObj) {
-                        var size = new Tmapv2.Size(24, 38);//아이콘 크기 설정합니다.
+                        var size = new Tmapv2.Size(38, 38);//아이콘 크기 설정합니다.
                 
                         if (infoObj.pointType == "P") { //포인트점일때는 아이콘 크기를 줄입니다.
-                            size = new Tmapv2.Size(8, 8);
-                        }
+                            size = new Tmapv2.Size(1, 1);
+                        } 
                 
                         marker_p = new Tmapv2.Marker({
                             position : new Tmapv2.LatLng(infoObj.lat, infoObj.lng),
@@ -307,7 +268,48 @@ module.exports = {
                 
                         resultMarkerArr.push(marker_p);
                     }
-                
+                    var markers = [];
+                    
+                    // 마커들의 좌표를 저장할 배열
+                    let coords = [];
+                    ${getCctvData.addCctvMarkerAni(cctvDataList)}
+
+                    // 마커를 추가하는 함수
+                    function addMarkerAni(aniType) {
+                        var coordIdx = 0;
+                        const size = new Tmapv2.Size(38, 38);
+                        removeMarkers(); // 지도에 새로 등록하기 위해 모든 마커를 지우는 함수입니다.
+                        
+                        var func = function() {
+                            //Marker 객체 생성.
+                            var marker = new Tmapv2.Marker({
+                                position: coords[coordIdx++], //Marker의 중심좌표 설정.
+                                draggable: false, //Marker의 드래그 가능 여부.
+                                animation: aniType, //Marker 애니메이션.
+                                animationLength: 600, //애니메이션 길이.
+                                map: map, //Marker가 표시될 Map 설정.
+                                icon: "https://cdn-icons-png.flaticon.com/512/4601/4601587.png",
+                                iconSize: size
+                            });
+                            
+                            markers.push(marker);
+
+                            if (coordIdx < 5) {
+                                // 일정 시간 간격으로 마커를 생성하는 함수를 실행합니다
+                                setTimeout(func, 300);
+                            }
+                        }
+                        // 일정 시간 간격으로 마커를 생성하는 함수를 실행합니다
+                        setTimeout(func, 300);
+                    }
+                    // 모든 마커를 제거하는 함수
+                    function removeMarkers() {
+                        for (var i = 0; i < markers.length; i++) {
+                            markers[i].setMap(null);
+                        }
+                        markers = [];
+                    }
+                                
                     //라인그리기
                     function drawLine(arrPoint, traffic) {
                         var polyline_;
@@ -481,6 +483,7 @@ module.exports = {
                         resultMarkerArr = [];
                         resultdrawArr = [];
                     }
+                    
                 </script>
                 </body>
             </html>

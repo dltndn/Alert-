@@ -1,17 +1,29 @@
-const cookie = require('cookie');
-const access = require('./DB/access')
+const access = require('./DB/access');
 module.exports = {
   getLiveData : function (request, response, title) {    
     const tMapAPIKEY = "l7xxc243b4151b1245f6a9792ca962a8398c";
+    
     let arriveData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
     let departrueData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.departrueAdress}'`)[0];
-
-        const startX  = departrueData.xpos;
-        const startY = departrueData.ypos;
-        const endX = arriveData.xpos;
-        const endY = arriveData.ypos;
+    console.log(request.session.userid)
+    console.log(request.arriveAdress)
+    console.log(request.departrueAdress)
+    console.log(departrueData);
+    // const startX  = 126.787101543581;
+    // const startY = 37.4528612784565; //test: 집
+    // const endX = 126.728080590524;
+    // const endY = 37.5432900176718;  //test: ㄱ계산역 테스트용
+    //test
+    let departrueXPos = departrueData.xpos;
+    let departrueYPos = departrueData.ypos;
+    let arriveXPos = arriveData.xpos;
+    let arriveYPos = arriveData.ypos;
+    const startX = departrueXPos; //출발지 x좌표
+    const startY = departrueYPos; //출발지 y좌표
+    const endX = arriveXPos; //도착지 x좌표
+    const endY = arriveYPos; //도착지 y좌표
     
     return `<!DOCTYPE html>
             <html>
@@ -28,6 +40,9 @@ module.exports = {
                     <div class="map_act_btn_wrap clear_box"></div>
                     <br />
                     <script type="text/javascript">
+                    function goToLoadingLive() {
+                        document.location.href="/loading_live";
+                    }
                     var map;
                     var markerInfo;
                     //출발지,도착지 마커
@@ -104,6 +119,7 @@ module.exports = {
                                                                         }
                 
                                                                         const arrr = drawLine(sectionInfos, trafficArr);
+                                                                        
                                                                         if (arrr.length != 0) {
                                                                             cctvArr = cctvArr.concat(arrr);                                                                            
                                                                         }                                                                                                                                                
@@ -153,7 +169,10 @@ module.exports = {
                                                     });
                                             //JSON TYPE EDIT [E]
                                             if (cctvArr.length == 0) {
-                                                console.log("정체구간 없음");
+                                                document.cookie = "trafficJamList=null"; //정체구간 없을 시 cookie에 null 저장
+                                                // const dddata = [{"lat":37.45525326987871,"lng":126.7971490103368},{"lat":37.45682526188185,"lng":126.79447143261505},{"lat":37.48557942585608,"lng":126.74785821174484},{"lat":37.543080827902216,"lng":126.73413007896661},{"lat":37.54334458503499,"lng":126.72843336927583}];
+                                                // document.cookie = "trafficJamList=" + JSON.stringify(dddata);
+                                                goToLoadingLive();
                                             } else {
                                                 let cctvData = [];
                                                 let lat = 0;
@@ -167,9 +186,10 @@ module.exports = {
                                                         lng: lng
                                                     }                                                
                                                     cctvData.push(objj);
+                                                    console.log(objj);
                                                 }                                                                                            
-                                                document.cookie = "cctvList=" + JSON.stringify(cctvData); //cctv객체 배열 쿠키에 저장
-                                                
+                                               document.cookie = "trafficJamList=" + JSON.stringify(cctvData); //cctv객체 배열 쿠키에 저장                                               
+                                               goToLoadingLive();
                                             }                                            
                     }
             
@@ -399,6 +419,8 @@ module.exports = {
                         resultMarkerArr = [];
                         resultdrawArr = [];
                     }
+                    
+                   
                 </script>
                 </body>
             </html>
