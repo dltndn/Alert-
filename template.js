@@ -303,8 +303,8 @@ exports.register = () => {
         </div>
         <input type="password" class="textbox" name="pwd" minlength="4" placeholder="패스워드를 입력해주세요" required>
         <input type="password" class="textbox" name="contrastPwd" minlength="4" placeholder="패스워드를 입력해주세요" required>
-        <input type="submit"  id="submit" class="button" value="확인" onclick="">
-        <button name="cancel" id="cancel" class="button" onClick="location.href='/'">취소</button>
+        <input type="submit" id="submit" class="button" value="확인">
+        <input type="button" id="cancel" class="button" onClick="location.href='/'" value="취소">
       </form>
     </div>
   </div>`
