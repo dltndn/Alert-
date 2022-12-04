@@ -256,7 +256,7 @@ module.exports = {
                         var size = new Tmapv2.Size(38, 38);//아이콘 크기 설정합니다.
                 
                         if (infoObj.pointType == "P") { //포인트점일때는 아이콘 크기를 줄입니다.
-                            size = new Tmapv2.Size(8, 8);
+                            size = new Tmapv2.Size(1, 1);
                         } 
                 
                         marker_p = new Tmapv2.Marker({
