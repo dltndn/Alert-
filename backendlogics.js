@@ -33,19 +33,30 @@ const validation = require("./validation");
   }
 
   changeKo = (hour) => {
-    if(hour >= 12) {
+    if(hour > 12) {
       departTime.hour = "오후 " + (hour -12);
-    } else {
+    } else if (hour === 12) {
+      departTime.hour = "오후 " + (hour);
+    }else {
       departTime.hour = "오전 " + hour;
     }
   }
   
   change = (hour) => {
-    if(hour >= 12) {
+    if(hour > 12) {
       alarmTime.hour = `<div class = "alarmhour">오후</div>` + (hour -12);
+    } else if(hour === 12) {
+      alarmTime.hour = `<div class = "alarmhour">오후</div>` + hour;
     } else {
       alarmTime.hour = `<div class = "alarmhour">오전</div>` + hour;
     }
+  }
+
+  changeMin = (time) => {
+    if (time <10) {
+      time = "0" + time
+    }
+    return time; 
   }
   
   for (let row = 0;row < alarmData.length; row++){
@@ -58,12 +69,12 @@ const validation = require("./validation");
     let on_off = ""
     if (alarmData[row].on_off == 1) on_off = 'checked';
     data += `<div class = "alarms">`
-    data += `<div class = "alarm_time">` + alarmTime.hour + ":" + parseTime(alarmData[row].alarm_time).min + `</div>`
+    data += `<div class = "alarm_time">` + alarmTime.hour + ":" + changeMin(parseTime(alarmData[row].alarm_time).min) + `</div>`
     data += `<div class = "inner_container">`
     data += `<div class = "inner_container_top">`
     data += `<div class = "departrue_adress">` + alarmData[row].departrue_adress + `</div>`
     data += `<div class = "arrive_adress">` + alarmData[row].arrive_adress + `</div></div>`
-    data += `<div class = "departure_time">` + departTime.hour + "시 " + parseTime(alarmData[row].departure_time).min + "분" + `</div>`
+    data += `<div class = "departure_time">` + departTime.hour + "시 " + changeMin(parseTime(alarmData[row].departure_time).min) + "분" + `</div>`
     data += `<div class = "alarm_days">` + alarmdays + `</div></div>`
     data += `<input type="checkbox" name="alarm_id" value="${alarmData[row].alarm_id}" class="alarm_checkbox alarmOnOff${alarmData[row].alarm_id}" ${on_off}>`
     data += `</div>`  

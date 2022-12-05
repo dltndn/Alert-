@@ -25,6 +25,9 @@ exports.header = (request, departrueAdress ,departTime ,arriveAdress , loginOrLo
       if (departTime.substring(col,col+1) === ":") {
         hour = parseInt(departTime.substring(0,col)); 
         min = parseInt(departTime.substring(col+1,parseInt(departTime.length + 1)))
+        if (min < 10) {
+          min = "0" +min;
+        }
         break;
       }
     }
@@ -309,7 +312,7 @@ exports.register = () => {
     </div>
   </div>`
 },
-  
+
 exports.createAlarm = () => {
   return `
          <form action="/create_alarm_process" method="post">
@@ -329,8 +332,6 @@ exports.createAlarm = () => {
             <label for="금">금</label>
             <input type="checkbox" name="Day_of_the_week" value="토" id="토">    
             <label for="토">토</label>
-          
-              
           
             <select name="출발지">
               <option value="">출발지 선택</option>
@@ -434,8 +435,8 @@ exports.funcname = (user_id, nick ,adress) => {
     <link rel="stylesheet" type="text/css" href="./editUserLoc.css">
       <div class="locDataDiv">
       <p class="idTemplate"><span>ID</span><span style="flex-grow:1;text-align: end;">${userID}</span><span style="padding-left: 1rem;">님</span></p>
-          <div>${nick_adress_form}</div>
-      </div>`;
+        <div>${nick_adress_form}</div>
+    </div>`;
   },
 
 
