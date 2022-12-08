@@ -2,6 +2,7 @@ const getLiveData = require("./getLiveData.js");
 const getCctvData = require("./getCctvData");
 const cookie = require('cookie');
 const session = require('express-session');
+const apiKey = require('./getApiKey');
 
 /**
  * 웹 사이트의 헤더 부분 (statusbar + 링크들)
@@ -495,7 +496,7 @@ function check (checkboxElem) {
    * @returns HTML 코드
    */
    exports.create_userLoc = function () {
-    const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
+    const APIkey = apiKey.getKakao();
 
     const getAdressScript = `
     let xpos; 
@@ -598,7 +599,7 @@ function check (checkboxElem) {
    * @returns HTML 코드
    */
    exports.edit_userLoc = function (selectedRow) {
-    const APIkey = "6c2ba4ae316b4be8e59c17b0af464fec"; //kakao
+    const APIkey =apiKey.getKakao();
 
     const getAdressScript = `
     let xpos; 
@@ -714,43 +715,12 @@ function check (checkboxElem) {
     return getLD;
   }, 
   exports.loadingLive = async function (request, response) {
-    const itsAPIKEY = 'd81d3254072d4f96ac9338294785d036';
+    const itsAPIKEY = apiKey.getIts();
     let cctvDataList = [];     //정체구간 근방 cctv src url데이터
     const cookies = cookie.parse(request.headers.cookie);
     if (request.headers.cookie !== undefined){
       const jamSectionList = JSON.parse(cookies.trafficJamList);  //정체구간 좌표
       if(jamSectionList == null) {
-        // if (cctvDataList.length == 0) {  //정체 구간 없을 시 테스트용
-        //   let a = {
-        //     name : "[수도권제1순환선] 성남",
-        //     src : "http://cctvsec.ktict.co.kr/2/zdu3vCWMqm8BOoAocdd4FEt4ZG93hWE8Nybgbe5qFEmGtymzqbkEiw3HXGaXgIbGWtUOHSErYTddpGAU31Gtog==",
-        //     coordx : 127.12361,
-        //     coordy : 37.42889
-        //   };
-        //   let b = {
-        //       name : "[수도권제1순환선] 송파",
-        //       src : "http://cctvsec.ktict.co.kr/4/HAUIKUqV9pGO2its+ETwaTPtNnbE19Tj+PF7JJB5C4FEFDP9P3Tb4JBSW3qc7WHV2oXSICWKQoA+BITA4W35UA==",
-        //       coordx : 127.12944,
-        //       coordy : 37.475
-        //   };
-        //   let c = {
-        //       name : "[수도권제1순환선] 하남분기점",
-        //       src : "http://cctvsec.ktict.co.kr/8/m3hu1EnLHpqRRbY5OsUvXdiGh+EBUU0Lfzr32k33ORhxo4m9vzT1Dyhv8JatjJd1tDNLY3hoIAa6Nh0NTKpABQ==",
-        //       coordx : 127.19361,
-        //       coordy : 37.5325
-        //   };
-        //   let d = {
-        //       name : "[수도권제1순환선] 남양주",
-        //       src : "http://cctvsec.ktict.co.kr/12/3qY9KkqtXlmcqSUUMA0LNwObni0xgPcG4gq5sLbNb2FpdiwnvQ0AcomSs81OU72669Jf36WPAudVNOljxJlDS/1oZG9cO5iNwhDbu9KqCzY=",
-        //       coordx : 127.1536111,
-        //       coordy : 37.60222222
-        //   };
-        //   cctvDataList.push(a);
-        //   cctvDataList.push(b);
-        //   cctvDataList.push(c);
-        //   cctvDataList.push(d);
-        // }
-        // request.session.cctvDataList = cctvDataList;
         return;
       }
       for (const jamSection of jamSectionList) {

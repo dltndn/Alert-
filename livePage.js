@@ -3,10 +3,10 @@ const getTemplate = require("./template.js");
 const cookie = require('cookie');
 const access = require('./DB/access');
 const getCctvData = require('./getCctvData');
+const apiKey = require('./getApiKey');
 
 module.exports = {
   livePage: async function (request,response, title, header) {
-    const itsAPIKEY = 'd81d3254072d4f96ac9338294785d036';
     let arriveData = access.query(request, response, 
         `select * from Alert.user_location WHERE user_id = '${request.session.userid}' AND nickname = '${request.arriveAdress}'`)[0];
     let departrueData = access.query(request, response, 
@@ -43,7 +43,6 @@ module.exports = {
     }
     
     let departureTime = request.departureTime;
-    // let departureTime = "8:00";
     let departureHour;
     let departureMin ;
     for (let col = 0; col < departureTime.length ;col++) {
@@ -69,7 +68,7 @@ module.exports = {
     let expectTime = departureHour + ":" + departureMin;
     
     
-    const tMapAPIKEY = "l7xx16b2283d260c4bbabae01b727e1a8b75";
+    const tMapAPIKEY = apiKey.getTmap();
     const startX = departrueXPos; //출발지 x좌표
     const startY = departrueYPos; //출발지 y좌표
     const endX = arriveXPos; //도착지 x좌표
